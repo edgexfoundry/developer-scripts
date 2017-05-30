@@ -2,6 +2,10 @@
 
 version: '2'
 services:
+
+#################################################################
+# Base config and database services
+#################################################################
   volume:
     image: edgexfoundry/docker-edgex-volume
     container_name: edgex-files
@@ -66,6 +70,9 @@ services:
       - volume
       - mongo
 
+#################################################################
+# Required Supporting Services
+#################################################################
   logging:
     image: edgexfoundry/docker-support-logging
     ports:
@@ -101,6 +108,9 @@ services:
       - mongo-seed
       - logging
 
+#################################################################
+# Core Services
+#################################################################
   metadata:
     image: edgexfoundry/docker-core-metadata
     ports:
@@ -158,6 +168,9 @@ services:
       - logging
       - metadata
 
+#################################################################
+# Additional Supporting Service
+#################################################################
   scheduler:
     image: edgexfoundry/docker-support-scheduler
     ports:
@@ -178,6 +191,9 @@ services:
       - metadata
       - command
 
+#################################################################
+# North Side Services
+#################################################################
   export-client:
     image: edgexfoundry/docker-export-client
     ports:
