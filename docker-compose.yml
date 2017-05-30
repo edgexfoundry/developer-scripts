@@ -2,8 +2,12 @@
 
 version: '2'
 services:
+
+#################################################################
+# Base config and database services
+#################################################################
   volume:
-    image: dellfuse/docker-edgex-volume
+    image: edgexfoundry/docker-edgex-volume
     container_name: edgex-files
     networks:
       - edgex-network
@@ -14,7 +18,7 @@ services:
       - /consul/data
 
   consul:
-    image: dellfuse/docker-core-consul
+    image: edgexfoundry/docker-core-consul
     ports:
       - "8400:8400"
       - "8500:8500"
@@ -29,7 +33,7 @@ services:
       - volume
 
   config-seed:
-    image: dellfuse/docker-core-config-seed
+    image: edgexfoundry/docker-core-config-seed
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -41,7 +45,7 @@ services:
       - consul
 
   mongo:
-    image: dellfuse/docker-edgex-mongo
+    image: edgexfoundry/docker-edgex-mongo
     ports:
       - "27017:27017"
     container_name: edgex-mongo
@@ -55,7 +59,7 @@ services:
     command: --smallfiles
 
   mongo-seed:
-    image: dellfuse/docker-edgex-mongo-seed
+    image: edgexfoundry/docker-edgex-mongo-seed
     container_name: edgex-mongo-seed
     hostname: edgex-mongo-seed
     networks:
@@ -66,8 +70,11 @@ services:
       - volume
       - mongo
 
+#################################################################
+# Required Supporting Services
+#################################################################
   logging:
-    image: dellfuse/docker-support-logging
+    image: edgexfoundry/docker-support-logging
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
@@ -84,7 +91,7 @@ services:
       - mongo-seed
 
   notifications:
-    image: dellfuse/docker-support-notifications
+    image: edgexfoundry/docker-support-notifications
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -101,8 +108,11 @@ services:
       - mongo-seed
       - logging
 
+#################################################################
+# Core Services
+#################################################################
   metadata:
-    image: dellfuse/docker-core-metadata
+    image: edgexfoundry/docker-core-metadata
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
@@ -120,7 +130,7 @@ services:
       - logging
 
   data:
-    image: dellfuse/docker-core-data
+    image: edgexfoundry/docker-core-data
     ports:
       - "48080:48080"
       - "5563"
@@ -140,7 +150,7 @@ services:
       - notifications
 
   command:
-    image: dellfuse/docker-core-command
+    image: edgexfoundry/docker-core-command
     ports:
       - "48082:48082"
     container_name: edgex-core-command
@@ -158,8 +168,11 @@ services:
       - logging
       - metadata
 
+#################################################################
+# Additional Supporting Service
+#################################################################
   scheduler:
-    image: dellfuse/docker-support-scheduler
+    image: edgexfoundry/docker-support-scheduler
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -178,8 +191,11 @@ services:
       - metadata
       - command
 
+#################################################################
+# North Side Services
+#################################################################
   export-client:
-    image: dellfuse/docker-export-client
+    image: edgexfoundry/docker-export-client
     ports:
       - "48071:48071"
     container_name: edgex-export-client
@@ -200,7 +216,7 @@ services:
       - data
 
   export-distro:
-    image: dellfuse/docker-export-distro
+    image: edgexfoundry/docker-export-distro
     ports:
       - "48070:48070"
       - "5566"
@@ -223,7 +239,7 @@ services:
       - export-client
 
   rulesengine:
-    image: dellfuse/docker-support-rulesengine
+    image: edgexfoundry/docker-support-rulesengine
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -248,7 +264,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: dellfuse/docker-device-virtual
+    image: edgexfoundry/docker-device-virtual
     ports:
       - "49990:49990"
     container_name: edgex-device-virtual
