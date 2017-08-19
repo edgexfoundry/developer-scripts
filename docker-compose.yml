@@ -267,6 +267,135 @@ services:
       - metadata
       - data
       - command
+      
+  # device-bacnet:
+    # image: edgexfoundry/docker-device-bacnet
+    # ports:
+      # - "49986:49986"
+    # container_name: edgex-device-bacnet
+    # hostname: edgex-device-bacnet
+    # networks:
+      # - edgex-network
+    # volumes_from:
+      # - volume
+    # depends_on:
+      # - volume
+      # - consul
+      # - config-seed
+      # - mongo
+      # - mongo-seed
+      # - logging
+      # - metadata
+      # - data
+      # - command
+      
+  # device-bluetooth:
+    # image: edgexfoundry/docker-device-bluetooth
+    # ports:
+      # - "49988:49988"
+    # container_name: edgex-device-bluetooth
+    # hostname: edgex-device-bluetooth
+    # networks:
+      # - edgex-network
+    # volumes_from:
+      # - volume
+    # privileged: true
+    # depends_on:
+      # - volume
+      # - consul
+      # - config-seed
+      # - mongo
+      # - mongo-seed
+      # - logging
+      # - metadata
+      # - data
+      # - command
+      
+  # device-fischetechnik:
+    # image: edgexfoundry/docker-device-fischetechnik
+    # ports:
+      # - "49985:49985"
+    # container_name: edgex-device-fischetechnik
+    # hostname: edgex-device-fischetechnik
+    # networks:
+      # - edgex-network
+    # volumes_from:
+      # - volume
+    # privileged: true
+    # depends_on:
+      # - volume
+      # - consul
+      # - config-seed
+      # - mongo
+      # - mongo-seed
+      # - logging
+      # - metadata
+      # - data
+      # - command
+      
+  # device-modbus:
+    # image: edgexfoundry/docker-device-modbus
+    # ports:
+      # - "49991:49991"
+    # container_name: edgex-device-modbus
+    # hostname: edgex-device-modbus
+    # networks:
+      # - edgex-network
+    # volumes_from:
+      # - volume
+    # privileged: true
+    # depends_on:
+      # - volume
+      # - consul
+      # - config-seed
+      # - mongo
+      # - mongo-seed
+      # - logging
+      # - metadata
+      # - data
+      # - command
+      
+  # device-mqtt:
+    # image: edgexfoundry/docker-device-mqtt
+    # ports:
+      # - "49982:49982"
+    # container_name: edgex-device-mqtt
+    # hostname: edgex-device-mqtt
+    # networks:
+      # - edgex-network
+    # volumes_from:
+      # - volume
+    # depends_on:
+      # - volume
+      # - consul
+      # - config-seed
+      # - mongo
+      # - mongo-seed
+      # - logging
+      # - metadata
+      # - data
+      # - command
+      
+  # device-snmp:
+    # image: edgexfoundry/docker-device-snmp
+    # ports:
+      # - "49989:49989"
+    # container_name: edgex-device-snmp
+    # hostname: edgex-device-snmp
+    # networks:
+      # - edgex-network
+    # volumes_from:
+      # - volume
+    # depends_on:
+      # - volume
+      # - consul
+      # - config-seed
+      # - mongo
+      # - mongo-seed
+      # - logging
+      # - metadata
+      # - data
+      # - command
 
 networks:
   edgex-network:
