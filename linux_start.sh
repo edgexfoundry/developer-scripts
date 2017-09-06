@@ -11,7 +11,6 @@ clear
 echo
 echo "This script will do the following:"
 echo "-- Ask you to supply a user name: a user name is needed to set folder ownership"
-#echo "-- Ask you where you would like to locate the Mongo Database."
 echo "-- Create folders, if necessary, for the database."
 echo "-- Start database creation (without --auth)."
 echo "-- Initialize the database for Edgex."
@@ -30,10 +29,18 @@ read name
 echo
 
 # Confirm the user name
-echo "Is this what you meant to write?"
-echo
-echo $name
-echo
+echo "Is this what you meant to write: $name "
+echo "Choose a number for your answer"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) exit;;
+    esac
+done
+
+
+
+
 
 # TODO
 # add the y/n to continue code
