@@ -1,91 +1,122 @@
 #!/bin/bash
 
-# This shell script does a few things to help get a Ubuntu Desktop 16.04 system
-# read to run EdgeX. Here is what the script does:
-#
-# X. Asks what is the user name of the person who will be running EdgeX
-# X. If the /data/db directory is not on the system it creates it as 
-#      well as changes ownership of the directory
-# X.
-# X.
-# X.
-# X.
-# X.
-# X.
-# X.
-# X.
-# X.
-
-
-
-
-
-
+# The user must define this path
+Full path
+dbpath="/home/youngc/edgex/db"
+Short path
+dirname="/home/youngc/edgex"
 
 
 clear
-echo 
-echo "What is the non-root user name you are using on the system:"
+echo
+echo "This script will do the following:"
+echo "-- Ask you to supply a user name: a user name is needed to set folder ownership"
+#echo "-- Ask you where you would like to locate the Mongo Database."
+echo "-- Create folders, if necessary, for the database."
+echo "-- Start database creation (without --auth)."
+echo "-- Initialize the database for Edgex."
+echo "-- Shutdown the database."
+echo "-- Verify all processes of Mongo are stopped."
+echo "-- Start the database again (using --auth). "
+echo
+echo
+
+# Ask for a user name
+echo "What is the non-root user name who will own the folders where the database will be stored:"
+echo
 
 # read the non-root user name
 read name
 echo
 
-#show the name being used
-echo "The user name is: $name"
+# Confirm the user name
+echo "Is this what you meant to write?"
+echo
+echo $name
 echo
 
-# Directory needed if db initial setup
-# TODO replace chad with data
-dirsname="/chad/db"
-dirname="/chad"
+# TODO
+# add the y/n to continue code
 
-# TODO 
-# Ask for the path of where you will want the working database to live
-# You might have to go through the same file own change again
 
+# Ask you where you would like to locate the Mongo Database
+#echo "Where would you like to the Mongo Database to reside?"
+#echo "Example: /home/tester/edgex/db"
+#echo
+
+## Read the location of the data base
+#read dbpath
+
+## Ask if this is correct
+#echo
+#echo "Is this what you meant to write?  $dbpath"
+#echo
+
+# TODO
+#enter the y/n to continue code
 
 # folder creation and change ownership
-echo "Does the $dirsname folder exist?"
+echo "Checking to see if $dbpath exist?"
 echo
-if [ ! -d $dirname  ] 
+if [ ! -d $dbpath  ] 
 then
-    echo "The folder doesn't exist. Now creating $dirname"
-    sudo mkdir -p $dirname
+    echo
+    echo "The folder doesn't exist. "
+    echo
+
+    echo "Now creating $dbpath"
+    sudo mkdir -p $dbpath
+    echo
+
     echo "Folder created"
     echo
-    
-    echo "Who is the owner of the folder"
-    # TODO replace chad with data
-    OWNS=$(stat -c '%U' /chad)
-    echo $OWNS
-    echo
-    
+
+# DEBUG
+#    echo "Who is the owner of the folder"
+#    OWNS=$(stat -c '%U' $dbpath)
+#    echo $OWNS
+#    echo 
+
     echo "Changing the file owner to $name"
     sudo chown -R $name:$name $dirname
+    echo
     echo "File owner changed"
     echo
-    
-    echo "Who is the owner of the folder"
-    # TODO replace chad with data
-    OWNS=$(stat -c '%U' /chad)
-    echo $OWNS
-    echo
+
+# DEBUG
+#    echo "Who is the owner of the folder"
+#    OWNS=$(stat -c '%U' $dbpath)
+#    echo $OWNS
+#    echo
 
     echo "Folder creation is complete, moving to next step"
     echo
 
 else
     echo "File exists -> moving to next step"
+    echo
 fi
 
-# TODO
-# first initialize this
-# mongod --dbpath /data/db
+# Start the database creation (without --auth)
+#sudo mongod --dbpath $dbpath
+#echo
 
-# TODO
-# second initialize this 
-# mongod --dbpath /home/$USER/mongodb/db
+# Initialize the database for edgex 
+#sudo mongo < init_mongo.js
+#echo
 
+# Shutdown the database
+#sudo mongod --dbpath $dbpath --shutdown
+#echo
+
+# Verify all the processes of Mongo are stopped
+#killpid=`sudo netstat -ntlp | grep mongod | awk '{print $7}' | sed 's/\/.*//'`
+#echo This is the pid that needs to die: $killpid
+#sudo kill -9 $killpid
+#sudo netstat -tulnp | grep mongod
+    
+
+# Start the database (using --auth)
+#sudo mongod --dbpath $dbpath --auth
 
 
