@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # The user must define this path
-Full path
+# Full path
 dbpath="/home/youngc/edgex/db"
-Short path
+# Short path - no"/db/"
 dirname="/home/youngc/edgex"
 
 
@@ -20,7 +20,18 @@ echo "-- Start the database again (using --auth). "
 echo
 echo
 
+# Confirm the database folder location
+echo "Should the folder for the database be created here: $dbpath "
+echo
+echo "Choose a number for your answer"
+select yn in "Yes" "No"; do
+    case $yn in
+        Yes ) break;;
+        No ) echo; echo "Program exit. Edit the top of this shell file and run again"; exit;;
+    esac
+done
 # Ask for a user name
+echo
 echo "What is the non-root user name who will own the folders where the database will be stored:"
 echo
 
@@ -30,37 +41,14 @@ echo
 
 # Confirm the user name
 echo "Is this what you meant to write: $name "
+echo
 echo "Choose a number for your answer"
 select yn in "Yes" "No"; do
     case $yn in
         Yes ) break;;
-        No ) exit;;
+        No ) echo; echo "progam exit, rerun again"; exit;;
     esac
 done
-
-
-
-
-
-# TODO
-# add the y/n to continue code
-
-
-# Ask you where you would like to locate the Mongo Database
-#echo "Where would you like to the Mongo Database to reside?"
-#echo "Example: /home/tester/edgex/db"
-#echo
-
-## Read the location of the data base
-#read dbpath
-
-## Ask if this is correct
-#echo
-#echo "Is this what you meant to write?  $dbpath"
-#echo
-
-# TODO
-#enter the y/n to continue code
 
 # folder creation and change ownership
 echo "Checking to see if $dbpath exist?"
@@ -105,25 +93,22 @@ else
 fi
 
 # Start the database creation (without --auth)
-#sudo mongod --dbpath $dbpath
-#echo
+sudo mongod --dbpath $dbpath
+echo
 
 # Initialize the database for edgex 
-#sudo mongo < init_mongo.js
-#echo
+sudo mongo < init_mongo.js
+echo
 
 # Shutdown the database
-#sudo mongod --dbpath $dbpath --shutdown
-#echo
+sudo mongod --dbpath $dbpath --shutdown
+echo
 
 # Verify all the processes of Mongo are stopped
-#killpid=`sudo netstat -ntlp | grep mongod | awk '{print $7}' | sed 's/\/.*//'`
+killpid=`sudo netstat -ntlp | grep mongod | awk '{print $7}' | sed 's/\/.*//'`
 #echo This is the pid that needs to die: $killpid
-#sudo kill -9 $killpid
-#sudo netstat -tulnp | grep mongod
-    
+sudo kill -9 $killpid
+sudo netstat -tulnp | grep mongod
 
 # Start the database (using --auth)
-#sudo mongod --dbpath $dbpath --auth
-
-
+sudo mongod --dbpath $dbpath --auth
