@@ -52,19 +52,6 @@ services:
       - volume
     depends_on:
       - volume
-    command: --smallfiles
-
-  mongo-seed:
-    image: edgexfoundry/docker-edgex-mongo-seed
-    container_name: edgex-mongo-seed
-    hostname: edgex-mongo-seed
-    networks:
-      - edgex-network
-    volumes_from:
-      - volume
-    depends_on:
-      - volume
-      - mongo
 
   logging:
     image: edgexfoundry/docker-support-logging
