@@ -30,7 +30,6 @@ sleep 65
 run_service config-seed
 run_service mongo
 sleep 12
-run_service mongo-seed
 run_service logging
 sleep 65
 run_service notifications
