@@ -18,7 +18,6 @@
 
 set -e
 
-source MODULES
 
 installAllModules(){
 SELECTED_MODULES=($@)
@@ -42,7 +41,11 @@ usage(){
 	exit 0
 }
 
+
+start(){
+
 echo -n "Do you want to install all modules or select from the list? (y/n) -> "
+
 read ans
 
 if [[ "$ans" == "y" ]]; then
@@ -66,4 +69,14 @@ fi
 
 
 echo "Done!"
+}
+
+
+
+if [ $# -eq 0 ]; then
+	source MODULES
+	start
+else
+	installAllModules $@
+fi
 
