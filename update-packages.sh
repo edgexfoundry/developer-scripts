@@ -18,6 +18,8 @@
 
 set -e
 
+git pull . 
+
 source MODULES 
 
 for m in ${MODULES[@]} ;  do
