@@ -1,4 +1,4 @@
 #!/bin/bash
 
-export MODULES=(core-data-client core-domain core-exception core-test export-distro export-domain export-test support-domain support-logging-client developer-scripts export-client support-notifications-client core-data core-metadata-client )
+export MODULES=(core-data-client core-domain core-exception core-test export-distro export-domain export-test support-domain support-logging-client export-client support-notifications-client core-data core-metadata-client )
 	

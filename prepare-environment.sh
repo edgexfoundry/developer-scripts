@@ -18,7 +18,7 @@
 
 set -e
 
-MODULES=(core-data-client core-domain core-exception core-test export-distro export-domain export-test support-domain support-logging-client developer-scripts export-client support-notifications-client core-data core-metadata-client )
+source MODULES
 
 installAllModules(){
 SELECTED_MODULES=($@)
