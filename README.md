@@ -6,7 +6,7 @@ This repos contains scripts, batch files, JSON used in REST calls and other misc
 
 ## Running on Linux
 
-For convenience there are a couple of scripts that help you get up and running 
+For convenience there are a couple of scripts that help you get up and running
 
 ### linux_setup.sh
 This script will:
@@ -23,7 +23,13 @@ in order as described [HERE](https://wiki.edgexfoundry.org/display/FA/Get+EdgeX+
 
 ### prepare-environment.sh
 
-This script works in two ways, you can download all modules in MODULES file or select one by one in case you only need a subset of modules.
+This script is used to clone from each git, the set of modules you need. You can pass a list of valid modules.
+
+>MODULES: core-data-client core-domain core-exception core-test export-distro 
+>export-domain export-test support-domain support-logging-client export-client
+>support-notifications-client core-data core-metadata-client
+
+Also, if you run the script without parameters, you can choose manually which one of above do you want to be installed.
 
 
 ### update-packages.sh
