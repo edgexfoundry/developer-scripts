@@ -19,3 +19,13 @@ This script will:
 ### run-it.sh
 This script will start the services
 in order as described [HERE](https://wiki.edgexfoundry.org/display/FA/Get+EdgeX+Foundry+-+Users).
+
+
+### prepare-environment.sh
+
+This script works in two ways, you can download all modules in MODULES file or select one by one in case you only need a subset of modules.
+
+
+### update-packages.sh
+
+This script will update the installed packages in your working copy
