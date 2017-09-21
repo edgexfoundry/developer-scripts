@@ -286,12 +286,12 @@ services:
       # - data
       # - command
       
-  # device-fischetechnik:
-    # image: edgexfoundry/docker-device-fischetechnik
+  # device-fischertechnik:
+    # image: edgexfoundry/docker-device-fischertechnik
     # ports:
       # - "49985:49985"
-    # container_name: edgex-device-fischetechnik
-    # hostname: edgex-device-fischetechnik
+    # container_name: edgex-device-fischertechnik
+    # hostname: edgex-device-fischertechnik
     # networks:
       # - edgex-network
     # volumes_from:
