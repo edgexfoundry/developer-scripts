@@ -16,5 +16,14 @@
 #
 # Author: chencho
 
-export MODULES=(core-data-client core-domain core-exception core-test export-distro export-domain export-test support-domain support-logging-client export-client support-notifications-client core-data core-metadata-client support-scheduler)
-	
+# Down images in docker-compose
+docker-compose down
+
+# Delete all containers
+if [[ $(docker ps -a -q) ]]; then
+docker rm $(docker ps -a -q)
+fi
+# Delete all images
+if [[ $(docker images -q -a) ]]; then
+docker rmi -f $(docker images -q -a)
+fi

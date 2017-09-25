@@ -35,3 +35,11 @@ Also, if you run the script without parameters, you can choose manually which on
 ### update-packages.sh
 
 This script will update the installed packages in your working copy
+
+### reset-dockers.sh
+
+This script removes all containers and images from your environment. Very useful for development
+
+### create-containers.sh
+
+This script creates containers and images defined in internal variable `DOCKER`
