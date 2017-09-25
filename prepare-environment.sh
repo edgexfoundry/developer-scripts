@@ -74,7 +74,7 @@ echo "Done!"
 
 
 if [ $# -eq 0 ]; then
-	source MODULES
+	. ./MODULES
 	start
 else
 	installAllModules $@
