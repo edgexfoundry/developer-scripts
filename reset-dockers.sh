@@ -24,6 +24,6 @@ if [[ $(docker ps -a -q) ]]; then
 docker rm $(docker ps -a -q)
 fi
 # Delete all images
-if [[ $(docker images -q) ]]; then
-docker rmi -f $(docker images -q)
+if [[ $(docker images -q -a) ]]; then
+docker rmi -f $(docker images -q -a)
 fi
