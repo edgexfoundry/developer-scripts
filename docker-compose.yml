@@ -52,19 +52,6 @@ services:
       - volume
     depends_on:
       - volume
-    command: --smallfiles
-
-  mongo-seed:
-    image: edgexfoundry/docker-edgex-mongo-seed
-    container_name: edgex-mongo-seed
-    hostname: edgex-mongo-seed
-    networks:
-      - edgex-network
-    volumes_from:
-      - volume
-    depends_on:
-      - volume
-      - mongo
 
   logging:
     image: edgexfoundry/docker-support-logging
@@ -79,6 +66,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
 
   notifications:
@@ -94,6 +82,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
 
@@ -110,6 +99,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
 
@@ -127,6 +117,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - notifications
@@ -144,6 +135,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - metadata
@@ -161,6 +153,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - metadata
@@ -179,6 +172,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - notifications
@@ -199,6 +193,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - notifications
@@ -219,6 +214,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - metadata
@@ -242,6 +238,7 @@ services:
     depends_on:
       - volume
       - consul
+      - config-seed
       - mongo
       - logging
       - metadata
@@ -261,6 +258,7 @@ services:
     # depends_on:
       # - volume
       # - consul
+      # - config-seed
       # - mongo
       # - logging
       # - metadata
@@ -281,18 +279,19 @@ services:
     # depends_on:
       # - volume
       # - consul
+      # - config-seed
       # - mongo
       # - logging
       # - metadata
       # - data
       # - command
       
-  # device-fischetechnik:
-    # image: edgexfoundry/docker-device-fischetechnik
+  # device-fischertechnik:
+    # image: edgexfoundry/docker-device-fischertechnik
     # ports:
       # - "49985:49985"
-    # container_name: edgex-device-fischetechnik
-    # hostname: edgex-device-fischetechnik
+    # container_name: edgex-device-fischertechnik
+    # hostname: edgex-device-fischertechnik
     # networks:
       # - edgex-network
     # volumes_from:
@@ -301,6 +300,7 @@ services:
     # depends_on:
       # - volume
       # - consul
+      # - config-seed
       # - mongo
       # - logging
       # - metadata
@@ -321,6 +321,7 @@ services:
     # depends_on:
       # - volume
       # - consul
+      # - config-seed
       # - mongo
       # - logging
       # - metadata
@@ -340,6 +341,7 @@ services:
     # depends_on:
       # - volume
       # - consul
+      # - config-seed
       # - mongo
       # - logging
       # - metadata
@@ -359,6 +361,7 @@ services:
     # depends_on:
       # - volume
       # - consul
+      # - config-seed
       # - mongo
       # - logging
       # - metadata
