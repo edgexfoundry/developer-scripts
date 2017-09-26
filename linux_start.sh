@@ -10,7 +10,9 @@ dirname="/home/youngc/edgex"
 clear
 echo
 echo "This script will do the following:"
-echo "-- Ask you to supply a user name: a user name is needed to set folder ownership"
+echo "-- Assumes that a fresh install of mongo is installed and that you have"
+echo "-- not run init_mongo.js before"
+echo "-- Asks you to supply a user name: a user name is needed to set folder ownership"
 echo "-- Create folders, if necessary, for the database."
 echo "-- Start database creation (without --auth)."
 echo "-- Initialize the database for Edgex."
