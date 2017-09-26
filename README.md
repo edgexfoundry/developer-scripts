@@ -9,6 +9,10 @@ This repos contains scripts, batch files, JSON used in REST calls and other misc
 For convenience there are a couple of scripts that help you get up and running
 
 ### linux_setup.sh
+This script assumes:
+* you are starting with a fresh install of mongodb
+* that init_mongo.js has not been run before  
+
 This script will:
 * create the necessary folder(s) for database placement
 * start mongod without the "--auth" option
