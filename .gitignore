@@ -54,3 +54,35 @@ Icon
 log/
 target/
 
+
+# git repos
+core-command/
+core-config-seed/
+core-data-client/
+core-data/
+core-domain/
+core-exception/
+core-metadata-client/
+core-metadata/
+core-test/
+device-bacnet/
+device-bluetooth/
+device-modbus/
+device-mqtt/
+device-snmp/
+device-virtual/
+docker-core-config-seed/
+docker-core-consul/
+docker-edgex-mongo/
+docker-edgex-volume/
+export-client/
+export-distro/
+export-domain/
+export-test/
+support-domain/
+support-logging-client/
+support-logging/
+support-notifications-client/
+support-notifications/
+support-rulesengine/
+support-scheduler/
