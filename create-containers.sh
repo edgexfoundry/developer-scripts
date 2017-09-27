@@ -25,44 +25,43 @@ DOCKERS=( docker-edgex-volume docker-core-consul core-config-seed docker-edgex-m
 DOCKERFILE=$1
 
 usage(){
-	echo -e "ERROR! Dockerfile name not found."
-	echo -e "\tI.E: ./${0} Dockerfile.aarch64"
-	exit 
+    echo -e "ERROR! Dockerfile name not found."
+    echo -e "\tI.E: ./${0} Dockerfile.aarch64"
+    exit
 }
 
 
 if [[ -z ${DOCKERFILE} ]]; then
-	usage
+    usage
 fi
 
 for m in ${DOCKERS[@]} ;  do
-	if [ -d $m ]; then
-		echo "Updating git modules... "
-		cd $m
-		git pull
-		cd ..
-	else
-		echo "Cloning $m"
+    if [ -d $m ]; then
+        echo "Updating git modules... "
+        cd $m
+        git pull
+        cd ..
+    else
+        echo "Cloning $m"
         git clone https://github.com/edgexfoundry/$m
-	fi
-	if [ -f $m/docker-files/${DOCKERFILE} ] ; then
+    fi
+    if [ -f $m/docker-files/${DOCKERFILE} ] ; then
         echo "Creating docker image $m"
         cd $m
         docker build . -t edgexfoundry/docker-$m -f docker-files/${DOCKERFILE}
         echo $m
         cd ..
-    
+
     elif [ -f $m/${DOCKERFILE} ] ; then
         echo "Creating docker image $m"
         cd $m
         docker build . -t edgexfoundry/$m -f ${DOCKERFILE}
         echo $m
         cd ..
-	else
-		usage 
-	fi
+    else
+        usage
+    fi
 done
 
 
 echo "Done!"
-
