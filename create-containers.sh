@@ -18,9 +18,9 @@
 
 set -e
 
-DOCKERS=( docker-edgex-volume docker-core-consul  docker-core-config-seed  docker-edgex-mongo support-logging \
-    support-notifications     core-metadata      core-data     core-command     support-scheduler     export-client \
-    export-distro     support-rulesengine      device-virtual  )
+DOCKERS=( docker-edgex-volume docker-core-consul core-config-seed docker-edgex-mongo support-logging \
+    support-notifications core-metadata core-data core-command support-scheduler export-client \
+    export-distro support-rulesengine device-virtual device-bacnet device-bluetooth device-modbus device-mqtt device-snmp)
 
 DOCKERFILE=$1
 
