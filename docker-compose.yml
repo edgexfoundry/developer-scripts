@@ -13,32 +13,35 @@ services:
       - /consul/config
       - /consul/data
 
-  consul:
-    image: edgexfoundry/docker-core-consul
-    ports:
-      - "8400:8400"
-      - "8500:8500"
-      - "8600:8600"
-    container_name: edgex-core-consul
-    hostname: edgex-core-consul
-    networks:
-      - edgex-network
-    volumes_from:
-      - volume
-    depends_on:
-      - volume
+#   consul:
+#    image: edgexfoundry/docker-core-consul
+#    ports:
+#      - "8400:8400"
+#      - "8500:8500"
+#      - "8600:8600"
+#    container_name: edgex-core-consul
+#    hostname: edgex-core-consul
+#    networks:
+#      - edgex-network
+#    volumes_from:
+#      - volume
+#    depends_on:
+#      - volume
 
   config-seed:
     image: edgexfoundry/docker-core-config-seed
+    ports:
+        - "8400:8400"
+        - "8500:8500"
+        - "8600:8600"
     container_name: edgex-config-seed
-    hostname: edgex-core-config-seed
+    hostname: edgex-core-config-seed edgex-core-consul
     networks:
       - edgex-network
     volumes_from:
       - volume
     depends_on:
       - volume
-      - consul
 
   mongo:
     image: edgexfoundry/docker-edgex-mongo
@@ -65,7 +68,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
 
@@ -81,7 +83,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -98,7 +99,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -116,7 +116,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -134,7 +133,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -152,7 +150,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -171,7 +168,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -192,7 +188,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -213,7 +208,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging
@@ -237,7 +231,6 @@ services:
       - volume
     depends_on:
       - volume
-      - consul
       - config-seed
       - mongo
       - logging

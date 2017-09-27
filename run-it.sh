@@ -19,14 +19,12 @@
 # https://wiki.edgexfoundry.org/display/FA/Get+EdgeX+Foundry+-+Users
 
 run_service () {
-	echo "\033[0;32mStarting.. $1\033[0m"
+	echo -e "\033[0;32mStarting.. $1\033[0m"
 	docker-compose up -d $1
 }
 
 run_service volume
 sleep 10
-run_service consul
-sleep 65
 run_service config-seed
 run_service mongo
 sleep 12
