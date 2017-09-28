@@ -13,21 +13,6 @@ services:
       - /consul/config
       - /consul/data
 
-#   consul:
-#    image: edgexfoundry/docker-core-consul
-#    ports:
-#      - "8400:8400"
-#      - "8500:8500"
-#      - "8600:8600"
-#    container_name: edgex-core-consul
-#    hostname: edgex-core-consul
-#    networks:
-#      - edgex-network
-#    volumes_from:
-#      - volume
-#    depends_on:
-#      - volume
-
   config-seed:
     image: edgexfoundry/docker-core-config-seed
     ports:
@@ -35,9 +20,11 @@ services:
         - "8500:8500"
         - "8600:8600"
     container_name: edgex-config-seed
-    hostname: edgex-core-config-seed edgex-core-consul
+    hostname: edgex-core-config-seed 
     networks:
       - edgex-network
+        aliases:
+            - edgex-core-consul
     volumes_from:
       - volume
     depends_on:
