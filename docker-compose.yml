@@ -22,7 +22,7 @@ services:
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed 
     networks:
-      - edgex-network
+      edgex-network:
         aliases:
             - edgex-core-consul
     volumes_from:
