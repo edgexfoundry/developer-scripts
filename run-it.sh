@@ -18,9 +18,11 @@
 # Start EdgeX Foundry services in right order, as described:
 # https://wiki.edgexfoundry.org/display/FA/Get+EdgeX+Foundry+-+Users
 
+COMPOSE_FILE=${1:-docker-compose.yml}
+
 run_service () {
 	echo -e "\033[0;32mStarting.. $1\033[0m"
-	docker-compose up -d $1
+	docker-compose -f "$COMPOSE_FILE" up -d $1
 }
 
 run_service volume
