@@ -237,7 +237,6 @@ services:
       # - volume
     # depends_on:
       # - volume
-      # - consul
       # - config-seed
       # - mongo
       # - logging
@@ -258,7 +257,6 @@ services:
     # privileged: true
     # depends_on:
       # - volume
-      # - consul
       # - config-seed
       # - mongo
       # - logging
@@ -279,7 +277,6 @@ services:
     # privileged: true
     # depends_on:
       # - volume
-      # - consul
       # - config-seed
       # - mongo
       # - logging
@@ -300,7 +297,6 @@ services:
     # privileged: true
     # depends_on:
       # - volume
-      # - consul
       # - config-seed
       # - mongo
       # - logging
@@ -320,7 +316,6 @@ services:
       # - volume
     # depends_on:
       # - volume
-      # - consul
       # - config-seed
       # - mongo
       # - logging
@@ -340,7 +335,6 @@ services:
       # - volume
     # depends_on:
       # - volume
-      # - consul
       # - config-seed
       # - mongo
       # - logging
