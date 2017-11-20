@@ -57,8 +57,6 @@ db.addressable.createIndex({name: 1}, {unique: true});
 db.createCollection("command");
 db.createCollection("device");
 db.device.createIndex({name: 1}, {unique: true});
-db.createCollection("deviceManager");
-db.deviceManager.createIndex({name: 1}, {unique: true});
 db.createCollection("deviceProfile");
 db.deviceProfile.createIndex({name: 1}, {unique: true});
 db.createCollection("deviceReport");
