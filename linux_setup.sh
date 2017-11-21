@@ -14,7 +14,19 @@
 # or implied. See the License for the specific language governing permissions and limitations under
 # the License.
 #
+# Version 3
 #################################################################################
+
+clear
+echo "Shutting down any running MongoDB"
+# Verify all the processes of Mongo are stopped
+killpid=`sudo netstat -ntlp | grep mongod | awk '{print $7}' | sed 's/\/.*//'`
+#echo This is the pid that needs to die: $killpid
+sudo kill -9 $killpid
+sudo netstat -tulnp | grep mongod
+echo "Stopped MongoDB and pausing for 5 seconds"
+sleep 5s
+clear
 
 # The user must define this path
 # Full path
@@ -22,12 +34,11 @@ dbpath="/home/tester/edgex/db"
 # Short path - no"/db/"
 dirname="/home/tester/edgex"
 
-
-clear
 echo
 echo "This script will do the following:"
 echo "-- Ask you to supply a user name (consider \"<user>\" in /home/<user>) "
-echo "---- The username is needed to set folder ownership."
+echo "-- Ask you to supply a password"
+echo "---- The username and password are needed to set folder ownership."
 echo "---- This username will not be the same username used for mongodb."
 echo "---- The mongodb username will be supplied in the init_mongo.js file."
 echo "-- Create folders, if necessary, for the database."
@@ -58,8 +69,16 @@ echo
 read name
 echo
 
+# Ask for a user name
+echo
+echo "What is the non-root user name who will own the folders where the database will be stored:"
+echo
+
+# read the non-root user name password
+read passwd
+
 # Confirm the user name
-echo "Is this what you meant to write: $name "
+echo "Is this what you meant to write: $name and $passwd "
 echo
 echo "Choose a number for your answer"
 select yn in "Yes" "No"; do
@@ -85,24 +104,11 @@ then
     echo "Folder created"
     echo
 
-# DEBUG
-#    echo "Who is the owner of the folder"
-#    OWNS=$(stat -c '%U' $dbpath)
-#    echo $OWNS
-#    echo 
-
     echo "Changing the file owner to $name"
     sudo chown -R $name:$name $dirname
     echo
     echo "File owner changed"
     echo
-
-# DEBUG
-#    echo "Who is the owner of the folder"
-#    OWNS=$(stat -c '%U' $dbpath)
-#    echo $OWNS
-#    echo
-
     echo "Folder creation is complete, moving to next step"
     echo
 
@@ -111,23 +117,32 @@ else
     echo
 fi
 
+echo "Starting MongoDB with no auth"
 # Start the database creation (without --auth)
-sudo mongod --dbpath $dbpath
+gnome-terminal -x bash -c "sudo nohup mongod --dbpath $dbpath" 
 echo
+echo "Sleeping for 30 seconds"
+sleep 30s
 
 # Initialize the database for edgex 
-sudo mongo < init_mongo.js
+gnome-terminal -x bash -c "sudo nohup mongo < init_mongo.js"
 echo
+echo "Initialize the database and sleep for 10 seconds"
+sleep 10s
 
 # Shutdown the database
-sudo mongod --dbpath $dbpath --shutdown
-echo
+gnome-terminal -x bash -c "sudo nohup mongod --dbpath $dbpath --shutdown "
+#echo
+echo "Shutting down the database and sleep for 10 seconds"
+sleep 10s
 
-# Verify all the processes of Mongo are stopped
-killpid=`sudo netstat -ntlp | grep mongod | awk '{print $7}' | sed 's/\/.*//'`
-#echo This is the pid that needs to die: $killpid
-sudo kill -9 $killpid
-sudo netstat -tulnp | grep mongod
+# Change the oener of the DB dir
+sudo chown -R mongodb:mongodb $dirname
 
-# Start the database (using --auth)
-sudo mongod --dbpath $dbpath --auth
+# Make changes to the DB 
+sudo sed -i 's/dbpath=\/var\/lib\/mongodb/dbpath=\/home\/tester\/edgex\/db/' /etc/mongodb.conf
+
+# Turn on authentication 
+sudo sed -i 's/\#auth/auth/' /etc/mongodb.conf
+
+echo "Setup is complete - PLEASE REBOOT THE SYSTEM"
