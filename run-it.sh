@@ -21,10 +21,10 @@
 COMPOSE_FILE=${1:-docker-compose.yml}
 
 run_service () {
-	echo -e "\033[0;32mStarting.. $1\033[0m"
-	docker-compose -f "$COMPOSE_FILE" up -d $1
+    echo -e "\033[0;32mStarting.. $1\033[0m"
+    docker-compose -f "$COMPOSE_FILE" up -d $1
 	
-	if [ "$1" == "config-seed" ]
+    if [ "$1" == "config-seed" ]
     then
          while [ -z "$(curl -s http://localhost:8500/v1/kv/config/support-scheduler\;docker/app.open.msg)" ]
          do
