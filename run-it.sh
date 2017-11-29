@@ -48,7 +48,6 @@ run_service () {
     done
 
     echo "$1 has been completely started !"
-	
 }
 
 run_service volume
