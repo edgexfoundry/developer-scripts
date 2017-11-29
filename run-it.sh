@@ -21,31 +21,57 @@
 COMPOSE_FILE=${1:-docker-compose.yml}
 
 run_service () {
-	echo -e "\033[0;32mStarting.. $1\033[0m"
-	docker-compose -f "$COMPOSE_FILE" up -d $1
+    
+    echo -e "\033[0;32mStarting.. $1\033[0m"
+    docker-compose -f "$COMPOSE_FILE" up -d $1
+	
+    if [ "$1" == "config-seed" ]
+    then
+         while [ -z "$(curl -s http://localhost:8500/v1/kv/config/support-scheduler\;docker/app.open.msg)" ]
+         do
+               sleep 1
+         done
+         echo "$1 has been completely started !"
+         return
+    fi
+
+    if [ -z "$2" ]
+    then
+         sleep 10
+         echo "$1 has been completely started !"
+         return
+    fi
+    
+    while [ -z "$(docker-compose exec $1 netstat -ntl | grep $2)" ]
+    do
+        sleep 1
+    done
+
+    echo "$1 has been completely started !"
 }
 
 run_service volume
-sleep 10
+
 run_service config-seed
+
 run_service mongo
-sleep 12
-run_service logging
-sleep 65
-run_service notifications
-sleep 33
-run_service metadata
-sleep 60
-run_service data
-sleep 60
-run_service command
-sleep 60
-run_service scheduler
-sleep 60
-run_service export-client
-sleep 60
-run_service export-distro
-sleep 60
-run_service rulesengine
-sleep 60
-run_service device-virtual
+
+run_service logging 48061
+
+run_service notifications 48060
+
+run_service metadata 48081
+
+run_service data 48080
+
+run_service command 48082
+
+run_service scheduler 48085
+
+run_service export-client 48071
+
+run_service export-distro 48070
+
+run_service rulesengine 48075
+
+run_service device-virtual 49990
