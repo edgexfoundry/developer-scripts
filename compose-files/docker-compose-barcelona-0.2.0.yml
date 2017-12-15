@@ -222,12 +222,6 @@ services:
 #     depends_on:
 #       - data
 #       - command
-#     extra_hosts:
-#        - "edgex-core-consul:10.0.1.144"
-#        - "edgex-core-data:10.0.1.144"
-#        - "edgex-core-metadata:10.0.1.144"
-#        - "edgex-support-logging:10.0.1.144"
-#        - "edgex-device-bluetooth:10.0.1.144"
 
 #   device-snmp:
 #     image: edgexfoundry/docker-device-snmp:0.2
