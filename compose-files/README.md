@@ -2,10 +2,10 @@
 
 ## Docker Compose Files
 This folder contains Docker Compose files for the following releases and usages:
-* docker-compose-barcelona-0.2.0.yml	This file uses the EdgeX **Barcelona release 0.2.0** container images.  See Note 1
-* docker-compose-barcelona-0.2.1.yml	This file uses the EdgeX **Barcelona release 0.2.1** container images.  Release 0.2.1 was a bug fix release to version 0.2.0.  See Note 2
-* docker-compose.yml			        This file uses the latest EdgeX container images from Docker Hub.  This should be considered the EdgeX *developer's latest usable container images*.
-* docker-compose-nexus.yml		    This file uses the latest EdgeX container images from the EdgeX Nexus repository managed by the Linux Foundation. See Note 3
+* docker-compose-barcelona-0.2.0.yml:  This file uses the EdgeX **Barcelona release 0.2.0** container images.  See Note 1
+* docker-compose-barcelona-0.2.1.yml:  This file uses the EdgeX **Barcelona release 0.2.1** container images.  Release 0.2.1 was a bug fix release to version 0.2.0.  See Note 2
+* docker-compose.yml:                  This file uses the latest EdgeX container images from Docker Hub.  This should be considered the EdgeX **developer's latest usable container images**.
+* docker-compose-nexus.yml:            This file uses the latest EdgeX container images from the EdgeX Nexus repository (**developer working images**) managed by the Linux Foundation. See Note 3
 
 ## Notes
 1. The Barcelona 0.2 release of EdgeX has an issue whereby the health check address for each of the microservices was not set correctly.  The release will still run and perform its duties, but Consul will not be able to apprpriately know the status of all the services.
@@ -15,7 +15,7 @@ This folder contains Docker Compose files for the following releases and usages:
 
 ## Donations
 Other members of the community that are creating unique, updated or special EdgeX deployments are invited to add their Docker Compose files to this folder.  When contributing, please use the following naming conventions:
-docker-compose-'<release name or organization'>-'<purpose if applicable'>-'<version if applicable'>.yml
+docker-compose-[release name or organization]-[purpose if applicable]-[version if applicable].yml
 
 For example:
 * docker-compose-dell-WithDellUIs.yml
