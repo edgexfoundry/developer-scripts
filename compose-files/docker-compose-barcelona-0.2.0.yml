@@ -99,8 +99,6 @@ services:
       - volume
     depends_on:
       - logging
-    extra_hosts:
-      - "edgex-device-bluetooth:10.0.1.144"
 
   data:
     image: edgexfoundry/docker-core-data:0.2
@@ -128,8 +126,6 @@ services:
       - volume
     depends_on:
       - metadata
-    extra_hosts:  
-      - "edgex-device-bluetooth:10.0.1.144"  
 
 ## scheduler container does not come up on Consul - bug fix in the works.
   scheduler:
@@ -142,7 +138,6 @@ services:
       - edgex-network
     volumes_from:
       - volume
-
     depends_on:
       - metadata
 

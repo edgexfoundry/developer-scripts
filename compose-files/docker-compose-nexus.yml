@@ -13,6 +13,11 @@
 #  *
 #  * @author: Jim White, Dell
 #  * EdgeX Foundry, Developer Lastest Build (from local LF Nexus) Docker Compose
+#
+## Login to the nexus3.edgexfoundry.org:10003 registry instance with:
+## docker login nexus3.edgexfoundry.org:10003
+## u: docker, p: docker
+#
 #  *******************************************************************************/
 
 version: '2'
