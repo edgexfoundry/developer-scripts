@@ -1,7 +1,19 @@
-## EdgeX Foundry Developer docker compose file
-## Login to the nexus3.edgexfoundry.org:10003 registry instance with:
-## docker login nexus3.edgexfoundry.org:10003
-## u: docker, p: docker
+# /*******************************************************************************
+#  * Copyright 2017 Dell Inc.
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  *
+#  * @author: Jim White, Dell
+#  * EdgeX Foundry, Developer Docker Compose
+#  *******************************************************************************/
 
 version: '2'
 services:
@@ -17,7 +29,7 @@ services:
       - /consul/data
 
   config-seed:
-    image: nexus3.edgexfoundry.org:10003/docker-core-config-seed
+    image: edgexfoundry/docker-core-config-seed
     ports:
         - "8400:8400"
         - "8500:8500"
@@ -47,7 +59,7 @@ services:
       - volume
 
   logging:
-    image: nexus3.edgexfoundry.org:10003/docker-support-logging
+    image: edgexfoundry/docker-support-logging
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
@@ -62,7 +74,7 @@ services:
       - mongo
 
   notifications:
-    image: nexus3.edgexfoundry.org:10003/docker-support-notifications
+    image: edgexfoundry/docker-support-notifications
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -78,7 +90,7 @@ services:
       - logging
 
   metadata:
-    image: nexus3.edgexfoundry.org:10003/docker-core-metadata
+    image: edgexfoundry/docker-core-metadata
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
@@ -94,7 +106,7 @@ services:
       - logging
 
   data:
-    image: nexus3.edgexfoundry.org:10003/docker-core-data
+    image: edgexfoundry/docker-core-data
     ports:
       - "48080:48080"
       - "5563:5563"
@@ -112,7 +124,7 @@ services:
       - notifications
 
   command:
-    image: nexus3.edgexfoundry.org:10003/docker-core-command
+    image: edgexfoundry/docker-core-command
     ports:
       - "48082:48082"
     container_name: edgex-core-command
@@ -129,7 +141,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10003/docker-support-scheduler
+    image: edgexfoundry/docker-support-scheduler
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -147,7 +159,7 @@ services:
       - command
 
   export-client:
-    image: nexus3.edgexfoundry.org:10003/docker-export-client
+    image: edgexfoundry/docker-export-client
     ports:
       - "48071:48071"
     container_name: edgex-export-client
@@ -166,7 +178,7 @@ services:
       - data
 
   export-distro:
-    image: nexus3.edgexfoundry.org:10003/docker-export-distro
+    image: edgexfoundry/docker-export-distro
     ports:
       - "48070:48070"
       - "5566"
@@ -187,7 +199,7 @@ services:
       - export-client
 
   rulesengine:
-    image: nexus3.edgexfoundry.org:10003/docker-support-rulesengine
+    image: edgexfoundry/docker-support-rulesengine
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -210,7 +222,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: nexus3.edgexfoundry.org:10003/docker-device-virtual
+    image: edgexfoundry/docker-device-virtual
     ports:
       - "49990:49990"
     container_name: edgex-device-virtual
@@ -229,7 +241,7 @@ services:
       - command
       
   # device-bacnet:
-    # image: nexus3.edgexfoundry.org:10003/docker-device-bacnet
+    # image: edgexfoundry/docker-device-bacnet
     # ports:
       # - "49986:49986"
     # container_name: edgex-device-bacnet
@@ -248,7 +260,7 @@ services:
       # - command
       
   # device-bluetooth:
-    # image: nexus3.edgexfoundry.org:10003/docker-device-bluetooth
+    # image: edgexfoundry/docker-device-bluetooth
     # ports:
       # - "49988:49988"
     # container_name: edgex-device-bluetooth
@@ -268,7 +280,7 @@ services:
       # - command
       
   # device-fischertechnik:
-    # image: nexus3.edgexfoundry.org:10003/docker-device-fischertechnik
+    # image: edgexfoundry/docker-device-fischertechnik
     # ports:
       # - "49985:49985"
     # container_name: edgex-device-fischertechnik
@@ -288,7 +300,7 @@ services:
       # - command
       
   # device-modbus:
-    # image: nexus3.edgexfoundry.org:10003/docker-device-modbus
+    # image: edgexfoundry/docker-device-modbus
     # ports:
       # - "49991:49991"
     # container_name: edgex-device-modbus
@@ -308,7 +320,7 @@ services:
       # - command
       
   # device-mqtt:
-    # image: nexus3.edgexfoundry.org:10003/docker-device-mqtt
+    # image: edgexfoundry/docker-device-mqtt
     # ports:
       # - "49982:49982"
     # container_name: edgex-device-mqtt
@@ -327,7 +339,7 @@ services:
       # - command
       
   # device-snmp:
-    # image: nexus3.edgexfoundry.org:10003/docker-device-snmp
+    # image: edgexfoundry/docker-device-snmp
     # ports:
       # - "49989:49989"
     # container_name: edgex-device-snmp
@@ -344,7 +356,7 @@ services:
       # - metadata
       # - data
       # - command
-
+      
 networks:
   edgex-network:
     driver: "bridge"
