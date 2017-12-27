@@ -42,7 +42,7 @@ run_service () {
          return
     fi
     
-    while [ -z "$(docker-compose exec $1 netstat -ntl | grep $2)" ]
+    while [ -z "$(docker-compose -f $COMPOSE_FILE exec $1 netstat -ntl | grep $2)" ]
     do
         sleep 1
     done
