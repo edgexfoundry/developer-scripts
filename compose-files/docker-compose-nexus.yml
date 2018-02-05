@@ -13,14 +13,22 @@
 #  *
 #  * @author: Jim White, Dell
 #  * EdgeX Foundry, Developer Lastest Build (from local LF Nexus) Docker Compose
-#
+#  * updated: Feb 3, 2018
+#  *
 ## Login to the nexus3.edgexfoundry.org:10003 registry instance with:
 ## docker login nexus3.edgexfoundry.org:10003
 ## u: docker, p: docker
 #
 #  *******************************************************************************/
 
-version: '2'
+version: '3'
+
+volumes:
+  db-data:
+  log-data:
+  consul-config:
+  consul-data:
+
 services:
   volume:
     image: edgexfoundry/docker-edgex-volume
@@ -28,10 +36,10 @@ services:
     networks:
       - edgex-network
     volumes:
-      - /data/db
-      - /edgex/logs
-      - /consul/config
-      - /consul/data
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
 
   config-seed:
     image:  nexus3.edgexfoundry.org:10003/docker-core-config-seed
@@ -45,8 +53,11 @@ services:
       edgex-network:
         aliases:
             - edgex-core-consul
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
 
@@ -58,8 +69,11 @@ services:
     hostname: edgex-mongo
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
 
@@ -71,8 +85,11 @@ services:
     hostname: edgex-support-logging
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -86,8 +103,11 @@ services:
     hostname: edgex-support-notifications
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -102,8 +122,11 @@ services:
     hostname: edgex-core-metadata
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -119,8 +142,11 @@ services:
     hostname: edgex-core-data
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -136,8 +162,11 @@ services:
     hostname: edgex-core-command
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -153,8 +182,11 @@ services:
     hostname: edgex-support-scheduler
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -171,8 +203,11 @@ services:
     hostname: edgex-export-client
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -191,8 +226,11 @@ services:
     hostname: edgex-export-distro
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -211,8 +249,11 @@ services:
     hostname: edgex-support-rulesengine
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -234,8 +275,11 @@ services:
     hostname: edgex-device-virtual
     networks:
       - edgex-network
-    volumes_from:
-      - volume
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - config-seed
@@ -253,8 +297,11 @@ services:
     # hostname: edgex-device-bacnet
     # networks:
       # - edgex-network
-    # volumes_from:
-      # - volume
+#    volumes:
+#      - db-data:/data/db
+#      - log-data:/edgex/logs
+#      - consul-config:/consul/config
+#      - consul-data:/consul/data
     # depends_on:
       # - volume
       # - config-seed
@@ -272,8 +319,11 @@ services:
     # hostname: edgex-device-bluetooth
     # networks:
       # - edgex-network
-    # volumes_from:
-      # - volume
+#    volumes:
+#      - db-data:/data/db
+#      - log-data:/edgex/logs
+#      - consul-config:/consul/config
+#      - consul-data:/consul/data
     # privileged: true
     # depends_on:
       # - volume
@@ -292,8 +342,11 @@ services:
     # hostname: edgex-device-fischertechnik
     # networks:
       # - edgex-network
-    # volumes_from:
-      # - volume
+#    volumes:
+#      - db-data:/data/db
+#      - log-data:/edgex/logs
+#      - consul-config:/consul/config
+#      - consul-data:/consul/data
     # privileged: true
     # depends_on:
       # - volume
@@ -312,8 +365,11 @@ services:
     # hostname: edgex-device-modbus
     # networks:
       # - edgex-network
-    # volumes_from:
-      # - volume
+#    volumes:
+#      - db-data:/data/db
+#      - log-data:/edgex/logs
+#      - consul-config:/consul/config
+#      - consul-data:/consul/data
     # privileged: true
     # depends_on:
       # - volume
@@ -332,8 +388,11 @@ services:
     # hostname: edgex-device-mqtt
     # networks:
       # - edgex-network
-    # volumes_from:
-      # - volume
+#    volumes:
+#      - db-data:/data/db
+#      - log-data:/edgex/logs
+#      - consul-config:/consul/config
+#      - consul-data:/consul/data
     # depends_on:
       # - volume
       # - config-seed
@@ -351,8 +410,11 @@ services:
     # hostname: edgex-device-snmp
     # networks:
       # - edgex-network
-    # volumes_from:
-      # - volume
+#    volumes:
+#      - db-data:/data/db
+#      - log-data:/edgex/logs
+#      - consul-config:/consul/config
+#      - consul-data:/consul/data
     # depends_on:
       # - volume
       # - config-seed
