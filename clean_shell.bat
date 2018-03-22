@@ -1,1 +1,2 @@
-"C:\Program Files\MongoDB\Server\3.0\bin\mongo.exe" "clean_mongo.js"
+: Change the version or whole location of mongo.exe as you want
+"C:\Program Files\MongoDB\Server\3.6\bin\mongo.exe" "clean_mongo.js"
