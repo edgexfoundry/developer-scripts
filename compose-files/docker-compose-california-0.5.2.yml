@@ -14,8 +14,8 @@
 #  * @author: Jim White, Dell
 #  * EdgeX Foundry, California Preview, version 0.5.2
 #  * added: May 3, 2018
-#  Login to the nexus3.edgexfoundry.org:10003 registry instance with:
-#  docker login nexus3.edgexfoundry.org:10003
+#  Login to the nexus3.edgexfoundry.org:10004 registry instance with:
+#  docker login nexus3.edgexfoundry.org:10004
 #  u: docker, p: docker
 #  *******************************************************************************/
 
@@ -77,7 +77,6 @@ services:
 
   logging:
     image: edgexfoundry/docker-support-logging-go:0.5.2
-#    image: edgexfoundry/docker-support-logging:0.2.1
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
@@ -95,7 +94,7 @@ services:
       - volume
 
   notifications:
-    image: edgexfoundry/docker-support-notifications:0.2
+    image: nexus3.edgexfoundry.org:10004/docker-support-notifications:0.5.0
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -161,7 +160,7 @@ services:
 
 # scheduler container does not come up on Consul - bug fix in the works.
   scheduler:
-    image: edgexfoundry/docker-support-scheduler::0.2.1
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler:0.5.0
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -219,7 +218,7 @@ services:
       - EXPORT_DISTRO_MQTTS_KEY_FILE=none
 
   rulesengine:
-    image: edgexfoundry/docker-support-rulesengine:0.2.1
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:0.5.0
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -239,7 +238,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: edgexfoundry/docker-device-virtual:0.2.1
+    image: nexus3.edgexfoundry.org:10004/docker-device-virtual:0.5.0
     ports:
       - "49990:49990"
     container_name: edgex-device-virtual
@@ -368,5 +367,3 @@ networks:
   edgex-network:
     driver: "bridge"
 ...
-
-
