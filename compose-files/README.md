@@ -1,4 +1,4 @@
-# last updated:  5/3/2018
+# last updated:  7/8/2018
 
 ## Docker Compose Files
 This folder contains Docker Compose files for the following releases and usages:
