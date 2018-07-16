@@ -69,9 +69,9 @@ echo
 read name
 echo
 
-# Ask for a user name
+# Ask for a user name password
 echo
-echo "What is the non-root user name who will own the folders where the database will be stored:"
+echo "What is the non-root user name password:"
 echo
 
 # read the non-root user name password
@@ -136,7 +136,7 @@ gnome-terminal -x bash -c "sudo nohup mongod --dbpath $dbpath --shutdown "
 echo "Shutting down the database and sleep for 10 seconds"
 sleep 10s
 
-# Change the oener of the DB dir
+# Change the owner of the DB dir
 sudo chown -R mongodb:mongodb $dirname
 
 # Make changes to the DB 
