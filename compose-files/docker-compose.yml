@@ -58,11 +58,6 @@ services:
 
   config-seed:
     image: edgexfoundry/docker-core-config-seed-go
-    ports:
-      - "8300:8300"
-      - "8400:8400"
-      - "8500:8500"
-      - "8600:8600"
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
