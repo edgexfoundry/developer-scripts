@@ -34,3 +34,6 @@ db.auth('core','password');
 db.valueDescriptor.remove({});
 db.reading.remove({});
 db.event.remove({});
+db=db.getSiblingDB('logging')
+db.auth('logging','password');
+db.logEntry.remove({});
