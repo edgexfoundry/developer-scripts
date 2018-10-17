@@ -93,6 +93,22 @@ services:
     depends_on:
       - volume
 
+  sma:
+    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:0.7.0
+    ports:
+      - "48090:48090"
+    container_name: edgex-sys-mgmt
+    hostname: edgex-sys-mgmt
+    networks:
+      - edgex-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
+    depends_on:
+      - volume
+  
   logging:
     image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:0.7.0
     ports:
@@ -177,7 +193,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler:0.7.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:0.7.0
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -217,7 +233,6 @@ services:
     ports:
       - "48070:48070"
       - "5566:5566"
-      - "5563:5563"
     container_name: edgex-export-distro
     hostname: edgex-export-distro
     networks:
@@ -236,12 +251,11 @@ services:
       - EXPORT_DISTRO_MQTTS_CERT_FILE=none
       - EXPORT_DISTRO_MQTTS_KEY_FILE=none
 
+#needs to be replaced with version 0.7.0 once updated nexus or docker hub
   rulesengine:
     image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:0.7.0
     ports:
       - "48075:48075"
-      - "5563:5563"
-      - "5566:5566"
     container_name: edgex-support-rulesengine
     hostname: edgex-support-rulesengine
     networks:
@@ -383,6 +397,11 @@ services:
 #     depends_on:
 #       - data
 #       - command
+
+#################################################################
+# UIs
+#################################################################
+# to be done
 
 #################################################################
 # Tooling
