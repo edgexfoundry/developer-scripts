@@ -58,7 +58,7 @@ services:
       - volume  
 
   config-seed:
-    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:0.7.0
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -91,7 +91,7 @@ services:
       - volume
 
   logging:
-    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:0.7.0
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
@@ -109,7 +109,7 @@ services:
       - volume
 
   notifications:
-    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:0.7.0
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -125,7 +125,7 @@ services:
       - logging
 
   metadata:
-    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:0.7.0
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
@@ -141,7 +141,7 @@ services:
       - logging
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-core-data-go:0.7.0
     ports:
       - "48080:48080"
       - "5563:5563"
@@ -158,7 +158,7 @@ services:
       - logging
 
   command:
-    image: nexus3.edgexfoundry.org:10004/docker-core-command-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-core-command-go:0.7.0
     ports:
       - "48082:48082"
     container_name: edgex-core-command
@@ -173,9 +173,8 @@ services:
     depends_on:
       - metadata
 
-# scheduler container does not come up on Consul - bug fix in the works.
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler:0.6.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:0.7.0
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -191,7 +190,7 @@ services:
       - metadata
 
   export-client:
-    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:0.7.0
     ports:
       - "48071:48071"
     container_name: edgex-export-client
@@ -211,7 +210,7 @@ services:
       - EXPORT_CLIENT_CONSUL_HOST=edgex-config-seed
 
   export-distro:
-    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:0.6.1
+    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:0.7.0
     ports:
       - "48070:48070"
     container_name: edgex-export-distro
@@ -233,7 +232,7 @@ services:
       - EXPORT_DISTRO_MQTTS_KEY_FILE=none
 
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:0.6.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:0.7.0
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
