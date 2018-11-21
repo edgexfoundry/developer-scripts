@@ -28,7 +28,7 @@ volumes:
 
 services:
   volume:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-volume:0.6.0
+    image: edgexfoundry/docker-edgex-volume:0.6.0
     container_name: edgex-files
     networks:
       - edgex-network
@@ -59,7 +59,7 @@ services:
       - volume  
 
   config-seed:
-    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:0.7.0
+    image: edgexfoundry/docker-core-config-seed-go:0.7.0
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -188,25 +188,9 @@ services:
       - consul-data:/consul/data
     depends_on:
       - volume
-
-  sma:
-    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:0.7.0
-    ports:
-      - "48090:48090"
-    container_name: edgex-sys-mgmt
-    hostname: edgex-sys-mgmt
-    networks:
-      - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
-    depends_on:
-      - volume
   
   logging:
-    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:0.7.0
+    image: edgexfoundry/docker-support-logging-go:0.7.0
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
@@ -224,7 +208,7 @@ services:
       - volume
 
   notifications:
-    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:0.7.0
+    image: edgexfoundry/docker-support-notifications-go:0.7.0
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -240,7 +224,7 @@ services:
       - logging
 
   metadata:
-    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:0.7.0
+    image: edgexfoundry/docker-core-metadata-go:0.7.0
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
@@ -256,7 +240,7 @@ services:
       - logging
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go:0.7.0
+    image: edgexfoundry/docker-core-data-go:0.7.0
     ports:
       - "48080:48080"
       - "5563:5563"
@@ -273,7 +257,7 @@ services:
       - logging
 
   command:
-    image: nexus3.edgexfoundry.org:10004/docker-core-command-go:0.7.0
+    image: edgexfoundry/docker-core-command-go:0.7.0
     ports:
       - "48082:48082"
     container_name: edgex-core-command
@@ -289,7 +273,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:0.7.0
+    image: edgexfoundry/docker-support-scheduler-go:0.7.0
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -305,7 +289,7 @@ services:
       - metadata
 
   export-client:
-    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:0.7.0
+    image: edgexfoundry/docker-export-client-go:0.7.0
     ports:
       - "48071:48071"
     container_name: edgex-export-client
@@ -325,7 +309,7 @@ services:
       - EXPORT_CLIENT_CONSUL_HOST=edgex-config-seed
 
   export-distro:
-    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:0.7.0
+    image: edgexfoundry/docker-export-distro-go:0.7.0
     ports:
       - "48070:48070"
       - "5566:5566"
@@ -349,7 +333,7 @@ services:
 
 #needs to be replaced with version 0.7.0 once updated nexus or docker hub
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:0.7.0
+    image: edgexfoundry/docker-support-rulesengine:0.7.0
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -369,7 +353,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: nexus3.edgexfoundry.org:10004/docker-device-virtual:0.6.0
+    image: edgexfoundry/docker-device-virtual:0.6.0
     ports:
       - "49990:49990"
     container_name: edgex-device-virtual
