@@ -28,7 +28,7 @@ volumes:
 
 services:
   volume:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-volume:0.6.0
+    image: edgexfoundry/docker-edgex-volume:0.6.0
     container_name: edgex-files
     networks:
       - edgex-network
