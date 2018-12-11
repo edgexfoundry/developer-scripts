@@ -2,6 +2,7 @@
 
 ## Docker Compose Files
 This folder contains Docker Compose files for the following releases and usages:
+* docker-compose-delhi-0.7.0.yml: This file uses the EdgeX **Delhi release 0.7.0** container images.
 * docker-compose-california-0.6.0.yml:  This file uses the EdgeX **California release 0.6.0** container images.
 * docker-compose-california-0.5.2.yml: This file includes mid-way versions of the Go core, support and export services with the latest Nexus container images.  It is meant as a develoment/testing copy of EdgeX.
 * docker-compose-barcelona-0.2.0.yml:  This file uses the EdgeX **Barcelona release 0.2.0** container images.  See Note 1
