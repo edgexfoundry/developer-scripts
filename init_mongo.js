@@ -111,3 +111,15 @@ db.createUser({ user: "logging",
   ]
 });
 db.createCollection("logEntry");
+
+db=db.getSiblingDB('scheduler')
+db.createUser({ user: "scheduler",
+  pwd: "password",
+  roles: [
+    { role: "readWrite", db: "scheduler" }
+  ]
+});
+db.createCollection("interval");
+db.createCollection("intervalAction");
+db.interval.createIndex({slug: 1}, {unique: true});
+db.intervalAction.createIndex({slug: 1}, {unique: true});
