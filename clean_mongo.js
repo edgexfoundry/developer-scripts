@@ -37,3 +37,7 @@ db.event.remove({});
 db=db.getSiblingDB('logging')
 db.auth('logging','password');
 db.logEntry.remove({});
+db=db.getSiblingDB('scheduler')
+db.auth('scheduler','password');
+db.interval.remove({});
+db.intervalAction.remove({});
