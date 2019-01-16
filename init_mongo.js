@@ -32,6 +32,7 @@ db.serviceMapping.insert( { serviceName: "command", serviceUrl: "http://localhos
 db.serviceMapping.insert( { serviceName: "rules", serviceUrl: "http://localhost:48084/" });
 db.serviceMapping.insert( { serviceName: "notifications", serviceUrl: "http://localhost:48060/" });
 db.serviceMapping.insert( { serviceName: "logging", serviceUrl: "http://localhost:48061/" });
+db.serviceMapping.insert( { serviceName: "exportclient", serviceUrl: "http://localhost:48071/" });
 
 db=db.getSiblingDB('admin')
 db.system.users.remove({});
@@ -123,3 +124,12 @@ db.createCollection("interval");
 db.createCollection("intervalAction");
 db.interval.createIndex({slug: 1}, {unique: true});
 db.intervalAction.createIndex({slug: 1}, {unique: true});
+
+db=db.getSiblingDB('exportclient')
+db.createUser({ user: "exportclient",
+  pwd: "password",
+  roles: [
+    { role: "readWrite", db: "exportclient" }
+  ]
+});
+db.createCollection("exportConfiguration");
