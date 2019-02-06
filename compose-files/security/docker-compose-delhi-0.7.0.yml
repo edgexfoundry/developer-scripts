@@ -22,6 +22,7 @@ volumes:
   log-data:
   consul-config:
   consul-data:
+  portainer_data:
   vault-config:  
   vault-file:
   vault-logs:
@@ -75,8 +76,8 @@ services:
       - volume
       - consul
 
-    vault:
-    image: edgexfoundry/docker-edgex-vault:latest
+  vault:
+    image: edgexfoundry/docker-edgex-vault:0.2.0
     container_name: edgex-vault
     hostname: edgex-vault
     networks:
@@ -99,7 +100,7 @@ services:
       - consul
 
   vault-worker:
-    image: edgexfoundry/docker-edgex-vault-worker:latest
+    image: edgexfoundry/docker-edgex-vault-worker-go:0.2.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
     command: ["--init=true", "--wait=30", "--insureskipverify=false"]
@@ -159,7 +160,7 @@ services:
         - kong-db
 
   edgex-proxy:
-    image: "edgexfoundry/docker-edgex-proxy-go:latest"
+    image: "edgexfoundry/docker-edgex-proxy-go:0.2.0"
     container_name: edgex-proxy
     hostname: edgex-proxy
     networks:
