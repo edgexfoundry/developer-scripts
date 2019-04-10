@@ -357,23 +357,23 @@ services:
 #       - data
 #       - command    
 
-#   device-mqtt:
-#     image: nexus3.edgexfoundry.org:10004/docker-device-mqtt:0.6.0
-#     ports:
-#       - "49982:49982"
-#       - "14377:14377"
-#     container_name: edgex-device-mqtt
-#     hostname: edgex-device-mqtt
-#     networks:
-#       - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#     depends_on:
-#       - data
-#       - command
+  device-mqtt:
+     image: nexus3.edgexfoundry.org:10004/docker-device-mqtt:0.6.0
+     ports:
+       - "49982:49982"
+       - "14377:14377"
+     container_name: edgex-device-mqtt
+     hostname: edgex-device-mqtt
+     networks:
+       - edgex-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
+     depends_on:
+       - data
+       - command
 
 #################################################################
 # UIs
