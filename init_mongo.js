@@ -122,8 +122,8 @@ db.createUser({ user: "scheduler",
 });
 db.createCollection("interval");
 db.createCollection("intervalAction");
-db.interval.createIndex({slug: 1}, {unique: true});
-db.intervalAction.createIndex({slug: 1}, {unique: true});
+db.interval.createIndex({name: 1}, {unique: true});
+db.intervalAction.createIndex({name: 1}, {unique: true});
 
 db=db.getSiblingDB('exportclient')
 db.createUser({ user: "exportclient",
