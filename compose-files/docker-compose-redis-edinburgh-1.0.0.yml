@@ -236,20 +236,23 @@ services:
 #################################################################
 
   device-virtual:
-    image: edgexfoundry/docker-device-virtual:0.6.0
+    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:1.0.0
     ports:
-      - "49990:49990"
+    - "49990:49990"
     container_name: edgex-device-virtual
     hostname: edgex-device-virtual
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+        - edgex-device-virtual
     volumes:
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
+    - db-data:/data/db
+    - log-data:/edgex/logs
+    - consul-config:/consul/config
+    - consul-data:/consul/data
     depends_on:
-      - data
-      - command
+    - data
+    - command
 
 #  device-random:
 #    image: edgexfoundry/docker-device-random-go:0.7.1
