@@ -339,22 +339,25 @@ services:
 #       - data
 #       - command
 
-#   device-snmp:
-#     image: nexus3.edgexfoundry.org:10004/docker-device-snmp:0.6.0
-#     ports:
-#       - "49989:49989"
-#     container_name: edgex-device-snmp
-#     hostname: edgex-device-snmp
-#     networks:
-#       - edgex-network
+#  device-snmp-go:
+#    image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go:1.0.0
+#    ports:
+#      - "49993:49993"
+#      - "161:161"
+#    container_name: edgex-device-snmp
+#    hostname: edgex-device-snmp
+#    networks:
+#      edgex-network:
+#        aliases:
+#          - edgex-device-snmp
 #    volumes:
 #      - db-data:/data/db
 #      - log-data:/edgex/logs
 #      - consul-config:/consul/config
 #      - consul-data:/consul/data
-#     depends_on:
-#       - data
-#       - command
+#    depends_on:
+#      - data
+#      - command
 
 #   device-fischertechnik:
 #     image: nexus3.edgexfoundry.org:10004/docker-device-fischertechnik:0.6.0
