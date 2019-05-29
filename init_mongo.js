@@ -79,8 +79,10 @@ db.createUser({ user: "core",
   ]
 });
 db.createCollection("event");
+db.event.createIndex({"device": 1}, {unique: false});
 db.createCollection("reading");
 db.createCollection("valueDescriptor");
+db.reading.createIndex({"device": 1}, {unique: false});
 db.valueDescriptor.createIndex({name: 1}, {unique: true});
 
 db=db.getSiblingDB('rules_engine_db')
