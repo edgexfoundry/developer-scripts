@@ -12,9 +12,11 @@
 #  * the License.
 #  *
 #  * @author: Jim White, Dell
-#  * EdgeX Foundry, Delhi, version 0.7.1
-#  * added: Dec 10, 2018
+#  * EdgeX Foundry, Edinburgh, version 1.0.0
+#  * added: Jun 30, 2019
 #  *******************************************************************************/
+
+# NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway and Secret Store
 
 version: '3'
 volumes:
@@ -26,16 +28,16 @@ volumes:
 
 services:
   volume:
-    image: edgexfoundry/docker-edgex-volume:0.6.0
+    image: edgexfoundry/docker-edgex-volume:1.0.0
     container_name: edgex-files
     networks:
       - edgex-network
     volumes:
-      - db-data:/data
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
-      
+
   consul:
     image: consul:1.3.1
     ports:
@@ -49,15 +51,15 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
-      - volume  
+      - volume
 
   config-seed:
     image: edgexfoundry/docker-core-config-seed-go:1.0.0
-    command: ["--profile=docker", "--cmd=/edgex/cmd-redis"]
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -65,23 +67,27 @@ services:
         aliases:
             - edgex-core-config-seed
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - volume
       - consul
-      
-  redis:
-    image: redis:5.0.5-alpine
+
+  mongo:
+    image: edgexfoundry/docker-edgex-mongo:1.0.0
     ports:
-      - "6379:6379"
-    container_name: edgex-redis
-    hostname: edgex-redis
+      - "27017:27017"
+    container_name: edgex-mongo
+    hostname: edgex-mongo
     networks:
       - edgex-network
     volumes:
-      - db-data:/data
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
 
@@ -94,11 +100,13 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - config-seed
+      - mongo
       - volume
 
   notifications:
@@ -110,12 +118,12 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - logging
-      - redis
 
   metadata:
     image: edgexfoundry/docker-core-metadata-go:1.0.0
@@ -126,12 +134,12 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - logging
-      - redis
 
   data:
     image: edgexfoundry/docker-core-data-go:1.0.0
@@ -143,12 +151,12 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - logging
-      - redis
 
   command:
     image: edgexfoundry/docker-core-command-go:1.0.0
@@ -159,6 +167,7 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -174,12 +183,12 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - metadata
-      - redis
 
   export-client:
     image: edgexfoundry/docker-export-client-go:1.0.0
@@ -190,6 +199,7 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -206,6 +216,7 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -219,7 +230,7 @@ services:
       - EXPORT_DISTRO_MQTTS_KEY_FILE=none
 
   rulesengine:
-    image: edgexfoundry/docker-support-rulesengine:0.7.0
+    image: edgexfoundry/docker-support-rulesengine:1.0.0
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -227,16 +238,19 @@ services:
     networks:
       - edgex-network
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
+    depends_on:
+      - export-client
 
 #################################################################
 # Device Services
 #################################################################
 
   device-virtual:
-    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:1.0.0
+    image: edgexfoundry/docker-device-virtual-go:1.0.0
     ports:
     - "49990:49990"
     container_name: edgex-device-virtual
@@ -254,150 +268,93 @@ services:
     - data
     - command
 
-#  device-random:
-#    image: edgexfoundry/docker-device-random-go:0.7.1
-#    ports:
-#      - "49988:49988"
-#    container_name: edgex-device-random
-#    hostname: edgex-device-random
-#    networks:
-#      - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#    depends_on:
-#      - data
-#      - command
-
-#  device-mqtt:
-#    image: edgexfoundry/docker-device-mqtt-go:0.7.1
-#    ports:
-#      - "49982:49982"
-#    container_name: edgex-device-mqtt
-#    hostname: edgex-device-mqtt
-#    networks:
-#      - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#    depends_on:
-#      - data
-#      - command
-
-#  device-modbus:
-#    image: edgexfoundry/docker-device-modbus-go:0.7.1
-#    ports:
-#      - "49991:49991"
-#    container_name: edgex-device-modbus
-#    hostname: edgex-device-modbus
-#    networks:
-#      - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#    depends_on:
-#      - data
-#      - command
-
-#   device-bluetooth:
-#     image: nexus3.edgexfoundry.org:10004/docker-device-bluetooth:0.6.0
-#     ports:
-#       - "49988:49988"
-#       - "5000:5000"
-#     container_name: edgex-device-bluetooth
-#     hostname: edgex-device-bluetooth
-#     privileged: true  
-#     network_mode: "host"
-#     cap_add:
-#       - NET_ADMIN
-# #    networks:
-# #      - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#     depends_on:
-#       - data
-#       - command
-
-#   device-snmp:
-#     image: nexus3.edgexfoundry.org:10004/docker-device-snmp:0.6.0
-#     ports:
-#       - "49989:49989"
-#     container_name: edgex-device-snmp
-#     hostname: edgex-device-snmp
-#     networks:
-#       - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#     depends_on:
-#       - data
-#       - command
-
-#   device-fischertechnik:
-#     image: nexus3.edgexfoundry.org:10004/docker-device-fischertechnik:0.6.0
-#     ports:
-#       - "49985:49985"
-#     container_name: edgex-device-fischertechnik
-#     networks:
-#       - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#     privileged: true
-#     depends_on:
-#       - data
-#       - command
-
-#   device-bacnet:
-#     image: nexus3.edgexfoundry.org:10004/docker-device-bacnet:0.6.0
-#     ports:
-#       - "49986:49986"
-#       - "5002:5002"
-#     container_name: edgex-device-bacnet
-#     hostname: edgex-device-bacnet
-#     networks:
-#       - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#    depends_on:
-#       - data
-#       - command    
+  # device-random:
+  #   image: edgexfoundry/docker-device-random-go:1.0.0
+  #   ports:
+  #     - "49988:49988"
+  #   container_name: edgex-device-random
+  #   hostname: edgex-device-random
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - db-data:/data/db
+  #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
+  #   depends_on:
+  #     - data
+  #     - command
+  #
+  # device-mqtt:
+  #   image: edgexfoundry/docker-device-mqtt-go:1.0.0
+  #   ports:
+  #     - "49982:49982"
+  #   container_name: edgex-device-mqtt
+  #   hostname: edgex-device-mqtt
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - db-data:/data/db
+  #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
+  #   depends_on:
+  #     - data
+  #     - command
+  #
+  # device-modbus:
+  #   image: edgexfoundry/docker-device-modbus-go:1.0.0
+  #   ports:
+  #     - "49991:49991"
+  #   container_name: edgex-device-modbus
+  #   hostname: edgex-device-modbus
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - db-data:/data/db
+  #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
+  #   depends_on:
+  #     - data
+  #     - command
+  #
+  # device-snmp:
+  #   image: edgexfoundry/docker-device-snmp-go:1.0.0
+  #   ports:
+  #     - "49993:49993"
+  #   container_name: edgex-device-snmp
+  #   hostname: edgex-device-snmp
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - db-data:/data/db
+  #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
+  #   depends_on:
+  #     - data
+  #     - command
 
 #################################################################
 # UIs
 #################################################################
-#  ui:
-#    image: edgexfoundry/docker-edgex-ui-go:0.1.1
-#    ports:
-#      - "4000:4000"
-#    container_name: edgex-ui-go
-#    hostname: edgex-ui-go
-#    networks:
-#      - edgex-network
-#    volumes:
-#      - db-data:/data/db
-#      - log-data:/edgex/logs
-#      - consul-config:/consul/config
-#      - consul-data:/consul/data
-#    depends_on:
-#      - data
-#      - command
+  ui:
+    image: edgexfoundry/docker-edgex-ui-go:1.0.0
+    ports:
+      - "4000:4000"
+    container_name: edgex-ui-go
+    hostname: edgex-ui-go
+    networks:
+      - edgex-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
+    depends_on:
+      - data
+      - command
 
 #################################################################
 # Tooling
@@ -412,7 +369,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
     depends_on:
-      - volume  
+      - volume
 
 networks:
   edgex-network:
