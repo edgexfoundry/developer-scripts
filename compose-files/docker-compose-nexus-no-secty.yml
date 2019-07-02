@@ -109,6 +109,23 @@ services:
       - mongo
       - volume
 
+  system:
+    image: nexus3.edgexfoundry.org:10002/docker-sys-mgmt-agent-go:1.0.0
+    ports:
+      - "48090:48090"
+    container_name: edgex-sys-mgmt-agent
+    hostname: edgex-sys-mgmt-agent
+    networks:
+      - edgex-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - logging
+
   notifications:
     image: nexus3.edgexfoundry.org:10002/docker-support-notifications-go:1.0.0
     ports:
@@ -244,7 +261,7 @@ services:
       - consul-data:/consul/data
     depends_on:
       - export-client
-      
+
 #################################################################
 # Device Services
 #################################################################
