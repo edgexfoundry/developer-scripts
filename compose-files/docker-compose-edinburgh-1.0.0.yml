@@ -86,7 +86,7 @@ services:
       - "8200:8200"
     cap_add:
       - "IPC_LOCK"
-    command: "server"
+    command: "server -log-level=info"
     environment:
       - 'VAULT_ADDR=https://edgex-vault:8200'
       - 'VAULT_CONFIG_DIR=/vault/config'
@@ -103,7 +103,7 @@ services:
     image: edgexfoundry/docker-edgex-vault-worker-go:1.0.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    command: ["--init=true", "--wait=30", "--insureskipverify=false"]
+    command: ["--init=true", "--debug=false", "--wait=10", "--insureskipverify=false"]
     networks:
       - edgex-network
     volumes:
@@ -115,7 +115,7 @@ services:
 
 # containers for reverse proxy
   kong-db:
-    image: "postgres:9.5"
+    image: "postgres:9.6"
     container_name: kong-db
     hostname: kong-db
     networks:
@@ -135,7 +135,7 @@ services:
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
-    command: "kong migrations up"
+    command: "kong migrations bootstrap"
 
   kong:
     image: "kong:1.0.3"
@@ -343,7 +343,7 @@ services:
       - consul-data:/consul/data
     depends_on:
       - export-client
-      
+
 #################################################################
 # Device Services
 #################################################################
