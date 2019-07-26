@@ -12,8 +12,8 @@
 #  * the License.
 #  *
 #  * @author: Jim White, Dell
-#  * EdgeX Foundry, Edinburgh, version 1.0.0
-#  * added: Jun 30, 2019
+#  * EdgeX Foundry, Edinburgh, version 1.0.1
+#  * added: July 26, 2019
 #  *******************************************************************************/
 
 # NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway and Secret Store
@@ -31,9 +31,11 @@ services:
     image: edgexfoundry/docker-edgex-volume:1.0.0
     container_name: edgex-files
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-files
     volumes:
-      - db-data:/data
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -51,6 +53,7 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -59,7 +62,6 @@ services:
 
   config-seed:
     image: edgexfoundry/docker-core-config-seed-go:1.0.0
-    command: ["--profile=docker", "--cmd=/edgex/cmd-redis"]
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -67,6 +69,7 @@ services:
         aliases:
             - edgex-core-config-seed
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -74,43 +77,54 @@ services:
       - volume
       - consul
 
-  redis:
-    image: redis:5.0.5-alpine
+  mongo:
+    image: edgexfoundry/docker-edgex-mongo:1.0.1
     ports:
-      - "6379:6379"
-    container_name: edgex-redis
-    hostname: edgex-redis
+      - "27017:27017"
+    container_name: edgex-mongo
+    hostname: edgex-mongo
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-mongo
     volumes:
-      - db-data:/data
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
 
   logging:
-    image: edgexfoundry/docker-support-logging-go:1.0.0
+    image: edgexfoundry/docker-support-logging-go:1.0.1
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
     hostname: edgex-support-logging
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-support-logging
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - config-seed
+      - mongo
       - volume
 
   system:
-    image: edgexfoundry/docker-sys-mgmt-agent-go:1.0.0
+    image: edgexfoundry/docker-sys-mgmt-agent-go:1.0.1
     ports:
       - "48090:48090"
     container_name: edgex-sys-mgmt-agent
     hostname: edgex-sys-mgmt-agent
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-sys-mgmt-agent
     volumes:
       - db-data:/data/db
       - log-data:/edgex/logs
@@ -121,63 +135,72 @@ services:
       - logging
 
   notifications:
-    image: edgexfoundry/docker-support-notifications-go:1.0.0
+    image: edgexfoundry/docker-support-notifications-go:1.0.1
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
     hostname: edgex-support-notifications
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-support-notifications
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - logging
-      - redis
 
   metadata:
-    image: edgexfoundry/docker-core-metadata-go:1.0.0
+    image: edgexfoundry/docker-core-metadata-go:1.0.1
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
     hostname: edgex-core-metadata
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-core-metadata
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - logging
-      - redis
 
   data:
-    image: edgexfoundry/docker-core-data-go:1.0.0
+    image: edgexfoundry/docker-core-data-go:1.0.1
     ports:
       - "48080:48080"
       - "5563:5563"
     container_name: edgex-core-data
     hostname: edgex-core-data
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-core-data
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - logging
-      - redis
 
   command:
-    image: edgexfoundry/docker-core-command-go:1.0.0
+    image: edgexfoundry/docker-core-command-go:1.0.1
     ports:
       - "48082:48082"
     container_name: edgex-core-command
     hostname: edgex-core-command
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-core-command
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -185,30 +208,35 @@ services:
       - metadata
 
   scheduler:
-    image: edgexfoundry/docker-support-scheduler-go:1.0.0
+    image: edgexfoundry/docker-support-scheduler-go:1.0.1
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
     hostname: edgex-support-scheduler
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-support-scheduler
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - metadata
-      - redis
 
   export-client:
-    image: edgexfoundry/docker-export-client-go:1.0.0
+    image: edgexfoundry/docker-export-client-go:1.0.1
     ports:
       - "48071:48071"
     container_name: edgex-export-client
     hostname: edgex-export-client
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-export-client
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -216,15 +244,18 @@ services:
       - data
 
   export-distro:
-    image: edgexfoundry/docker-export-distro-go:1.0.0
+    image: edgexfoundry/docker-export-distro-go:1.0.1
     ports:
       - "48070:48070"
       - "5566:5566"
     container_name: edgex-export-distro
     hostname: edgex-export-distro
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-export-distro
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -244,8 +275,11 @@ services:
     container_name: edgex-support-rulesengine
     hostname: edgex-support-rulesengine
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-support-rulesengine
     volumes:
+      - db-data:/data/db
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -282,7 +316,9 @@ services:
   #   container_name: edgex-device-random
   #   hostname: edgex-device-random
   #   networks:
-  #     - edgex-network
+  #     edgex-network:
+  #       aliases:
+  #           - edgex-device-random
   #   volumes:
   #     - db-data:/data/db
   #     - log-data:/edgex/logs
@@ -299,7 +335,9 @@ services:
   #   container_name: edgex-device-mqtt
   #   hostname: edgex-device-mqtt
   #   networks:
-  #     - edgex-network
+  #     edgex-network:
+  #       aliases:
+  #           - edgex-device-mqtt
   #   volumes:
   #     - db-data:/data/db
   #     - log-data:/edgex/logs
@@ -316,7 +354,9 @@ services:
   #   container_name: edgex-device-modbus
   #   hostname: edgex-device-modbus
   #   networks:
-  #     - edgex-network
+  #     edgex-network:
+  #       aliases:
+  #           - edgex-device-modbus
   #   volumes:
   #     - db-data:/data/db
   #     - log-data:/edgex/logs
@@ -333,7 +373,9 @@ services:
   #   container_name: edgex-device-snmp
   #   hostname: edgex-device-snmp
   #   networks:
-  #     - edgex-network
+  #     edgex-network:
+  #       aliases:
+  #           - edgex-device-snmp
   #   volumes:
   #     - db-data:/data/db
   #     - log-data:/edgex/logs
@@ -353,7 +395,9 @@ services:
     container_name: edgex-ui-go
     hostname: edgex-ui-go
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-ui-go
     volumes:
       - db-data:/data/db
       - log-data:/edgex/logs
