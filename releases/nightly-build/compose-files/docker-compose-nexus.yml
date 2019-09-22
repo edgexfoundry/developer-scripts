@@ -175,7 +175,7 @@ services:
 # end of containers for reverse proxy
 
   mongo:
-    image: nexus3.edgexfoundry.org:10002/docker-edgex-mongo:1.0.0
+    image: nexus3.edgexfoundry.org:10002/docker-edgex-mongo:1.1.0
     ports:
       - "27017:27017"
     container_name: edgex-mongo
@@ -183,12 +183,10 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
+      - vault-config:/vault/config
     depends_on:
       - volume
+      - vault-worker
 
   logging:
     image: nexus3.edgexfoundry.org:10002/docker-support-logging-go:1.0.0
