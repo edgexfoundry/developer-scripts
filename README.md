@@ -22,7 +22,7 @@ This script will:
 
 ### run-it.sh
 This script will start the services
-in order as described [HERE](https://wiki.edgexfoundry.org/display/FA/Get+EdgeX+Foundry+-+Users).
+in order as described [HERE](https://docs.edgexfoundry.org/Ch-GettingStartedUsers.html).
 
 
 ### prepare-environment.sh
