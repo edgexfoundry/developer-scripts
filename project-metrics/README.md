@@ -4,7 +4,7 @@
 Scripts that generate Git statistics use a local checkout of EdgeX git repos. Before you run those scripts, you will need to fetch the latest contents from Github.  To do that, run:
 
 ```
-./retch_repos.sh
+./fetch_repos.sh
 ```
 
 This will create a local ./repos folder with a checkout of all the EdgeX repositories from Github.
