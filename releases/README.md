@@ -42,18 +42,14 @@ Using these Docker Compose files will require you have [access to the EdgeX Nexu
 
 Available releases include:
 
-* [`releases/edinburgh/compose-files/docker-compose-edinburgh-1.0.0.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-edinburgh-1.0.0.yml) 
-    uses the EdgeX **Edinburgh release 1.0.0** container images.
+* [`releases/edinburgh/compose-files/docker-compose-edinburgh-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-edinburgh-1.0.1.yml) 
+    uses the EdgeX **Edinburgh release 1.0.1** container images.
 
-* [`releases/edinburgh/compose-files/docker-compose-edinburgh-no-secty-1.0.0.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-edinburgh-no-secty-1.0.0.yml) 
-    uses the EdgeX **Edinburgh release 1.0.0** container images and does not include security services.
+* [`releases/edinburgh/compose-files/docker-compose-edinburgh-no-secty-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-edinburgh-no-secty-1.0.1.yml) 
+    uses the EdgeX **Edinburgh release 1.0.1** container images and does not include security services.
 
-* [`releases/edinburgh/compose-files/docker-compose-redis-edinburgh-1.0.0.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-redis-edinburgh-1.0.0.yml) 
-    uses the EdgeX **Edinburgh release 1.0.0** container images and includes the Redis container (for use when using 
-    Redis in persistence with core data, metadata or logging).
-
-* [`releases/edinburgh/compose-files/docker-compose-redis-edinburgh-no-secty-1.0.0.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-redis-edinburgh-no-secty-1.0.0.yml) 
-    uses the EdgeX **Edinburgh release 1.0.0** container images, includes the Redis container (for use when using Redis 
+* [`releases/edinburgh/compose-files/docker-compose-redis-edinburgh-no-secty-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/edinburgh/compose-files/docker-compose-redis-edinburgh-no-secty-1.0.1.yml) 
+    uses the EdgeX **Edinburgh release 1.0.1** container images, includes the Redis container (for use when using Redis 
     in persistence with core data, metadata or logging), and does not include security services.
 
 The Docker Compose files have device service elements that have all been commented out (except for the device-virtual 
