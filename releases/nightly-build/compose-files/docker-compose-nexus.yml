@@ -12,7 +12,7 @@
 #  * the License.
 #  *
 #  * @author: Jim White, Dell
-#  * EdgeX Foundry, Edinburgh, version 1.0.0
+#  * EdgeX Foundry, Fuji, version 1.1.0
 #  * added: Jun 30, 2019
 #  *******************************************************************************/
 
@@ -29,7 +29,7 @@ volumes:
 
 services:
   volume:
-    image: nexus3.edgexfoundry.org:10002/docker-edgex-volume:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-volume:1.1.0
     container_name: edgex-files
     networks:
       - edgex-network
@@ -60,7 +60,7 @@ services:
       - volume
 
   config-seed:
-    image: nexus3.edgexfoundry.org:10002/docker-core-config-seed-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:1.1.0
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -77,35 +77,66 @@ services:
       - consul
 
   vault:
-    image: edgexfoundry/docker-edgex-vault:1.0.0
+    image: edgexfoundry/docker-edgex-vault:1.1.0
     container_name: edgex-vault
     hostname: edgex-vault
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-vault
     ports:
       - "8200:8200"
     cap_add:
       - "IPC_LOCK"
-    command: "server -log-level=info"
     environment:
-      - 'VAULT_ADDR=https://edgex-vault:8200'
-      - 'VAULT_CONFIG_DIR=/vault/config'
-      - 'VAULT_UI=true'
+      - VAULT_ADDR=https://edgex-vault:8200
+      - |
+        VAULT_LOCAL_CONFIG=
+          listener "tcp" { 
+              tls_disable = "0" 
+              cluster_address = "edgex-vault:8201" 
+              tls_min_version = "tls12" 
+              tls_client_ca_file ="/run/edgex/secrets/edgex-vault/ca.pem" 
+              tls_cert_file ="/run/edgex/secrets/edgex-vault/server.crt" 
+              tls_key_file = "/run/edgex/secrets/edgex-vault/server.key" 
+              tls_perfer_server_cipher_suites = true 
+          } 
+          backend "consul" { 
+              path = "vault/" 
+              address = "edgex-core-consul:8500" 
+              scheme = "http" 
+              redirect_addr = "https://edgex-vault:8200" 
+              cluster_addr = "https://edgex-vault:8201" 
+          } 
+          default_lease_ttl = "168h" 
+          max_lease_ttl = "720h"
+      - VAULT_CONFIG_DIR=/vault/config
+      - VAULT_UI=true
+    tmpfs:
+      - /run
+    command: >
+      /usr/bin/dumb-init -- /bin/sh -c 
+      "./security-secrets-setup generate ;
+      chown -Rh 100:1000 /run/edgex/secrets/edgex-vault/ ;
+      exec /usr/local/bin/docker-entrypoint.sh server -log-level=info"
     volumes:
-      - vault-config:/vault/config
       - vault-file:/vault/file
       - vault-logs:/vault/logs
+      - secrets-setup-cache:/etc/edgex/pki
+      - /run/edgex/secrets/edgex-vault:/run/edgex/secrets/edgex-vault
     depends_on:
       - volume
       - consul
 
   vault-worker:
-    image: edgexfoundry/docker-edgex-vault-worker-go:1.0.0
+    image: edgexfoundry/docker-edgex-vault-worker-go:1.1.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    command: ["--init=true", "--debug=false", "--wait=10", "--insureskipverify=false"]
+    command: ["--init=true", "--vaultInterval=10", "--insecureskipverify=false"]
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-vault-worker
     volumes:
       - vault-config:/vault/config
     depends_on:
@@ -119,7 +150,9 @@ services:
     container_name: kong-db
     hostname: kong-db
     networks:
-        - edgex-network
+      edgex-network:
+        aliases:
+            - kong-db
     ports:
         - "5432:5432"
     environment:
@@ -131,7 +164,9 @@ services:
     container_name: kong-migration
     hostname: kong-migration
     networks:
-        - edgex-network
+      edgex-network:
+        aliases:
+            - kong-migration
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
@@ -142,7 +177,9 @@ services:
     container_name: kong
     hostname: kong
     networks:
-        - edgex-network
+      edgex-network:
+        aliases:
+            - kong
     ports:
         - "8000:8000"
         - "8001:8001"
@@ -160,11 +197,13 @@ services:
         - kong-db
 
   edgex-proxy:
-    image: "edgexfoundry/docker-edgex-proxy-go:1.0.0"
+    image: edgexfoundry/docker-edgex-proxy-go:1.1.0
     container_name: edgex-proxy
     hostname: edgex-proxy
     networks:
-        - edgex-network
+      edgex-network:
+        aliases:
+            - edgex-proxy
     volumes:
         - vault-config:/vault/config
     depends_on:
@@ -175,7 +214,7 @@ services:
 # end of containers for reverse proxy
 
   mongo:
-    image: nexus3.edgexfoundry.org:10002/docker-edgex-mongo:1.1.0
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:1.1.0
     ports:
       - "27017:27017"
     container_name: edgex-mongo
@@ -189,7 +228,7 @@ services:
       - vault-worker
 
   logging:
-    image: nexus3.edgexfoundry.org:10002/docker-support-logging-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:1.1.0
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
@@ -207,7 +246,7 @@ services:
       - volume
 
   system:
-    image: nexus3.edgexfoundry.org:10002/docker-sys-mgmt-agent-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:1.1.0
     ports:
       - "48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -224,7 +263,7 @@ services:
       - logging
 
   notifications:
-    image: nexus3.edgexfoundry.org:10002/docker-support-notifications-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:1.1.0
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -240,7 +279,7 @@ services:
       - logging
 
   metadata:
-    image: nexus3.edgexfoundry.org:10002/docker-core-metadata-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:1.1.0
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
@@ -256,7 +295,7 @@ services:
       - logging
 
   data:
-    image: nexus3.edgexfoundry.org:10002/docker-core-data-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-core-data-go:1.1.0
     ports:
       - "48080:48080"
       - "5563:5563"
@@ -273,7 +312,7 @@ services:
       - logging
 
   command:
-    image: nexus3.edgexfoundry.org:10002/docker-core-command-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-core-command-go:1.1.0
     ports:
       - "48082:48082"
     container_name: edgex-core-command
@@ -289,7 +328,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10002/docker-support-scheduler-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:1.1.0
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -305,7 +344,7 @@ services:
       - metadata
 
   export-client:
-    image: nexus3.edgexfoundry.org:10002/docker-export-client-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:1.1.0
     ports:
       - "48071:48071"
     container_name: edgex-export-client
@@ -321,7 +360,7 @@ services:
       - data
 
   export-distro:
-    image: nexus3.edgexfoundry.org:10002/docker-export-distro-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:1.1.0
     ports:
       - "48070:48070"
       - "5566:5566"
@@ -344,7 +383,7 @@ services:
       - EXPORT_DISTRO_MQTTS_KEY_FILE=none
 
   rulesengine:
-    image: nexus3.edgexfoundry.org:10002/docker-support-rulesengine:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.1.0
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -364,7 +403,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: nexus3.edgexfoundry.org:10002/docker-device-virtual-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:1.1.0
     ports:
     - "49990:49990"
     container_name: edgex-device-virtual
@@ -383,7 +422,7 @@ services:
     - command
 
   # device-random:
-  #   image: nexus3.edgexfoundry.org:10002/docker-device-random-go:1.0.0
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go:1.1.0
   #   ports:
   #     - "49988:49988"
   #   container_name: edgex-device-random
@@ -400,7 +439,7 @@ services:
   #     - command
   #
   # device-mqtt:
-  #   image: nexus3.edgexfoundry.org:10002/docker-device-mqtt-go:1.0.0
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go:1.1.0
   #   ports:
   #     - "49982:49982"
   #   container_name: edgex-device-mqtt
@@ -417,7 +456,7 @@ services:
   #     - command
   #
   # device-modbus:
-  #   image: nexus3.edgexfoundry.org:10002/docker-device-modbus-go:1.0.0
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go:1.1.0
   #   ports:
   #     - "49991:49991"
   #   container_name: edgex-device-modbus
@@ -434,7 +473,7 @@ services:
   #     - command
   #
   # device-snmp:
-  #   image: nexus3.edgexfoundry.org:10002/docker-device-snmp-go:1.0.0
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go:1.1.0
   #   ports:
   #     - "49993:49993"
   #   container_name: edgex-device-snmp
@@ -454,7 +493,7 @@ services:
 # UIs
 #################################################################
   ui:
-    image: nexus3.edgexfoundry.org:10002/docker-edgex-ui-go:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go:1.1.0
     ports:
       - "4000:4000"
     container_name: edgex-ui-go
