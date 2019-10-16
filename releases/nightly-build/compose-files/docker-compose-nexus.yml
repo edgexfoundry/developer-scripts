@@ -26,6 +26,7 @@ volumes:
   vault-config:
   vault-file:
   vault-logs:
+  secrets-setup-cache:
 
 services:
   volume:
@@ -44,7 +45,6 @@ services:
     ports:
       - "8400:8400"
       - "8500:8500"
-      - "8600:8600"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
     networks:
@@ -77,7 +77,7 @@ services:
       - consul
 
   vault:
-    image: edgexfoundry/docker-edgex-vault:1.1.0
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-secret-store-go:1.1.0
     container_name: edgex-vault
     hostname: edgex-vault
     networks:
@@ -129,7 +129,7 @@ services:
       - consul
 
   vault-worker:
-    image: edgexfoundry/docker-edgex-vault-worker-go:1.1.0
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:1.1.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
     command: ["--init=true", "--vaultInterval=10", "--insecureskipverify=false"]
@@ -197,7 +197,7 @@ services:
         - kong-db
 
   edgex-proxy:
-    image: edgexfoundry/docker-edgex-proxy-go:1.1.0
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:1.1.0
     container_name: edgex-proxy
     hostname: edgex-proxy
     networks:
@@ -527,4 +527,4 @@ services:
 networks:
   edgex-network:
     driver: "bridge"
-...
+
