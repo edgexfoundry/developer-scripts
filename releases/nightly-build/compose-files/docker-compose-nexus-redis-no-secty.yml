@@ -18,7 +18,12 @@
 
 # NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway and Secret Store
 
-version: '3'
+version: '3.4'
+
+# all common shared environment variables defined here:
+x-common-env-variables: &common-variables
+  EDGEX_SECURITY_SECRET_STORE: "false"
+
 volumes:
   db-data:
   log-data:
@@ -43,7 +48,6 @@ services:
     ports:
       - "8400:8400"
       - "8500:8500"
-      - "8600:8600"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
     networks:
@@ -66,6 +70,8 @@ services:
       edgex-network:
         aliases:
             - edgex-core-config-seed
+    environment:
+      <<: *common-variables            
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -95,6 +101,8 @@ services:
     hostname: edgex-support-logging
     networks:
       - edgex-network
+    environment: 
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -111,6 +119,8 @@ services:
     hostname: edgex-sys-mgmt-agent
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - db-data:/data/db
       - log-data:/edgex/logs
@@ -128,6 +138,8 @@ services:
     hostname: edgex-support-notifications
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -144,6 +156,8 @@ services:
     hostname: edgex-core-metadata
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -161,6 +175,8 @@ services:
     hostname: edgex-core-data
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -177,6 +193,8 @@ services:
     hostname: edgex-core-command
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -192,6 +210,8 @@ services:
     hostname: edgex-support-scheduler
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -208,6 +228,8 @@ services:
     hostname: edgex-export-client
     networks:
       - edgex-network
+    environment:
+      <<: *common-variables
     volumes:
       - log-data:/edgex/logs
       - consul-config:/consul/config
@@ -231,14 +253,15 @@ services:
     depends_on:
       - export-client
     environment:
-      - EXPORT_DISTRO_CLIENT_HOST=export-client
-      - EXPORT_DISTRO_DATA_HOST=edgex-core-data
-      - EXPORT_DISTRO_CONSUL_HOST=edgex-config-seed
-      - EXPORT_DISTRO_MQTTS_CERT_FILE=none
-      - EXPORT_DISTRO_MQTTS_KEY_FILE=none
+      <<: *common-variables
+      EXPORT_DISTRO_CLIENT_HOST: export-client
+      EXPORT_DISTRO_DATA_HOST: edgex-core-data
+      EXPORT_DISTRO_CONSUL_HOST: edgex-config-seed
+      EXPORT_DISTRO_MQTTS_CERT_FILE: none
+      EXPORT_DISTRO_MQTTS_KEY_FILE: none
 
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.1.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.1.0-dev.1
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -381,4 +404,4 @@ services:
 networks:
   edgex-network:
     driver: "bridge"
-...
+
