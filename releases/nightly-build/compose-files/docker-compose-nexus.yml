@@ -150,7 +150,9 @@ services:
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
-    command: "kong migrations bootstrap"
+    command: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh kong-db; do sleep 1; done && kong migrations bootstrap"
     volumes:
       - consul-scripts:/consul/scripts
     depends_on:
@@ -179,6 +181,10 @@ services:
         - 'KONG_PROXY_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl'
+    command: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh kong-migrations; do sleep 1; done;
+      /docker-entrypoint.sh kong docker-start"
     volumes:
       - consul-scripts:/consul/scripts
     depends_on:
