@@ -22,6 +22,7 @@ volumes:
   log-data:
   consul-config:
   consul-data:
+  consul-scripts:
   portainer_data:
   vault-config:
   vault-file:
@@ -56,6 +57,7 @@ services:
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
 
@@ -100,6 +102,7 @@ services:
       - vault-logs:/vault/logs
       - secrets-setup-cache:/etc/edgex/pki
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - consul
@@ -115,6 +118,7 @@ services:
             - edgex-vault-worker
     volumes:
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - consul
@@ -147,6 +151,8 @@ services:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
     command: "kong migrations bootstrap"
+    volumes:
+      - consul-scripts:/consul/scripts
     depends_on:
       - kong-db
       - volume
@@ -173,6 +179,8 @@ services:
         - 'KONG_PROXY_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl'
+    volumes:
+      - consul-scripts:/consul/scripts
     depends_on:
         - kong-db
         - kong-migrations
