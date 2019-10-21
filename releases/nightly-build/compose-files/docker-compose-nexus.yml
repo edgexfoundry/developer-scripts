@@ -215,8 +215,8 @@ services:
 
   mongo:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:1.1.0
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
     networks:
@@ -229,8 +229,8 @@ services:
 
   logging:
     image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:1.1.0
-    ports:
-      - "48061:48061"
+    expose:
+      - "48061"
     container_name: edgex-support-logging
     hostname: edgex-support-logging
     networks:
@@ -247,8 +247,8 @@ services:
 
   system:
     image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:1.1.0
-    ports:
-      - "48090:48090"
+    expose:
+      - "48090"
     container_name: edgex-sys-mgmt-agent
     hostname: edgex-sys-mgmt-agent
     networks:
@@ -264,8 +264,8 @@ services:
 
   notifications:
     image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:1.1.0
-    ports:
-      - "48060:48060"
+    expose:
+      - "48060"
     container_name: edgex-support-notifications
     hostname: edgex-support-notifications
     networks:
@@ -280,8 +280,8 @@ services:
 
   metadata:
     image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:1.1.0
-    ports:
-      - "48081:48081"
+    expose:
+      - "48081"
     container_name: edgex-core-metadata
     hostname: edgex-core-metadata
     networks:
@@ -296,9 +296,9 @@ services:
 
   data:
     image: nexus3.edgexfoundry.org:10004/docker-core-data-go:1.1.0
-    ports:
-      - "48080:48080"
-      - "5563:5563"
+    expose:
+      - "48080"
+      - "5563"
     container_name: edgex-core-data
     hostname: edgex-core-data
     networks:
@@ -313,8 +313,8 @@ services:
 
   command:
     image: nexus3.edgexfoundry.org:10004/docker-core-command-go:1.1.0
-    ports:
-      - "48082:48082"
+    expose:
+      - "48082"
     container_name: edgex-core-command
     hostname: edgex-core-command
     networks:
@@ -329,8 +329,8 @@ services:
 
   scheduler:
     image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:1.1.0
-    ports:
-      - "48085:48085"
+    expose:
+      - "48085"
     container_name: edgex-support-scheduler
     hostname: edgex-support-scheduler
     networks:
@@ -345,8 +345,8 @@ services:
 
   export-client:
     image: nexus3.edgexfoundry.org:10004/docker-export-client-go:1.1.0
-    ports:
-      - "48071:48071"
+    expose:
+      - "48071"
     container_name: edgex-export-client
     hostname: edgex-export-client
     networks:
@@ -361,9 +361,9 @@ services:
 
   export-distro:
     image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:1.1.0
-    ports:
-      - "48070:48070"
-      - "5566:5566"
+    expose:
+      - "48070"
+      - "5566"
     container_name: edgex-export-distro
     hostname: edgex-export-distro
     networks:
@@ -384,8 +384,8 @@ services:
 
   rulesengine:
     image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.1.0
-    ports:
-      - "48075:48075"
+    expose:
+      - "48075"
     container_name: edgex-support-rulesengine
     hostname: edgex-support-rulesengine
     networks:
@@ -404,8 +404,8 @@ services:
 
   device-virtual:
     image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:1.1.0
-    ports:
-    - "49990:49990"
+    expose:
+    - "49990"
     container_name: edgex-device-virtual
     hostname: edgex-device-virtual
     networks:
