@@ -112,8 +112,9 @@ services:
           max_lease_ttl = "720h"
       - VAULT_CONFIG_DIR=/vault/config
       - VAULT_UI=true
+    # create the tempfs directory inside the container for deployed purpose
     tmpfs:
-      - /run
+      - /run/edgex/secrets/edgex-vault
     command: >
       /usr/bin/dumb-init -- /bin/sh -c 
       "./security-secrets-setup generate ;
@@ -123,7 +124,6 @@ services:
       - vault-file:/vault/file
       - vault-logs:/vault/logs
       - secrets-setup-cache:/etc/edgex/pki
-      - /run/edgex/secrets/edgex-vault:/run/edgex/secrets/edgex-vault
     depends_on:
       - volume
       - consul
@@ -383,7 +383,7 @@ services:
       - EXPORT_DISTRO_MQTTS_KEY_FILE=none
 
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.1.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.1.0-dev.1
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
