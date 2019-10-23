@@ -150,8 +150,15 @@ services:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
     command: >
-      /bin/sh -c 
-      "until /consul/scripts/consul-svc-healthy.sh kong-db; do sleep 1; done && kong migrations bootstrap"
+      /bin/sh -cx 
+      'until /consul/scripts/consul-svc-healthy.sh kong-db;
+         do sleep 1;
+      done && kong migrations bootstrap;
+      kong migrations list;
+      code=$$?;
+      if [ $$code -eq 5 ]; then
+        kong migrations up && kong migrations finish;
+      fi'
     volumes:
       - consul-scripts:/consul/scripts
     depends_on:
