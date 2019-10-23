@@ -124,6 +124,7 @@ services:
       - vault-file:/vault/file
       - vault-logs:/vault/logs
       - secrets-setup-cache:/etc/edgex/pki
+      - vault-config:/vault/config
     depends_on:
       - volume
       - consul
@@ -132,7 +133,7 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:1.1.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    command: ["--init=true", "--vaultInterval=10", "--insecureskipverify=false"]
+    command: ["--init=true", "--vaultInterval=10", "--insecureSkipVerify=false"]
     networks:
       edgex-network:
         aliases:
@@ -200,6 +201,7 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:1.1.0
     container_name: edgex-proxy
     hostname: edgex-proxy
+    command: ["--init=true", "--insecureSkipVerify=true"]
     networks:
       edgex-network:
         aliases:
