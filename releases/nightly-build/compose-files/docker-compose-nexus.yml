@@ -52,8 +52,6 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
@@ -238,10 +236,7 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
       - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - config-seed
       - mongo
@@ -256,10 +251,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - logging
@@ -272,11 +263,6 @@ services:
     hostname: edgex-support-notifications
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - logging
 
@@ -288,11 +274,6 @@ services:
     hostname: edgex-core-metadata
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - logging
 
@@ -305,11 +286,6 @@ services:
     hostname: edgex-core-data
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - logging
 
@@ -321,11 +297,6 @@ services:
     hostname: edgex-core-command
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - metadata
 
@@ -337,11 +308,6 @@ services:
     hostname: edgex-support-scheduler
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - metadata
 
@@ -353,11 +319,6 @@ services:
     hostname: edgex-export-client
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - data
 
@@ -370,11 +331,6 @@ services:
     hostname: edgex-export-distro
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - export-client
     environment:
@@ -393,10 +349,7 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
       - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - export-client
 
@@ -414,11 +367,6 @@ services:
       edgex-network:
         aliases:
         - edgex-device-virtual
-    volumes:
-    - db-data:/data/db
-    - log-data:/edgex/logs
-    - consul-config:/consul/config
-    - consul-data:/consul/data
     depends_on:
     - data
     - command
@@ -432,10 +380,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -449,10 +394,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -466,10 +408,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -483,10 +422,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -502,11 +438,6 @@ services:
     hostname: edgex-ui-go
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - data
       - command
