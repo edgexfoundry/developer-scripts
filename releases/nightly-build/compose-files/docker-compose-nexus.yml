@@ -22,6 +22,7 @@ volumes:
   log-data:
   consul-config:
   consul-data:
+  consul-scripts:
   portainer_data:
   vault-config:
   vault-file:
@@ -41,7 +42,7 @@ services:
       - consul-data:/consul/data
 
   consul:
-    image: consul:1.3.1
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:1.1.0
     ports:
       - "8400:8400"
       - "8500:8500"
@@ -56,6 +57,7 @@ services:
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
 
@@ -100,6 +102,7 @@ services:
       - vault-logs:/vault/logs
       - secrets-setup-cache:/etc/edgex/pki
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - consul
@@ -115,6 +118,7 @@ services:
             - edgex-vault-worker
     volumes:
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - consul
@@ -137,16 +141,30 @@ services:
 
   kong-migrations:
     image: "kong:1.0.3"
-    container_name: kong-migration
-    hostname: kong-migration
+    container_name: kong-migrations
     networks:
       edgex-network:
         aliases:
-            - kong-migration
+            - kong-migrations
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
-    command: "kong migrations bootstrap"
+    command: >
+      /bin/sh -cx 
+      'until /consul/scripts/consul-svc-healthy.sh kong-db;
+         do sleep 1;
+      done && kong migrations bootstrap;
+      kong migrations list;
+      code=$$?;
+      if [ $$code -eq 5 ]; then
+        kong migrations up && kong migrations finish;
+      fi'
+    volumes:
+      - consul-scripts:/consul/scripts
+    depends_on:
+      - kong-db
+      - volume
+      - consul
 
   kong:
     image: "kong:1.0.3"
@@ -169,8 +187,18 @@ services:
         - 'KONG_PROXY_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl'
+    restart: on-failure
+    command: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh kong-migrations; do sleep 1; done;
+      /docker-entrypoint.sh kong docker-start"
+    volumes:
+      - consul-scripts:/consul/scripts
     depends_on:
         - kong-db
+        - kong-migrations
+        - volume
+        - consul
 
   edgex-proxy:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:1.1.0
