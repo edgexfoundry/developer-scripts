@@ -58,6 +58,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - consul-scripts:/consul/scripts
+      - vault-config:/vault/config
     depends_on:
       - volume
 
@@ -111,7 +112,10 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:1.1.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    command: ["--init=true", "--vaultInterval=10"]
+    entrypoint: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh security-secrets-setup; do sleep 1; done;
+      /security-secretstore-setup --init=true --vaultInterval=10"
     networks:
       edgex-network:
         aliases:
@@ -204,13 +208,18 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:1.1.0
     container_name: edgex-proxy
     hostname: edgex-proxy
-    command: ["--init=true"]
+    entrypoint: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh kong; do sleep 1; done;
+      until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup; do sleep 1; done;
+      /edgex/security-proxy-setup --init=true"
     networks:
       edgex-network:
         aliases:
             - edgex-proxy
     volumes:
-        - vault-config:/vault/config
+      - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
         - vault
         - kong-db
