@@ -87,6 +87,7 @@ services:
       - "27017:27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
+    restart: "on-failure: 5"
     networks:
       - edgex-network
     environment:
