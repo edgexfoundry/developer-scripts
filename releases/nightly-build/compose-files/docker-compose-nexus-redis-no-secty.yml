@@ -261,7 +261,7 @@ services:
       EXPORT_DISTRO_MQTTS_KEY_FILE: none
 
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
