@@ -241,10 +241,15 @@ services:
       - "27017:27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
+    entrypoint: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup; do sleep 1; done;
+      /edgex-mongo/bin/edgex-mongo-launch.sh"
     networks:
       - edgex-network
     volumes:
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - vault-worker
