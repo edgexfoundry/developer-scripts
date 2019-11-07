@@ -144,7 +144,7 @@ services:
         - 'POSTGRES_USER=kong'
 
   kong-migrations:
-    image: "kong:1.0.3"
+    image: "kong:1.3.0"
     container_name: kong-migrations
     networks:
       edgex-network:
@@ -171,7 +171,7 @@ services:
       - consul
 
   kong:
-    image: "kong:1.0.3"
+    image: "kong:1.3.0"
     container_name: kong
     hostname: kong
     networks:
