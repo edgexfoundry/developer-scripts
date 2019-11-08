@@ -438,7 +438,6 @@ services:
   #      - log-data:/edgex/logs
   #      - consul-config:/consul/config
   #      - consul-data:/consul/data
-  #      - vault-config:/vault/config
   #    depends_on:
   #      - export-client
   #    environment:
