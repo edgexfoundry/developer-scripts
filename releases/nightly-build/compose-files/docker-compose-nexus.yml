@@ -16,12 +16,21 @@
 #  * added: Jun 30, 2019
 #  *******************************************************************************/
 
-version: '3'
+version: '3.4'
+
+# all common shared environment variables defined here:
+x-common-env-variables: &common-variables
+  edgex_registry: consul://edgex-core-consul:8500
+  Clients_CoreData_Host: edgex-core-data
+  Clients_Logging_Host: edgex-support-logging
+  Logging_EnableRemote: "true"
+
 volumes:
   db-data:
   log-data:
   consul-config:
   consul-data:
+  consul-scripts:
   portainer_data:
   vault-config:
   vault-file:
@@ -41,7 +50,7 @@ services:
       - consul-data:/consul/data
 
   consul:
-    image: consul:1.3.1
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:1.1.0
     ports:
       - "8400:8400"
       - "8500:8500"
@@ -54,6 +63,8 @@ services:
     volumes:
       - consul-config:/consul/config
       - consul-data:/consul/data
+      - consul-scripts:/consul/scripts
+      - vault-config:/vault/config
     depends_on:
       - volume
 
@@ -88,41 +99,17 @@ services:
       - "IPC_LOCK"
     environment:
       - VAULT_ADDR=https://edgex-vault:8200
-      - |
-        VAULT_LOCAL_CONFIG=
-          listener "tcp" { 
-              tls_disable = "0" 
-              cluster_address = "edgex-vault:8201" 
-              tls_min_version = "tls12" 
-              tls_client_ca_file ="/run/edgex/secrets/edgex-vault/ca.pem" 
-              tls_cert_file ="/run/edgex/secrets/edgex-vault/server.crt" 
-              tls_key_file = "/run/edgex/secrets/edgex-vault/server.key" 
-              tls_perfer_server_cipher_suites = true 
-          } 
-          backend "consul" { 
-              path = "vault/" 
-              address = "edgex-core-consul:8500" 
-              scheme = "http" 
-              redirect_addr = "https://edgex-vault:8200" 
-              cluster_addr = "https://edgex-vault:8201" 
-          } 
-          default_lease_ttl = "168h" 
-          max_lease_ttl = "720h"
       - VAULT_CONFIG_DIR=/vault/config
       - VAULT_UI=true
-    # create the tempfs directory inside the container for deployed purpose
-    tmpfs:
-      - /run/edgex/secrets/edgex-vault
     command: >
       /usr/bin/dumb-init -- /bin/sh -c 
-      "./security-secrets-setup generate ;
-      chown -Rh 100:1000 /run/edgex/secrets/edgex-vault/ ;
-      exec /usr/local/bin/docker-entrypoint.sh server -log-level=info"
+      "exec /usr/local/bin/docker-entrypoint.sh server -log-level=info"
     volumes:
       - vault-file:/vault/file
       - vault-logs:/vault/logs
       - secrets-setup-cache:/etc/edgex/pki
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - consul
@@ -131,13 +118,17 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:1.1.0
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    command: ["--init=true", "--vaultInterval=10", "--insecureSkipVerify=false"]
+    entrypoint: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh security-secrets-setup; do sleep 1; done;
+      /security-secretstore-setup --init=true --vaultInterval=10"
     networks:
       edgex-network:
         aliases:
             - edgex-vault-worker
     volumes:
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - consul
@@ -159,20 +150,34 @@ services:
         - 'POSTGRES_USER=kong'
 
   kong-migrations:
-    image: "kong:1.0.3"
-    container_name: kong-migration
-    hostname: kong-migration
+    image: "kong:1.3.0"
+    container_name: kong-migrations
     networks:
       edgex-network:
         aliases:
-            - kong-migration
+            - kong-migrations
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
-    command: "kong migrations bootstrap"
+    command: >
+      /bin/sh -cx 
+      'until /consul/scripts/consul-svc-healthy.sh kong-db;
+         do sleep 1;
+      done && kong migrations bootstrap;
+      kong migrations list;
+      code=$$?;
+      if [ $$code -eq 5 ]; then
+        kong migrations up && kong migrations finish;
+      fi'
+    volumes:
+      - consul-scripts:/consul/scripts
+    depends_on:
+      - kong-db
+      - volume
+      - consul
 
   kong:
-    image: "kong:1.0.3"
+    image: "kong:1.3.0"
     container_name: kong
     hostname: kong
     networks:
@@ -192,20 +197,35 @@ services:
         - 'KONG_PROXY_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_ERROR_LOG=/dev/stderr'
         - 'KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl'
+    restart: on-failure
+    command: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh kong-migrations; do sleep 1; done;
+      /docker-entrypoint.sh kong docker-start"
+    volumes:
+      - consul-scripts:/consul/scripts
     depends_on:
         - kong-db
+        - kong-migrations
+        - volume
+        - consul
 
   edgex-proxy:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:1.1.0
     container_name: edgex-proxy
     hostname: edgex-proxy
-    command: ["--init=true", "--insecureSkipVerify=true"]
+    entrypoint: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh kong; do sleep 1; done;
+      until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup; do sleep 1; done;
+      /edgex/security-proxy-setup --init=true"
     networks:
       edgex-network:
         aliases:
             - edgex-proxy
     volumes:
-        - vault-config:/vault/config
+      - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
         - vault
         - kong-db
@@ -219,10 +239,15 @@ services:
       - "27017:27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
+    entrypoint: >
+      /bin/sh -c 
+      "until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup; do sleep 1; done;
+      /edgex-mongo/bin/edgex-mongo-launch.sh"
     networks:
       - edgex-network
     volumes:
       - vault-config:/vault/config
+      - consul-scripts:/consul/scripts
     depends_on:
       - volume
       - vault-worker
@@ -237,6 +262,7 @@ services:
       - edgex-network
     volumes:
       - log-data:/edgex/logs
+      - vault-config:/vault/config
     depends_on:
       - config-seed
       - mongo
@@ -263,6 +289,8 @@ services:
     hostname: edgex-support-notifications
     networks:
       - edgex-network
+    volumes:
+      - vault-config:/vault/config
     depends_on:
       - logging
 
@@ -274,6 +302,8 @@ services:
     hostname: edgex-core-metadata
     networks:
       - edgex-network
+    volumes:
+      - vault-config:/vault/config
     depends_on:
       - logging
 
@@ -286,6 +316,8 @@ services:
     hostname: edgex-core-data
     networks:
       - edgex-network
+    volumes:
+      - vault-config:/vault/config
     depends_on:
       - logging
 
@@ -297,6 +329,8 @@ services:
     hostname: edgex-core-command
     networks:
       - edgex-network
+    volumes:
+      - vault-config:/vault/config
     depends_on:
       - metadata
 
@@ -308,50 +342,87 @@ services:
     hostname: edgex-support-scheduler
     networks:
       - edgex-network
+    volumes:
+      - vault-config:/vault/config
     depends_on:
       - metadata
 
-  export-client:
-    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:1.1.0
+  app-service-rules:
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
     ports:
-      - "48071:48071"
-    container_name: edgex-export-client
-    hostname: edgex-export-client
+      - "48100:48100"
+    container_name: edgex-app-service-configurable-rules
+    hostname: edgex-app-service-configurable-rules
     networks:
-      - edgex-network
+      edgex-network:
+        aliases:
+          - edgex-app-service-configurable-rules
+    environment:
+      <<: *common-variables
+      edgex_service: http://edgex-app-service-configurable-rules:48100
+      edgex_profile: rules-engine
+      Service_Host: edgex-app-service-configurable-rules
+      MessageBus_SubscribeHost_Host: edgex-core-data
     depends_on:
+      - consul
+      - logging
       - data
 
-  export-distro:
-    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:1.1.0
-    ports:
-      - "48070:48070"
-      - "5566:5566"
-    container_name: edgex-export-distro
-    hostname: edgex-export-distro
-    networks:
-      - edgex-network
-    depends_on:
-      - export-client
-    environment:
-      - EXPORT_DISTRO_CLIENT_HOST=export-client
-      - EXPORT_DISTRO_DATA_HOST=edgex-core-data
-      - EXPORT_DISTRO_CONSUL_HOST=edgex-config-seed
-      - EXPORT_DISTRO_MQTTS_CERT_FILE=none
-      - EXPORT_DISTRO_MQTTS_KEY_FILE=none
-
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:1.0.0
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
     hostname: edgex-support-rulesengine
     networks:
-      - edgex-network
-    volumes:
-      - log-data:/edgex/logs
+      edgex-network:
+        aliases:
+          - edgex-support-rulesengine
     depends_on:
-      - export-client
+      - app-service-rules
+
+  #  export-client:
+  #    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:1.1.0
+  #    ports:
+  #      - "48071:48071"
+  #    container_name: edgex-export-client
+  #    hostname: edgex-export-client
+  #    networks:
+  #      - edgex-network
+  #    environment:
+  #      <<: *common-variables
+  #    volumes:
+  #      - db-data:/data/db
+  #      - log-data:/edgex/logs
+  #      - consul-config:/consul/config
+  #      - consul-data:/consul/data
+  #      - vault-config:/vault/config
+  #    depends_on:
+  #      - data
+  #
+  #  export-distro:
+  #    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:1.1.0
+  #    ports:
+  #      - "48070:48070"
+  #      - "5566:5566"
+  #    container_name: edgex-export-distro
+  #    hostname: edgex-export-distro
+  #    networks:
+  #      - edgex-network
+  #    volumes:
+  #      - db-data:/data/db
+  #      - log-data:/edgex/logs
+  #      - consul-config:/consul/config
+  #      - consul-data:/consul/data
+  #    depends_on:
+  #      - export-client
+  #    environment:
+  #      <<: *common-variables
+  #      EXPORT_DISTRO_CLIENT_HOST: export-client
+  #      EXPORT_DISTRO_DATA_HOST: edgex-core-data
+  #      EXPORT_DISTRO_CONSUL_HOST: dgex-config-seed
+  #      EXPORT_DISTRO_MQTTS_CERT_FILE: none
+  #      EXPORT_DISTRO_MQTTS_KEY_FILE: none
 
 #################################################################
 # Device Services
