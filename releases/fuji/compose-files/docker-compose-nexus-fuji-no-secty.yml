@@ -12,7 +12,7 @@
 #  * the License.
 #  *
 #  * @author: Jim White, Dell
-#  * EdgeX Foundry, Fuji, version master
+#  * EdgeX Foundry, Fuji, version 1.1.0
 #  * added: Jun 30, 2019
 #  *******************************************************************************/
 
@@ -37,12 +37,12 @@ volumes:
 
 services:
   volume:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-volume:master
+    image: edgexfoundry/docker-edgex-volume:1.1.0
     container_name: edgex-files
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
+      - db-data:/data
       - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
@@ -59,13 +59,15 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
+      - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
     depends_on:
       - volume
 
   config-seed:
-    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:master
+    image: edgexfoundry/docker-core-config-seed-go:1.1.0
+    command: ["--profile=docker", "--cmd=/edgex/cmd-redis"]
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
@@ -76,44 +78,45 @@ services:
       <<: *common-variables            
     volumes:
       - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - volume
       - consul
 
-  mongo:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:master
+  redis:
+    image: redis:5.0.5-alpine
     ports:
-      - "27017:27017"
-    container_name: edgex-mongo
-    hostname: edgex-mongo
+      - "6379:6379"
+    container_name: edgex-redis
+    hostname: edgex-redis
     networks:
       - edgex-network
-    environment:
-      <<: *common-variables
     volumes:
-      - db-data:/data/db
+      - db-data:/data
     depends_on:
       - volume
 
   logging:
-    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:master
+    image: edgexfoundry/docker-support-logging-go:1.1.0
     ports:
       - "48061:48061"
     container_name: edgex-support-logging
     hostname: edgex-support-logging
     networks:
       - edgex-network
-    environment:
+    environment: 
       <<: *common-variables
     volumes:
       - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - config-seed
-      - mongo
       - volume
 
   system:
-    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:master
+    image: edgexfoundry/docker-sys-mgmt-agent-go:1.1.0
     ports:
       - "48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -123,12 +126,16 @@ services:
     environment:
       <<: *common-variables
     volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - logging
 
   notifications:
-    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:master
+    image: edgexfoundry/docker-support-notifications-go:1.1.0
     ports:
       - "48060:48060"
     container_name: edgex-support-notifications
@@ -137,11 +144,16 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+    volumes:
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - logging
+      - redis
 
   metadata:
-    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:master
+    image: edgexfoundry/docker-core-metadata-go:1.1.0
     ports:
       - "48081:48081"
     container_name: edgex-core-metadata
@@ -150,11 +162,16 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+    volumes:
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - logging
+      - redis
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go:master
+    image: edgexfoundry/docker-core-data-go:1.1.0
     ports:
       - "48080:48080"
       - "5563:5563"
@@ -164,11 +181,16 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+    volumes:
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - logging
+      - redis
 
   command:
-    image: nexus3.edgexfoundry.org:10004/docker-core-command-go:master
+    image: edgexfoundry/docker-core-command-go:1.1.0
     ports:
       - "48082:48082"
     container_name: edgex-core-command
@@ -177,11 +199,15 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+    volumes:
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:master
+    image: edgexfoundry/docker-support-scheduler-go:1.1.0
     ports:
       - "48085:48085"
     container_name: edgex-support-scheduler
@@ -190,11 +216,16 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+    volumes:
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - metadata
+      - redis
 
   app-service-rules:
-    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    image: edgexfoundry/docker-app-service-configurable:1.0.0
     ports:
       - "48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -213,9 +244,9 @@ services:
       - consul
       - logging
       - data
-      
+
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
+    image: edgexfoundry/docker-support-rulesengine:1.1.0
     ports:
       - "48075:48075"
     container_name: edgex-support-rulesengine
@@ -228,7 +259,7 @@ services:
       - app-service-rules
 
   #  export-client:
-  #    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:master
+  #    image: edgexfoundry/docker-export-client-go:1.1.0
   #    ports:
   #      - "48071:48071"
   #    container_name: edgex-export-client
@@ -246,7 +277,7 @@ services:
   #      - data
   #
   #  export-distro:
-  #    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:master
+  #    image: edgexfoundry/docker-export-distro-go:1.1.0
   #    ports:
   #      - "48070:48070"
   #      - "5566:5566"
@@ -274,7 +305,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:master
+    image: edgexfoundry/docker-device-virtual-go:1.1.0
     ports:
     - "49990:49990"
     container_name: edgex-device-virtual
@@ -283,12 +314,17 @@ services:
       edgex-network:
         aliases:
         - edgex-device-virtual
+    volumes:
+    - db-data:/data/db
+    - log-data:/edgex/logs
+    - consul-config:/consul/config
+    - consul-data:/consul/data
     depends_on:
     - data
     - command
 
   # device-random:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go:master
+  #   image: edgexfoundry/docker-device-random-go:1.1.0
   #   ports:
   #     - "49988:49988"
   #   container_name: edgex-device-random
@@ -296,13 +332,16 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
+  #     - db-data:/data/db
   #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
   #
   # device-mqtt:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go:master
+  #   image: edgexfoundry/docker-device-mqtt-go:1.1.0
   #   ports:
   #     - "49982:49982"
   #   container_name: edgex-device-mqtt
@@ -310,13 +349,16 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
+  #     - db-data:/data/db
   #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
   #
   # device-modbus:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go:master
+  #   image: edgexfoundry/docker-device-modbus-go:1.1.0
   #   ports:
   #     - "49991:49991"
   #   container_name: edgex-device-modbus
@@ -324,13 +366,16 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
+  #     - db-data:/data/db
   #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
   #
   # device-snmp:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go:master
+  #   image: edgexfoundry/docker-device-snmp-go:1.1.0
   #   ports:
   #     - "49993:49993"
   #   container_name: edgex-device-snmp
@@ -338,7 +383,10 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
+  #     - db-data:/data/db
   #     - log-data:/edgex/logs
+  #     - consul-config:/consul/config
+  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -347,13 +395,18 @@ services:
 # UIs
 #################################################################
   ui:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go:master
+    image: edgexfoundry/docker-edgex-ui-go:1.1.0
     ports:
       - "4000:4000"
     container_name: edgex-ui-go
     hostname: edgex-ui-go
     networks:
       - edgex-network
+    volumes:
+      - db-data:/data/db
+      - log-data:/edgex/logs
+      - consul-config:/consul/config
+      - consul-data:/consul/data
     depends_on:
       - data
       - command

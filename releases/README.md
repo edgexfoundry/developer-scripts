@@ -8,6 +8,8 @@ This folder contains supporting files to run various current and historical vers
 
 - [Nightly Build](#nightly-build)
     - [Docker Compose](#docker-compose-for-nightly-build)
+- [Fuji Release](#fuji-release)
+    - [Docker Compose](#docker-compose-for-edinburgh-release)
 - [Edinburgh Release](#edinburgh-release)
     - [Docker Compose](#docker-compose-for-edinburgh-release)
 - [Delhi Release](#edinburgh-release)
@@ -35,6 +37,25 @@ The Docker Compose files have device service elements that have all been comment
 
 Using these Docker Compose files will require you have [access to the EdgeX Nexus 
     repository](https://docs.edgexfoundry.org/Ch-GettingStartedUsersNexus.html).
+
+## Fuji Release
+
+### Docker Compose for Fuji Release
+
+Available releases include:
+
+* [`releases/fuji/compose-files/docker-compose-fuji-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-fuji-1.0.1.yml) 
+    uses the EdgeX **Fuji release 1.1.0** container images.
+
+* [`releases/fuji/compose-files/docker-compose-fuji-no-secty-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-fuji-no-secty-1.0.1.yml) 
+    uses the EdgeX **Fuji release 1.1.0** container images and does not include security services.
+
+* [`releases/fuji/compose-files/docker-compose-redis-fuji-no-secty-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-redis-fuji-no-secty-1.0.1.yml) 
+    uses the EdgeX **Fuji release 1.1.0** container images, includes the Redis container (for use when using Redis 
+    in persistence with core data, metadata or logging), and does not include security services.
+
+The Docker Compose files have device service elements that have all been commented out (except for the device-virtual 
+    service). Uncomment the sections for the device services you need.
 
 ## Edinburgh Release
 
