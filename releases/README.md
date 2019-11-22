@@ -44,13 +44,13 @@ Using these Docker Compose files will require you have [access to the EdgeX Nexu
 
 Available releases include:
 
-* [`releases/fuji/compose-files/docker-compose-fuji-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-fuji-1.0.1.yml) 
+* [`releases/fuji/compose-files/docker-compose-fuji.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-fuji.yml) 
     uses the EdgeX **Fuji release 1.1.0** container images.
 
-* [`releases/fuji/compose-files/docker-compose-fuji-no-secty-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-fuji-no-secty-1.0.1.yml) 
+* [`releases/fuji/compose-files/docker-compose-fuji-no-secty.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-fuji-no-secty.yml) 
     uses the EdgeX **Fuji release 1.1.0** container images and does not include security services.
 
-* [`releases/fuji/compose-files/docker-compose-redis-fuji-no-secty-1.0.1.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-redis-fuji-no-secty-1.0.1.yml) 
+* [`releases/fuji/compose-files/docker-compose-redis-fuji-no-secty.yml`](https://github.com/edgexfoundry/developer-scripts/tree/master/releases/fuji/compose-files/docker-compose-redis-fuji-no-secty.yml) 
     uses the EdgeX **Fuji release 1.1.0** container images, includes the Redis container (for use when using Redis 
     in persistence with core data, metadata or logging), and does not include security services.
 
