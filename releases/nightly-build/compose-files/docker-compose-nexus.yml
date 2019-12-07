@@ -32,6 +32,7 @@ volumes:
   consul-data:
   consul-scripts:
   portainer_data:
+  vault-init:
   vault-config:
   vault-file:
   vault-logs:
@@ -67,6 +68,9 @@ services:
       - consul-data:/consul/data
       - consul-scripts:/consul/scripts
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro
+      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro
+      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro
     depends_on:
       - volume
 
@@ -88,7 +92,7 @@ services:
       - consul
 
   vault:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-secret-store-go:master
+    image: vault:1.0.3
     container_name: edgex-vault
     hostname: edgex-vault
     networks:
@@ -99,31 +103,40 @@ services:
       - "8200:8200"
     cap_add:
       - "IPC_LOCK"
+    tmpfs:
+      - /vault/config
+    entrypoint: ["/vault/init/start_vault.sh"]
     environment:
       - VAULT_ADDR=https://edgex-vault:8200
       - VAULT_CONFIG_DIR=/vault/config
       - VAULT_UI=true
-    command: >
-      /usr/bin/dumb-init -- /bin/sh -c 
-      "exec /usr/local/bin/docker-entrypoint.sh server -log-level=info"
     volumes:
       - vault-file:/vault/file
       - vault-logs:/vault/logs
+      - vault-init:/vault/init:ro
+      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro
+    depends_on:
+      - security-secrets-setup
+      - consul
+
+  security-secrets-setup:
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go:master
+    container_name: edgex-secrets-setup
+    hostname: edgex-secrets-setup
+    tmpfs:
+      - /tmp
+    command: "generate"
+    volumes:
       - secrets-setup-cache:/etc/edgex/pki
-      - vault-config:/vault/config
-      - consul-scripts:/consul/scripts
+      - vault-init:/vault/init
+      - /tmp/edgex/secrets:/tmp/edgex/secrets
     depends_on:
       - volume
-      - consul
 
   vault-worker:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:master
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    entrypoint: >
-      /bin/sh -c 
-      "until /consul/scripts/consul-svc-healthy.sh security-secrets-setup; do sleep 1; done;
-      /security-secretstore-setup --init=true --vaultInterval=10"
     networks:
       edgex-network:
         aliases:
@@ -131,6 +144,8 @@ services:
     volumes:
       - vault-config:/vault/config
       - consul-scripts:/consul/scripts
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
+      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro
     depends_on:
       - volume
       - consul
@@ -228,6 +243,8 @@ services:
     volumes:
       - vault-config:/vault/config
       - consul-scripts:/consul/scripts
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
+      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro      
     depends_on:
         - vault
         - kong-db
@@ -250,6 +267,7 @@ services:
     volumes:
       - vault-config:/vault/config
       - consul-scripts:/consul/scripts
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - volume
       - vault-worker
@@ -268,6 +286,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - config-seed
       - mongo
@@ -304,6 +323,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - logging
 
@@ -321,6 +341,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - logging
 
@@ -339,6 +360,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - logging
 
@@ -356,6 +378,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - metadata
 
@@ -373,6 +396,7 @@ services:
       - consul-config:/consul/config
       - consul-data:/consul/data
       - vault-config:/vault/config
+      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
     depends_on:
       - metadata
 
@@ -426,6 +450,7 @@ services:
   #      - consul-config:/consul/config
   #      - consul-data:/consul/data
   #      - vault-config:/vault/config
+  #      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca/pem:ro
   #    depends_on:
   #      - data
   #
