@@ -23,14 +23,10 @@ docker-device-virtual
 docker-edgex-mongo
 docker-edgex-mongo-seed
 docker-edgex-volume
-docker-export-client
-docker-export-distro
 docker-support-logging
 docker-support-notifications
 docker-support-rulesengine
 docker-support-scheduler
-export-client
-export-distro
 export-domain
 export-test
 edgex-ui-go

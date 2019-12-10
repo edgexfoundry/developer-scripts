@@ -68,10 +68,6 @@ run_service command 48082
 
 run_service scheduler 48085
 
-run_service export-client 48071
-
-run_service export-distro 48070
-
 run_service rulesengine 48075
 
 run_service device-virtual 49990

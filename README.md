@@ -29,8 +29,8 @@ This script will:
 
 **prepare-environment.sh**, this script will clone the set of modules you need. You can pass a list of valid modules.
 
->MODULES: core-data-client core-domain core-exception core-test export-distro
->export-domain export-test support-domain support-logging-client export-client
+>MODULES: core-data-client core-domain core-exception core-test 
+>export-domain export-test support-domain support-logging-client 
 >support-notifications-client core-data core-metadata-client
 
 **Note**, if you run the script without parameters, you can manually choose which modules you want to be installed.

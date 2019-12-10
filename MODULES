@@ -16,5 +16,5 @@
 #
 # Author: chencho
 
-export MODULES=(core-data-client core-domain core-exception core-test export-distro export-domain export-test support-domain support-logging-client export-client support-notifications-client core-data core-metadata-client support-scheduler)
+export MODULES=(core-data-client core-domain core-exception core-test export-domain export-test support-domain support-logging-client support-notifications-client core-data core-metadata-client support-scheduler)
 	
