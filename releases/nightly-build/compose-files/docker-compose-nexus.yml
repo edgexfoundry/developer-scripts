@@ -62,8 +62,6 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
       - consul-config:/consul/config
       - consul-data:/consul/data
       - consul-scripts:/consul/scripts
@@ -281,10 +279,7 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
       - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - vault-config:/vault/config
       - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
     depends_on:
@@ -301,10 +296,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - logging
@@ -318,10 +309,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - vault-config:/vault/config
       - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
     depends_on:
@@ -336,10 +323,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - vault-config:/vault/config
       - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
     depends_on:
@@ -355,10 +338,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - vault-config:/vault/config
       - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
     depends_on:
@@ -373,10 +352,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - vault-config:/vault/config
       - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
     depends_on:
@@ -391,10 +366,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
       - vault-config:/vault/config
       - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
     depends_on:
@@ -492,11 +463,6 @@ services:
       edgex-network:
         aliases:
         - edgex-device-virtual
-    volumes:
-    - db-data:/data/db
-    - log-data:/edgex/logs
-    - consul-config:/consul/config
-    - consul-data:/consul/data
     depends_on:
     - data
     - command
@@ -510,10 +476,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -527,10 +490,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -544,10 +504,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -561,10 +518,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - db-data:/data/db
   #     - log-data:/edgex/logs
-  #     - consul-config:/consul/config
-  #     - consul-data:/consul/data
   #   depends_on:
   #     - data
   #     - command
@@ -580,11 +534,6 @@ services:
     hostname: edgex-ui-go
     networks:
       - edgex-network
-    volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
     depends_on:
       - data
       - command
