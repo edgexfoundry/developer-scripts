@@ -1,0 +1,339 @@
+# /*******************************************************************************
+#  * Copyright 2018 Dell Inc.
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  *
+#  * @author: Jim White, Dell
+#  * EdgeX Foundry, Fuji, version master
+#  * added: Jun 30, 2019
+#  *******************************************************************************/
+
+# NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway and Secret Store
+
+version: '3.4'
+
+# all common shared environment variables defined here:
+x-common-env-variables: &common-variables
+  EDGEX_SECURITY_SECRET_STORE: "false"
+  edgex_registry: consul://edgex-core-consul:8500
+  Clients_CoreData_Host: edgex-core-data
+  Clients_Logging_Host: edgex-support-logging
+  Logging_EnableRemote: "true"
+
+volumes:
+  db-data:
+  log-data:
+  consul-config:
+  consul-data:
+  portainer_data:
+
+services:
+  volume:
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-volume-arm64:master
+    container_name: edgex-files
+    networks:
+      - edgex-network
+    volumes:
+      - db-data:/data/db:z
+      - log-data:/edgex/logs:z
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
+
+  consul:
+    image: nexus3.edgexfoundry.org:10001/arm64v8/consul:1.3.1
+    ports:
+      - "8400:8400"
+      - "8500:8500"
+    container_name: edgex-core-consul
+    hostname: edgex-core-consul
+    networks:
+      edgex-network:
+        aliases:
+            - edgex-core-consul
+    volumes:
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
+    depends_on:
+      - volume
+
+  config-seed:
+    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go-arm64:master
+    container_name: edgex-config-seed
+    hostname: edgex-core-config-seed
+    networks:
+      edgex-network:
+        aliases:
+            - edgex-core-config-seed
+    environment:
+      <<: *common-variables            
+    volumes:
+      - log-data:/edgex/logs:z
+    depends_on:
+      - volume
+      - consul
+
+  mongo:
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo-arm64:master
+    ports:
+      - "27017:27017"
+    container_name: edgex-mongo
+    hostname: edgex-mongo
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    volumes:
+      - db-data:/data/db:z
+    depends_on:
+      - volume
+
+  logging:
+    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go-arm64:master
+    ports:
+      - "48061:48061"
+    container_name: edgex-support-logging
+    hostname: edgex-support-logging
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    volumes:
+      - log-data:/edgex/logs:z
+    depends_on:
+      - config-seed
+      - mongo
+      - volume
+
+  system:
+    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go-arm64:master
+    ports:
+      - "48090:48090"
+    container_name: edgex-sys-mgmt-agent
+    hostname: edgex-sys-mgmt-agent
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:z
+    depends_on:
+      - logging
+
+  notifications:
+    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go-arm64:master
+    ports:
+      - "48060:48060"
+    container_name: edgex-support-notifications
+    hostname: edgex-support-notifications
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    depends_on:
+      - logging
+
+  metadata:
+    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go-arm64:master
+    ports:
+      - "48081:48081"
+    container_name: edgex-core-metadata
+    hostname: edgex-core-metadata
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    depends_on:
+      - logging
+
+  data:
+    image: nexus3.edgexfoundry.org:10004/docker-core-data-go-arm64:master
+    ports:
+      - "48080:48080"
+      - "5563:5563"
+    container_name: edgex-core-data
+    hostname: edgex-core-data
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    depends_on:
+      - logging
+
+  command:
+    image: nexus3.edgexfoundry.org:10004/docker-core-command-go-arm64:master
+    ports:
+      - "48082:48082"
+    container_name: edgex-core-command
+    hostname: edgex-core-command
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    depends_on:
+      - metadata
+
+  scheduler:
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go-arm64:master
+    ports:
+      - "48085:48085"
+    container_name: edgex-support-scheduler
+    hostname: edgex-support-scheduler
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    depends_on:
+      - metadata
+
+  app-service-rules:
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
+    entrypoint: ["/app-service-configurable"]
+    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
+    ports:
+      - "48100:48100"
+    container_name: edgex-app-service-configurable-rules
+    hostname: edgex-app-service-configurable-rules
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-app-service-configurable-rules
+    environment:
+      <<: *common-variables
+      edgex_service: http://edgex-app-service-configurable-rules:48100
+      edgex_profile: rules-engine
+      Service_Host: edgex-app-service-configurable-rules
+      MessageBus_SubscribeHost_Host: edgex-core-data
+    depends_on:
+      - consul
+      - logging
+      - data
+      
+  rulesengine:
+    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine-arm64:master
+    ports:
+      - "48075:48075"
+    container_name: edgex-support-rulesengine
+    hostname: edgex-support-rulesengine
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-support-rulesengine
+    depends_on:
+      - app-service-rules
+
+#################################################################
+# Device Services
+#################################################################
+
+  device-virtual:
+    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go-arm64:master
+    ports:
+    - "49990:49990"
+    container_name: edgex-device-virtual
+    hostname: edgex-device-virtual
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-device-virtual
+    depends_on:
+    - data
+    - command
+
+  # device-random:
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go-arm64:master
+  #   ports:
+  #     - "49988:49988"
+  #   container_name: edgex-device-random
+  #   hostname: edgex-device-random
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - log-data:/edgex/logs:z
+  #   depends_on:
+  #     - data
+  #     - command
+  #
+  # device-mqtt:
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go-arm64:master
+  #   ports:
+  #     - "49982:49982"
+  #   container_name: edgex-device-mqtt
+  #   hostname: edgex-device-mqtt
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - log-data:/edgex/logs:z
+  #   depends_on:
+  #     - data
+  #     - command
+  #
+  # device-modbus:
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go-arm64:master
+  #   ports:
+  #     - "49991:49991"
+  #   container_name: edgex-device-modbus
+  #   hostname: edgex-device-modbus
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - log-data:/edgex/logs:z
+  #   depends_on:
+  #     - data
+  #     - command
+  #
+  # device-snmp:
+  #   image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go-arm64:master
+  #   ports:
+  #     - "49993:49993"
+  #   container_name: edgex-device-snmp
+  #   hostname: edgex-device-snmp
+  #   networks:
+  #     - edgex-network
+  #   volumes:
+  #     - log-data:/edgex/logs:z
+  #   depends_on:
+  #     - data
+  #     - command
+
+#################################################################
+# UIs
+#################################################################
+  ui:
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go-arm64:master
+    ports:
+      - "4000:4000"
+    container_name: edgex-ui-go
+    hostname: edgex-ui-go
+    networks:
+      - edgex-network
+    depends_on:
+      - data
+      - command
+
+#################################################################
+# Tooling
+#################################################################
+
+  portainer:
+    image:  portainer/portainer
+    ports:
+      - "9000:9000"
+    command: -H unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:z
+      - portainer_data:/data
+    depends_on:
+      - volume
+
+networks:
+  edgex-network:
+    driver: "bridge"
+
