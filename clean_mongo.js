@@ -46,5 +46,3 @@ db.auth('notifications','password');
 db.notification.remove({});
 db.subscription.remove({});
 db.transmission.remove({});
-db=db.getSiblingDB('exportclient')
-db.exportConfiguration.remove({});

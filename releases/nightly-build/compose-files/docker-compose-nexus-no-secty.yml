@@ -227,48 +227,6 @@ services:
     depends_on:
       - app-service-rules
 
-  #  export-client:
-  #    image: nexus3.edgexfoundry.org:10004/docker-export-client-go:master
-  #    ports:
-  #      - "48071:48071"
-  #    container_name: edgex-export-client
-  #    hostname: edgex-export-client
-  #    networks:
-  #      - edgex-network
-  #    environment:
-  #      <<: *common-variables
-  #    volumes:
-  #      - db-data:/data/db
-  #      - log-data:/edgex/logs
-  #      - consul-config:/consul/config
-  #      - consul-data:/consul/data
-  #    depends_on:
-  #      - data
-  #
-  #  export-distro:
-  #    image: nexus3.edgexfoundry.org:10004/docker-export-distro-go:master
-  #    ports:
-  #      - "48070:48070"
-  #      - "5566:5566"
-  #    container_name: edgex-export-distro
-  #    hostname: edgex-export-distro
-  #    networks:
-  #      - edgex-network
-  #    volumes:
-  #      - db-data:/data/db
-  #      - log-data:/edgex/logs
-  #      - consul-config:/consul/config
-  #      - consul-data:/consul/data
-  #    depends_on:
-  #      - export-client
-  #    environment:
-  #      <<: *common-variables
-  #      EXPORT_DISTRO_CLIENT_HOST: export-client
-  #      EXPORT_DISTRO_DATA_HOST: edgex-core-data
-  #      EXPORT_DISTRO_CONSUL_HOST: dgex-config-seed
-  #      EXPORT_DISTRO_MQTTS_CERT_FILE: none
-  #      EXPORT_DISTRO_MQTTS_KEY_FILE: none
-
 #################################################################
 # Device Services
 #################################################################
