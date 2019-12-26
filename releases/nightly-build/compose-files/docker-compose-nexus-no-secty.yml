@@ -42,10 +42,10 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
+      - db-data:/data/db:z
+      - log-data:/edgex/logs:z
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
 
   consul:
     image: consul:1.3.1
@@ -59,8 +59,8 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
-      - consul-config:/consul/config
-      - consul-data:/consul/data
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
     depends_on:
       - volume
 
@@ -75,7 +75,7 @@ services:
     environment:
       <<: *common-variables            
     volumes:
-      - log-data:/edgex/logs
+      - log-data:/edgex/logs:z
     depends_on:
       - volume
       - consul
@@ -91,7 +91,7 @@ services:
     environment:
       <<: *common-variables
     volumes:
-      - db-data:/data/db
+      - db-data:/data/db:z
     depends_on:
       - volume
 
@@ -106,7 +106,7 @@ services:
     environment:
       <<: *common-variables
     volumes:
-      - log-data:/edgex/logs
+      - log-data:/edgex/logs:z
     depends_on:
       - config-seed
       - mongo
@@ -123,7 +123,7 @@ services:
     environment:
       <<: *common-variables
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
       - logging
 
@@ -199,6 +199,8 @@ services:
       - "48100:48100"
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
+    entrypoint: ["/app-service-configurable"]
+    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     networks:
       edgex-network:
         aliases:
@@ -254,7 +256,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - log-data:/edgex/logs
+  #     - log-data:/edgex/logs:z
   #   depends_on:
   #     - data
   #     - command
@@ -268,7 +270,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - log-data:/edgex/logs
+  #     - log-data:/edgex/logs:z
   #   depends_on:
   #     - data
   #     - command
@@ -282,7 +284,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - log-data:/edgex/logs
+  #     - log-data:/edgex/logs:z
   #   depends_on:
   #     - data
   #     - command
@@ -296,7 +298,7 @@ services:
   #   networks:
   #     - edgex-network
   #   volumes:
-  #     - log-data:/edgex/logs
+  #     - log-data:/edgex/logs:z
   #   depends_on:
   #     - data
   #     - command
@@ -326,7 +328,7 @@ services:
       - "9000:9000"
     command: -H unix:///var/run/docker.sock
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:z
       - portainer_data:/data
     depends_on:
       - volume

@@ -31,11 +31,12 @@ volumes:
   consul-config:
   consul-data:
   consul-scripts:
-  portainer_data:
   vault-init:
   vault-config:
   vault-file:
   vault-logs:
+  # non-shared volumes
+  portainer_data:
   secrets-setup-cache:
 
 services:
@@ -45,10 +46,10 @@ services:
     networks:
       - edgex-network
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
+      - db-data:/data/db:z
+      - log-data:/edgex/logs:z
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
 
   consul:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
@@ -62,13 +63,13 @@ services:
         aliases:
             - edgex-core-consul
     volumes:
-      - consul-config:/consul/config
-      - consul-data:/consul/data
-      - consul-scripts:/consul/scripts
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro
-      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro
-      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
+      - consul-scripts:/consul/scripts:z
+      - vault-config:/vault/config:ro,z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
+      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
     depends_on:
       - volume
 
@@ -81,10 +82,10 @@ services:
         aliases:
             - edgex-core-config-seed
     volumes:
-      - db-data:/data/db
-      - log-data:/edgex/logs
-      - consul-config:/consul/config
-      - consul-data:/consul/data
+      - db-data:/data/db:z
+      - log-data:/edgex/logs:z
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
     depends_on:
       - volume
       - consul
@@ -109,10 +110,10 @@ services:
       - VAULT_CONFIG_DIR=/vault/config
       - VAULT_UI=true
     volumes:
-      - vault-file:/vault/file
-      - vault-logs:/vault/logs
-      - vault-init:/vault/init:ro
-      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro
+      - vault-file:/vault/file:z
+      - vault-logs:/vault/logs:z
+      - vault-init:/vault/init:ro,z
+      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
     depends_on:
       - security-secrets-setup
       - consul
@@ -123,11 +124,12 @@ services:
     hostname: edgex-secrets-setup
     tmpfs:
       - /tmp
+      - /run
     command: "generate"
     volumes:
       - secrets-setup-cache:/etc/edgex/pki
-      - vault-init:/vault/init
-      - /tmp/edgex/secrets:/tmp/edgex/secrets
+      - vault-init:/vault/init:z
+      - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
       - volume
 
@@ -140,10 +142,9 @@ services:
         aliases:
             - edgex-vault-worker
     volumes:
-      - vault-config:/vault/config
-      - consul-scripts:/consul/scripts
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
-      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro
+      - vault-config:/vault/config:z
+      - consul-scripts:/consul/scripts:ro,z
+      - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
       - volume
       - consul
@@ -185,7 +186,7 @@ services:
         kong migrations up && kong migrations finish;
       fi'
     volumes:
-      - consul-scripts:/consul/scripts
+      - consul-scripts:/consul/scripts:ro,z
     depends_on:
       - kong-db
       - volume
@@ -218,7 +219,7 @@ services:
       "until /consul/scripts/consul-svc-healthy.sh kong-migrations; do sleep 1; done;
       /docker-entrypoint.sh kong docker-start"
     volumes:
-      - consul-scripts:/consul/scripts
+      - consul-scripts:/consul/scripts:ro,z
     depends_on:
         - kong-db
         - kong-migrations
@@ -239,10 +240,10 @@ services:
         aliases:
             - edgex-proxy
     volumes:
-      - vault-config:/vault/config
-      - consul-scripts:/consul/scripts
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
-      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro      
+      - vault-config:/vault/config:z
+      - consul-scripts:/consul/scripts:ro,z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z      
     depends_on:
         - vault
         - kong-db
@@ -263,9 +264,9 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config
-      - consul-scripts:/consul/scripts
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - vault-config:/vault/config:z
+      - consul-scripts:/consul/scripts:ro,z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - volume
       - vault-worker
@@ -279,9 +280,9 @@ services:
     networks:
       - edgex-network
     volumes:
-      - log-data:/edgex/logs
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - log-data:/edgex/logs:z
+      - vault-config:/vault/config:z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - config-seed
       - mongo
@@ -296,7 +297,7 @@ services:
     networks:
       - edgex-network
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
       - logging
 
@@ -309,8 +310,8 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - vault-config:/vault/config:z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - logging
 
@@ -323,8 +324,8 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - vault-config:/vault/config:z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - logging
 
@@ -338,8 +339,8 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - vault-config:/vault/config:z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - logging
 
@@ -352,8 +353,8 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - vault-config:/vault/config:z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - metadata
 
@@ -366,8 +367,8 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config
-      - /tmp/edgex/secrets/ca/ca.pem:/tmp/edgex/secrets/ca/ca.pem:ro
+      - vault-config:/vault/config:z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - metadata
 
@@ -377,6 +378,8 @@ services:
       - "48100:48100"
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
+    entrypoint: ["/app-service-configurable"]
+    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     networks:
       edgex-network:
         aliases:
@@ -504,7 +507,7 @@ services:
       - "9000:9000"
     command: -H unix:///var/run/docker.sock
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock:z
       - portainer_data:/data
     depends_on:
       - volume
