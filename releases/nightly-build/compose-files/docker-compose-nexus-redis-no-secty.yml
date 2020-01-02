@@ -83,7 +83,7 @@ services:
       - consul
 
   redis:
-    image: redis:5.0.5-alpine
+    image: redis:6.0-rc1-alpine
     ports:
       - "6379:6379"
     container_name: edgex-redis
