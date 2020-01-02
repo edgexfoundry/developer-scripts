@@ -153,7 +153,7 @@ services:
 
 # containers for reverse proxy
   kong-db:
-    image: postgres:9.6
+    image: postgres:12.1-alpine
     container_name: kong-db
     hostname: kong-db
     networks:
