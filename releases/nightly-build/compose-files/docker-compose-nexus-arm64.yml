@@ -206,6 +206,7 @@ services:
         - "8001:8001"
         - "8443:8443"
         - "8444:8444"
+    tty: true
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
