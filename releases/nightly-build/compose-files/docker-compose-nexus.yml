@@ -244,10 +244,9 @@ services:
       - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
-      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z      
+      - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
     depends_on:
-        - vault
-        - kong-db
+        - vault-worker
         - kong
 
 # end of containers for reverse proxy
