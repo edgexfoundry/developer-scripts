@@ -144,8 +144,7 @@ services:
     volumes:
       - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
-      - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
+      - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
       - volume
       - consul
