@@ -267,6 +267,7 @@ services:
       - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-mongo:/tmp/edgex/secrets/edgex-mongo:ro,z
     depends_on:
       - volume
       - vault-worker
@@ -283,6 +284,7 @@ services:
       - log-data:/edgex/logs:z
       - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
     depends_on:
       - config-seed
       - mongo
@@ -312,6 +314,7 @@ services:
     volumes:
       - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
       - logging
 
@@ -326,6 +329,7 @@ services:
     volumes:
       - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
       - logging
 
@@ -341,6 +345,7 @@ services:
     volumes:
       - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
       - logging
 
@@ -355,6 +360,7 @@ services:
     volumes:
       - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
       - metadata
 
@@ -369,6 +375,7 @@ services:
     volumes:
       - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
       - metadata
 
