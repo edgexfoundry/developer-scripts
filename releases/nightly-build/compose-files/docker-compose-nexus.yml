@@ -141,6 +141,8 @@ services:
       edgex-network:
         aliases:
             - edgex-vault-worker
+    tmpfs:
+      - /run
     volumes:
       - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
@@ -241,7 +243,6 @@ services:
         aliases:
             - edgex-proxy
     volumes:
-      - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
@@ -264,7 +265,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-mongo:/tmp/edgex/secrets/edgex-mongo:ro,z
@@ -282,7 +282,6 @@ services:
       - edgex-network
     volumes:
       - log-data:/edgex/logs:z
-      - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
     depends_on:
@@ -312,7 +311,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
@@ -327,7 +325,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
@@ -343,7 +340,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
@@ -358,7 +354,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
@@ -373,7 +368,6 @@ services:
     networks:
       - edgex-network
     volumes:
-      - vault-config:/vault/config:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
