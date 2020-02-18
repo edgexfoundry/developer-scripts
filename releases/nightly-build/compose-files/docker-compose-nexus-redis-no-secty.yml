@@ -1,5 +1,5 @@
 # /*******************************************************************************
-#  * Copyright 2018 Dell Inc.
+#  * Copyright 2020 Redis Labs Inc.
 #  *
 #  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 #  * in compliance with the License. You may obtain a copy of the License at
@@ -12,11 +12,13 @@
 #  * the License.
 #  *
 #  * @author: Jim White, Dell
-#  * EdgeX Foundry, Fuji, version master
-#  * added: Jun 30, 2019
+#  * @author: Andre Srinivasan, Redis Labs
+#  * EdgeX Foundry, Geneva, version 1.2.0
+#  * added: Feb 2020
 #  *******************************************************************************/
 
-# NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway and Secret Store
+# NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway
+# and Secret Store
 
 version: '3.4'
 
@@ -83,7 +85,7 @@ services:
       - consul
 
   redis:
-    image: redis:5.0.5-alpine
+    image: redis:5.0.7-alpine
     ports:
       - "6379:6379"
     container_name: edgex-redis
