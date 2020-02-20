@@ -169,7 +169,7 @@ services:
         - 'POSTGRES_PASSWORD=${KONG_POSTGRES_PASSWORD:-kong}'
 
   kong-migrations:
-    image: kong:1.3.0-ubuntu
+    image: kong:${KONG_VERSION:-2.0.1}-ubuntu
     container_name: kong-migrations
     networks:
       edgex-network:
@@ -197,7 +197,7 @@ services:
       - consul
 
   kong:
-    image: kong:1.3.0-ubuntu
+    image: kong:${KONG_VERSION:-2.0.1}-ubuntu
     container_name: kong
     hostname: kong
     networks:
