@@ -166,6 +166,7 @@ services:
     environment:
         - 'POSTGRES_DB=kong'
         - 'POSTGRES_USER=kong'
+        - 'POSTGRES_PASSWORD=${KONG_POSTGRES_PASSWORD:-kong}'
 
   kong-migrations:
     image: kong:${KONG_VERSION:-2.0.1}-ubuntu
@@ -177,6 +178,7 @@ services:
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
+        - 'KONG_PG_PASSWORD=${KONG_POSTGRES_PASSWORD:-kong}'
     command: >
       /bin/sh -cx 
       'until /consul/scripts/consul-svc-healthy.sh kong-db;
@@ -211,6 +213,7 @@ services:
     environment:
         - 'KONG_DATABASE=postgres'
         - 'KONG_PG_HOST=kong-db'
+        - 'KONG_PG_PASSWORD=${KONG_POSTGRES_PASSWORD:-kong}'
         - 'KONG_PROXY_ACCESS_LOG=/dev/stdout'
         - 'KONG_ADMIN_ACCESS_LOG=/dev/stdout'
         - 'KONG_PROXY_ERROR_LOG=/dev/stderr'
