@@ -69,7 +69,7 @@ services:
 
   config-seed:
     image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:master
-    command: ["--profile=docker", "--cmd=/edgex/cmd-redis"]
+    command: ["--profile=docker", "--cmd=/edgex/cmd-redis", "-cp=consul.http://edgex-core-consul:8500"]
     container_name: edgex-config-seed
     hostname: edgex-core-config-seed
     networks:
