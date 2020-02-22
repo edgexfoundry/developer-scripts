@@ -58,6 +58,8 @@ services:
       - "8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
+    environment:
+      - "SECRETSTORE_SETUP_DONE_FLAG=/tmp/edgex/secrets/edgex-consul/.secretstore-setup-done"
     networks:
       edgex-network:
         aliases:
@@ -66,8 +68,8 @@ services:
       - consul-config:/consul/config:z
       - consul-data:/consul/data:z
       - consul-scripts:/consul/scripts:z
-      - vault-config:/vault/config:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+      - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
       - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
       - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
     depends_on:
@@ -137,6 +139,8 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go-arm64:master
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
+    environment:
+      - "SECRETSTORE_SETUP_DONE_FLAG=/tmp/edgex/secrets/edgex-consul/.secretstore-setup-done"
     networks:
       edgex-network:
         aliases:
