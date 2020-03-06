@@ -24,6 +24,10 @@ x-common-env-variables: &common-variables
   Clients_CoreData_Host: edgex-core-data
   Clients_Logging_Host: edgex-support-logging
   Logging_EnableRemote: "true"
+  Databases_Primary_Type: mongodb
+  Databases_Primary_Host: edgex-mongo
+  Databases_Primary_Port: 27017
+  support-logging_Writable_Persistence: database
 
 volumes:
   db-data:
@@ -83,6 +87,8 @@ services:
       edgex-network:
         aliases:
             - edgex-core-config-seed
+    environment:
+      <<: *common-variables
     volumes:
       - db-data:/data/db:z
       - log-data:/edgex/logs:z
