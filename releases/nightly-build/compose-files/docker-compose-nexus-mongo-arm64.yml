@@ -216,9 +216,9 @@ services:
             - kong
     ports:
         - "8000:8000"
-        - "8001:8001"
+        - "${KONG_BINDABLE_IP:-127.0.0.1}:8001:8001"
         - "8443:8443"
-        - "8444:8444"
+        - "${KONG_BINDABLE_IP:-127.0.0.1}:8444:8444"
     tty: true
     environment:
         - 'KONG_DATABASE=postgres'
