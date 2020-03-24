@@ -92,8 +92,6 @@ services:
       edgex-network:
         aliases:
             - edgex-vault
-    ports:
-      - "8200:8200"
     cap_add:
       - "IPC_LOCK"
     environment:
