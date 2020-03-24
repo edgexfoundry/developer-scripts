@@ -57,9 +57,6 @@ services:
 
   consul:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-consul-arm64:master
-    ports:
-      - "8400:8400"
-      - "8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
     environment:

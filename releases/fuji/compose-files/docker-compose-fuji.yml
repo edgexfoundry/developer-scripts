@@ -51,9 +51,6 @@ services:
 
   consul:
     image: edgexfoundry/docker-edgex-consul:1.1.0
-    ports:
-      - "8400:8400"
-      - "8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
     networks:
