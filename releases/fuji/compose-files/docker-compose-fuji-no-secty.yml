@@ -84,8 +84,6 @@ services:
 
   mongo:
     image: edgexfoundry/docker-edgex-mongo:1.1.0
-    ports:
-      - "27017:27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
     networks:

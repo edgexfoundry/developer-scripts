@@ -260,8 +260,6 @@ services:
 
   mongo:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:master
-    ports:
-      - "27017:27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
     entrypoint: >
