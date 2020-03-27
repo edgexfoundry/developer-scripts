@@ -57,6 +57,9 @@ services:
 
   consul:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
+    ports:
+      - "127.0.0.1:8400:8400"
+      - "127.0.0.1:8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
     environment:
@@ -103,6 +106,8 @@ services:
       edgex-network:
         aliases:
             - edgex-vault
+    ports:
+      - "127.0.0.1:8200:8200"
     cap_add:
       - "IPC_LOCK"
     tmpfs:
@@ -166,6 +171,8 @@ services:
       edgex-network:
         aliases:
             - kong-db
+    ports:
+        - "127.0.0.1:5432:5432"
     environment:
         - 'POSTGRES_DB=kong'
         - 'POSTGRES_USER=kong'
@@ -209,9 +216,9 @@ services:
             - kong
     ports:
         - "8000:8000"
-        - "${KONG_BINDABLE_IP:-127.0.0.1}:8001:8001"
+        - "${KONG_ADMIN_BINDABLE_IP:-127.0.0.1}:8001:8001"
         - "8443:8443"
-        - "${KONG_BINDABLE_IP:-127.0.0.1}:8444:8444"
+        - "${KONG_ADMIN_BINDABLE_IP:-127.0.0.1}:8444:8444"
     tty: true
     environment:
         - 'KONG_DATABASE=postgres'
@@ -260,6 +267,8 @@ services:
 
   mongo:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:master
+    ports:
+      - "127.0.0.1:27017:27017"
     container_name: edgex-mongo
     hostname: edgex-mongo
     entrypoint: >

@@ -51,6 +51,9 @@ services:
 
   consul:
     image: nexus3.edgexfoundry.org:10001/arm64v8/consul:1.3.1
+    ports:
+      - "127.0.0.1:8400:8400"
+      - "127.0.0.1:8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
     networks:
@@ -83,6 +86,8 @@ services:
 
   redis:
     image: arm64v8/redis:5.0.7-alpine
+    ports:
+      - "6379:6379"
     container_name: edgex-redis
     hostname: edgex-redis
     networks:
