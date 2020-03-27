@@ -84,3 +84,6 @@ support-notifications-client/
 support-notifications/
 support-rulesengine/
 support-scheduler/
+
+# ignore convenience symlinks
+docker-compose.yml
