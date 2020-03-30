@@ -100,7 +100,7 @@ services:
   logging:
     image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:master
     ports:
-      - "48061:48061"
+      - "127.0.0.1:48061:48061"
     container_name: edgex-support-logging
     hostname: edgex-support-logging
     networks:
@@ -116,7 +116,7 @@ services:
   system:
     image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:master
     ports:
-      - "48090:48090"
+      - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
     hostname: edgex-sys-mgmt-agent
     networks:
@@ -131,7 +131,7 @@ services:
   notifications:
     image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:master
     ports:
-      - "48060:48060"
+      - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
     hostname: edgex-support-notifications
     networks:
@@ -145,7 +145,7 @@ services:
   metadata:
     image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:master
     ports:
-      - "48081:48081"
+      - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
     hostname: edgex-core-metadata
     networks:
@@ -159,8 +159,8 @@ services:
   data:
     image: nexus3.edgexfoundry.org:10004/docker-core-data-go:master
     ports:
-      - "48080:48080"
-      - "5563:5563"
+      - "127.0.0.1:48080:48080"
+      - "127.0.0.1:5563:5563"
     container_name: edgex-core-data
     hostname: edgex-core-data
     networks:
@@ -174,7 +174,7 @@ services:
   command:
     image: nexus3.edgexfoundry.org:10004/docker-core-command-go:master
     ports:
-      - "48082:48082"
+      - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
     hostname: edgex-core-command
     networks:
@@ -187,7 +187,7 @@ services:
   scheduler:
     image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:master
     ports:
-      - "48085:48085"
+      - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler
     hostname: edgex-support-scheduler
     networks:
@@ -201,7 +201,7 @@ services:
   app-service-rules:
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
     ports:
-      - "48100:48100"
+      - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
     entrypoint: ["/app-service-configurable"]
@@ -224,7 +224,7 @@ services:
   rulesengine:
     image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
     ports:
-      - "48075:48075"
+      - "127.0.0.1:48075:48075"
     container_name: edgex-support-rulesengine
     hostname: edgex-support-rulesengine
     networks:
@@ -241,7 +241,7 @@ services:
   device-virtual:
     image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:master
     ports:
-    - "49990:49990"
+    - "127.0.0.1:49990:49990"
     container_name: edgex-device-virtual
     hostname: edgex-device-virtual
     networks:
@@ -255,7 +255,7 @@ services:
   # device-random:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go:master
   #   ports:
-  #     - "49988:49988"
+  #     - "127.0.0.1:49988:49988"
   #   container_name: edgex-device-random
   #   hostname: edgex-device-random
   #   networks:
@@ -271,7 +271,7 @@ services:
   # device-mqtt:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go:master
   #   ports:
-  #     - "49982:49982"
+  #     - "127.0.0.1:49982:49982"
   #   container_name: edgex-device-mqtt
   #   hostname: edgex-device-mqtt
   #   networks:
@@ -287,7 +287,7 @@ services:
   # device-modbus:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go:master
   #   ports:
-  #     - "49991:49991"
+  #     - "127.0.0.1:49991:49991"
   #   container_name: edgex-device-modbus
   #   hostname: edgex-device-modbus
   #   networks:
@@ -301,7 +301,7 @@ services:
   # device-snmp:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go:master
   #   ports:
-  #     - "49993:49993"
+  #     - "127.0.0.1:49993:49993"
   #   container_name: edgex-device-snmp
   #   hostname: edgex-device-snmp
   #   networks:
@@ -318,7 +318,7 @@ services:
   ui:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go:master
     ports:
-      - "4000:4000"
+      - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
     hostname: edgex-ui-go
     networks:
@@ -334,7 +334,7 @@ services:
   portainer:
     image:  portainer/portainer
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
     command: -H unix:///var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
