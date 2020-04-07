@@ -430,6 +430,7 @@ services:
           - edgex-app-service-configurable-rules
     environment:
       <<: *common-variables
+      EDGEX_SECURITY_SECRET_STORE: "false"
       edgex_service: http://edgex-app-service-configurable-rules:48100
       edgex_profile: rules-engine
       Service_Host: edgex-app-service-configurable-rules
