@@ -25,14 +25,17 @@ version: '3.4'
 # all common shared environment variables defined here:
 x-common-env-variables: &common-variables
   EDGEX_SECURITY_SECRET_STORE: "false"
-  edgex_registry: consul://edgex-core-consul:8500
+  Registry_Host: edgex-core-consul
   Clients_CoreData_Host: edgex-core-data
   Clients_Logging_Host: edgex-support-logging
+  Clients_Notifications_Host: edgex-support-notifications
+  Clients_Metadata_Host: edgex-core-metadata
+  Clients_Command_Host: edgex-core-command
+  Clients_Scheduler_Host: edgex-support-scheduler
   Logging_EnableRemote: "true"
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
-  support-logging_Writable_Persistence: database
 
 volumes:
   db-data:
@@ -70,22 +73,6 @@ services:
     depends_on:
       - volume
 
-  config-seed:
-    image: nexus3.edgexfoundry.org:10004/docker-core-config-seed-go:master
-    container_name: edgex-config-seed
-    hostname: edgex-core-config-seed
-    networks:
-      edgex-network:
-        aliases:
-            - edgex-core-config-seed
-    environment:
-      <<: *common-variables            
-    volumes:
-      - log-data:/edgex/logs:z
-    depends_on:
-      - volume
-      - consul
-
   mongo:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:master
     ports:
@@ -111,10 +98,16 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-support-logging
+      Writable_Persistence: database
+      Logging_EnableRemote: "false"
+      Logging_File: /edgex/logs/edgex-support-logging.log
+      # TODO: Remove these when back in configuration.toml
+      Databases_Primary_Password: 'password'
+      Databases_Primary_Username: 'logging'
     volumes:
       - log-data:/edgex/logs:z
     depends_on:
-      - config-seed
       - mongo
       - volume
 
@@ -128,6 +121,9 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-sys-mgmt-agent
+      ExecutorPath: /sys-mgmt-executor
+      MetricsMechanism: executor
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
@@ -143,6 +139,10 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-support-notifications
+      # TODO: Remove these when back in configuration.toml
+      Databases_Primary_Password: 'password'
+      Databases_Primary_Username: 'notifications'
     depends_on:
       - logging
 
@@ -156,6 +156,11 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-core-metadata
+      Notifications_Sender: edgex-core-metadata
+      # TODO: Remove these when back in configuration.toml
+      Databases_Primary_Password: 'password'
+      Databases_Primary_Username: 'meta'
     depends_on:
       - logging
 
@@ -170,6 +175,10 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-core-data
+      # TODO: Remove these when back in configuration.toml
+      Databases_Primary_Password: 'password'
+      Databases_Primary_Username: 'core'
     depends_on:
       - logging
 
@@ -183,6 +192,10 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-core-command
+      # TODO: Remove these when back in configuration.toml
+      Databases_Primary_Password: 'password'
+      Databases_Primary_Username: 'meta'
     depends_on:
       - metadata
 
@@ -196,6 +209,12 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
+      Service_Host: edgex-support-scheduler
+      IntervalActions_ScrubPushed_Host: edgex-core-data
+      IntervalActions_ScrubAged_Host: edgex-core-data
+      # TODO: Remove these when back in configuration.toml
+      Databases_Primary_Password: 'password'
+      Databases_Primary_Username: 'scheduler'
     depends_on:
       - metadata
 
@@ -216,6 +235,7 @@ services:
       edgex_service: http://edgex-app-service-configurable-rules:48100
       edgex_profile: rules-engine
       Service_Host: edgex-app-service-configurable-rules
+      edgex_registry: consul://edgex-core-consul:8500
       MessageBus_SubscribeHost_Host: edgex-core-data
     depends_on:
       - consul
