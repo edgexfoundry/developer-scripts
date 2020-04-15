@@ -32,7 +32,6 @@ x-common-env-variables: &common-variables
   Clients_Metadata_Host: edgex-core-metadata
   Clients_Command_Host: edgex-core-command
   Clients_Scheduler_Host: edgex-support-scheduler
-  Logging_EnableRemote: "true"
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
