@@ -27,7 +27,6 @@ x-common-env-variables: &common-variables
   Clients_Metadata_Host: edgex-core-metadata
   Clients_Command_Host: edgex-core-command
   Clients_Scheduler_Host: edgex-support-scheduler
-  Logging_EnableRemote: "true"
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
@@ -249,8 +248,6 @@ services:
       SecretService_TokenPath: /tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json
       SecretService_CACertPath: /tmp/edgex/secrets/ca/ca.pem
       SecretService_SNIS: "edgex-kong"
-      Logging_EnableRemote: "false"
-      Logging_File: "/tmp/security-proxy-setup.log"
     volumes:
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
