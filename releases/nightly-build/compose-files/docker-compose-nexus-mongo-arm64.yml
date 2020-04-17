@@ -28,7 +28,6 @@ x-common-env-variables: &common-variables
   Clients_Command_Host: edgex-core-command
   Clients_Scheduler_Host: edgex-support-scheduler
   Clients_RulesEngine_Host: edgex-kuiper
-  Logging_EnableRemote: "true"
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
@@ -250,8 +249,6 @@ services:
       SecretService_TokenPath: /tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json
       SecretService_CACertPath: /tmp/edgex/secrets/ca/ca.pem
       SecretService_SNIS: "edgex-kong"
-      Logging_EnableRemote: "false"
-      Logging_File: "/tmp/security-proxy-setup.log"
     volumes:
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
@@ -431,6 +428,7 @@ services:
           - edgex-app-service-configurable-rules
     environment:
       <<: *common-variables
+      EDGEX_SECURITY_SECRET_STORE: "false"
       edgex_service: http://edgex-app-service-configurable-rules:48100
       edgex_profile: rules-engine
       Service_Host: edgex-app-service-configurable-rules
