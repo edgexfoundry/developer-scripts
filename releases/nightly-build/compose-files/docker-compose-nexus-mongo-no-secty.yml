@@ -32,6 +32,7 @@ x-common-env-variables: &common-variables
   Clients_Metadata_Host: edgex-core-metadata
   Clients_Command_Host: edgex-core-command
   Clients_Scheduler_Host: edgex-support-scheduler
+  Clients_RulesEngine_Host: edgex-kuiper
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
@@ -236,23 +237,47 @@ services:
       Service_Host: edgex-app-service-configurable-rules
       edgex_registry: consul://edgex-core-consul:8500
       MessageBus_SubscribeHost_Host: edgex-core-data
+      Binding_PublishTopic: events
     depends_on:
       - consul
       - logging
       - data
       
   rulesengine:
-    image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
+    image: emqx/kuiper:0.3.1
     ports:
       - "48075:48075"
-    container_name: edgex-support-rulesengine
-    hostname: edgex-support-rulesengine
+      - "20498:20498"
+    container_name: edgex-kuiper
+    hostname: edgex-kuiper
     networks:
       edgex-network:
         aliases:
-          - edgex-support-rulesengine
+          - edgex-kuiper
+    environment:
+      # KUIPER_DEBUG: "true"
+      KUIPER_CONSOLE_LOG: "true"
+      KUIPER_REST_PORT: 48075
+      EDGEX_SERVER: edgex-app-service-configurable-rules
+      EDGEX_SERVICE_SERVER: http://edgex-core-data:48080
+      EDGEX_TOPIC: events
+      EDGEX_PROTOCOL: tcp
+      EDGEX_PORT: 5566
     depends_on:
       - app-service-rules
+
+  # rulesengine:
+  #   image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
+  #   ports:
+  #     - "48075:48075"
+  #   container_name: edgex-support-rulesengine
+  #   hostname: edgex-support-rulesengine
+  #   networks:
+  #     edgex-network:
+  #       aliases:
+  #         - edgex-support-rulesengine
+  #   depends_on:
+  #     - app-service-rules
 
 #################################################################
 # Device Services
