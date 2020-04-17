@@ -46,7 +46,6 @@ volumes:
   vault-file:
   vault-logs:
   # non-shared volumes
-  portainer_data:
   secrets-setup-cache:
 
 services:
@@ -567,21 +566,6 @@ services:
     depends_on:
       - data
       - command
-
-#################################################################
-# Tooling
-#################################################################
-
-  portainer:
-    image:  portainer/portainer
-    ports:
-      - "9000:9000"
-    command: -H unix:///var/run/docker.sock
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:z
-      - portainer_data:/data
-    depends_on:
-      - volume
 
 networks:
   edgex-network:
