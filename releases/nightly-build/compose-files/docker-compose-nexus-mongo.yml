@@ -51,7 +51,7 @@ volumes:
 
 services:
   volume:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-volume:master
+    image: ubuntu:latest
     container_name: edgex-files
     networks:
       - edgex-network
@@ -60,6 +60,7 @@ services:
       - log-data:/edgex/logs:z
       - consul-config:/consul/config:z
       - consul-data:/consul/data:z
+    entrypoint: [ "tail", "-f", "/dev/null" ]
 
   consul:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
@@ -70,6 +71,8 @@ services:
     hostname: edgex-core-consul
     environment:
       - "SECRETSTORE_SETUP_DONE_FLAG=/tmp/edgex/secrets/edgex-consul/.secretstore-setup-done"
+      - EDGEX_DB=mongo
+      - EDGEX_SECURE=true
     networks:
       edgex-network:
         aliases:
