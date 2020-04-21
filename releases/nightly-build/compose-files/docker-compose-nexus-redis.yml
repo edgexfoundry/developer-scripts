@@ -35,12 +35,14 @@ x-common-env-variables: &common-variables
   SecretStore_ServerName: edgex-vault
   SecretStore_RootCaCertPath: /tmp/edgex/secrets/ca/ca.pem
 
+# REDIS5_PASSWORD_PATHNAME must have the same value as
+# security-secretstore-read/res/configuration.toml SecretStore.Passwordfile. Note edgex-go issue
+# #2503 that will address this.
 x-redis5-env-variables: &redis5-variables
-  REDIS5_PASSWORD_PATHNAME: /dbsecrets/redis5-password
+  REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
 
 volumes:
   db-data:
-  db-secrets:
   log-data:
   consul-config:
   consul-data:
@@ -149,7 +151,6 @@ services:
       - /run
     volumes:
       - vault-config:/vault/config:z
-      - db-secrets:/dbsecrets:z
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
@@ -288,7 +289,7 @@ services:
       - edgex-network
     volumes:
       - db-data:/data:z
-      - db-secrets:/dbsecrets:z
+      - /tmp/edgex/secrets/edgex-redis:/tmp/edgex/secrets/edgex-redis:z
     depends_on:
       - volume
       - vault-worker
