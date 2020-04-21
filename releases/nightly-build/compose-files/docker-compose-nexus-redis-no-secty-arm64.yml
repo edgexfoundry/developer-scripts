@@ -232,7 +232,7 @@ services:
       - data
 
   rulesengine:
-    image: emqx/kuiper:0.3.1
+    image: emqx/kuiper:0.3.2
     ports:
       - "48075:48075"
       - "20498:20498"
