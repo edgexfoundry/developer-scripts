@@ -33,6 +33,7 @@ x-common-env-variables: &common-variables
   Clients_Command_Host: edgex-core-command
   Clients_Scheduler_Host: edgex-support-scheduler
   Clients_RulesEngine_Host: edgex-kuiper
+  Clients_VirtualDevice_Host: edgex-device-virtual
   Databases_Primary_Host: edgex-redis
 
 volumes:
