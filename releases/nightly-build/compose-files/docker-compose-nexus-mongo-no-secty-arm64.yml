@@ -301,6 +301,9 @@ services:
       edgex-network:
         aliases:
         - edgex-device-virtual
+    environment:
+      <<: *common-variables
+      Service_Host: edgex-device-virtual
     depends_on:
     - data
     - command
@@ -313,8 +316,11 @@ services:
   #   hostname: edgex-device-random
   #   networks:
   #     - edgex-network
-  #   volumes:
-  #     - log-data:/edgex/logs:z
+  #      aliases:
+  #      - edgex-device-random
+  #   environment:
+  #     <<: *common-variables
+  #     Service_Host: edgex-device-random
   #   depends_on:
   #     - data
   #     - command
@@ -327,8 +333,11 @@ services:
   #   hostname: edgex-device-mqtt
   #   networks:
   #     - edgex-network
-  #   volumes:
-  #     - log-data:/edgex/logs:z
+  #      aliases:
+  #      - edgex-device-mqtt
+  #   environment:
+  #     <<: *common-variables
+  #     Service_Host: edgex-device-mqtt
   #   depends_on:
   #     - data
   #     - command
@@ -341,8 +350,11 @@ services:
   #   hostname: edgex-device-modbus
   #   networks:
   #     - edgex-network
-  #   volumes:
-  #     - log-data:/edgex/logs:z
+  #      aliases:
+  #      - edgex-device-modbus
+  #   environment:
+  #     <<: *common-variables
+  #     Service_Host: edgex-device-modbus
   #   depends_on:
   #     - data
   #     - command
@@ -355,8 +367,11 @@ services:
   #   hostname: edgex-device-snmp
   #   networks:
   #     - edgex-network
-  #   volumes:
-  #     - log-data:/edgex/logs:z
+  #      aliases:
+  #      - edgex-device-snmp
+  #   environment:
+  #     <<: *common-variables
+  #     Service_Host: edgex-device-snmp
   #   depends_on:
   #     - data
   #     - command
