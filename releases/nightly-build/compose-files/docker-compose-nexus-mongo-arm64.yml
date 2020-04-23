@@ -292,17 +292,16 @@ services:
       - edgex-network
     environment:
       <<: *common-variables
-      Service_Host: edgex-support-logging
-      Writable_Persistence: database
       SecretStore_TokenFile: /tmp/edgex/secrets/edgex-support-logging/secrets-token.json
+      Service_Host: edgex-support-logging
+      Writable_Persistence: file
+      Databases_Primary_Type: file
       Logging_EnableRemote: "false"
-      Logging_File: /edgex/logs/edgex-support-logging.log
+      Logging_File: ""
     volumes:
-      - log-data:/edgex/logs:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
     depends_on:
-      - mongo
       - volume
 
   system:

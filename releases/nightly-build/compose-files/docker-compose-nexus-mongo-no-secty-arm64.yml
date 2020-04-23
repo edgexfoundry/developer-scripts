@@ -107,16 +107,11 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-support-logging
-      Writable_Persistence: database
+      Writable_Persistence: file
+      Databases_Primary_Type: file
       Logging_EnableRemote: "false"
-      Logging_File: /edgex/logs/edgex-support-logging.log
-      # TODO: Remove these when back in configuration.toml
-      Databases_Primary_Password: 'password'
-      Databases_Primary_Username: 'logging'
-    volumes:
-      - log-data:/edgex/logs:z
+      Logging_File: ""
     depends_on:
-      - mongo
       - volume
 
   system:
