@@ -55,18 +55,6 @@ volumes:
   secrets-setup-cache:
 
 services:
-  volume:
-    image: ubuntu:latest
-    container_name: edgex-files
-    networks:
-      - edgex-network
-    volumes:
-      - db-data:/data:z
-      - log-data:/edgex/logs:z
-      - consul-config:/consul/config:z
-      - consul-data:/consul/data:z
-    entrypoint: [ "tail", "-f", "/dev/null" ]
-
   consul:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
     ports:
@@ -74,10 +62,6 @@ services:
       - "8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
-    environment:
-      - "SECRETSTORE_SETUP_DONE_FLAG=/tmp/edgex/secrets/edgex-consul/.secretstore-setup-done"
-      - EDGEX_DB=redis
-      - EDGEX_SECURE=true
     networks:
       edgex-network:
         aliases:
@@ -90,8 +74,12 @@ services:
       - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
       - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
       - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
+    environment:
+      - "SECRETSTORE_SETUP_DONE_FLAG=/tmp/edgex/secrets/edgex-consul/.secretstore-setup-done"
+      - EDGEX_DB=redis
+      - EDGEX_SECURE=true
     depends_on:
-      - volume
+      - security-secrets-setup
 
   vault:
     image: vault:1.3.1
@@ -118,8 +106,8 @@ services:
       - vault-init:/vault/init:ro,z
       - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
     depends_on:
-      - security-secrets-setup
       - consul
+      - security-secrets-setup
 
   security-secrets-setup:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go:master
@@ -133,8 +121,6 @@ services:
       - secrets-setup-cache:/etc/edgex/pki
       - vault-init:/vault/init:z
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
-    depends_on:
-      - volume
 
   vault-worker:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:master
@@ -154,7 +140,7 @@ services:
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
-      - volume
+      - security-secrets-setup
       - consul
       - vault
 
@@ -173,6 +159,8 @@ services:
         - 'POSTGRES_DB=kong'
         - 'POSTGRES_USER=kong'
         - 'POSTGRES_PASSWORD=${KONG_POSTGRES_PASSWORD:-kong}'
+    depends_on:
+      - security-secrets-setup
 
   kong-migrations:
     image: kong:${KONG_VERSION:-2.0.1}
@@ -198,9 +186,8 @@ services:
     volumes:
       - consul-scripts:/consul/scripts:ro,z
     depends_on:
-      - kong-db
-      - volume
       - consul
+      - kong-db
 
   kong:
     image: kong:${KONG_VERSION:-2.0.1}
@@ -233,10 +220,9 @@ services:
     volumes:
       - consul-scripts:/consul/scripts:ro,z
     depends_on:
-        - kong-db
-        - kong-migrations
-        - volume
-        - consul
+      - consul
+      - kong-db
+      - kong-migrations
 
   edgex-proxy:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:master
@@ -263,8 +249,9 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
     depends_on:
-        - vault-worker
-        - kong
+      - consul
+      - vault-worker
+      - kong
 
 # end of containers for reverse proxy
 
@@ -291,7 +278,6 @@ services:
       - db-data:/data:z
       - /tmp/edgex/secrets/edgex-redis:/tmp/edgex/secrets/edgex-redis:z
     depends_on:
-      - volume
       - vault-worker
 
   logging:
@@ -313,7 +299,8 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
     depends_on:
-      - volume
+      - consul
+      - vault-worker
 
   system:
     image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:master
@@ -331,7 +318,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
+      - consul
       - logging
+      - scheduler
+      - notifications
+      - metadata
+      - data
+      - command
 
   notifications:
     image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:master
@@ -349,7 +342,10 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
+      - consul
       - logging
+      - redis
+      - vault-worker
 
   metadata:
     image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:master
@@ -368,7 +364,11 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
+      - consul
       - logging
+      - redis
+      - notifications
+      - vault-worker
 
   data:
     image: nexus3.edgexfoundry.org:10004/docker-core-data-go:master
@@ -387,7 +387,11 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
+      - consul
       - logging
+      - redis
+      - metadata
+      - vault-worker
 
   command:
     image: nexus3.edgexfoundry.org:10004/docker-core-command-go:master
@@ -405,7 +409,11 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
+      - consul
+      - logging
+      - redis
       - metadata
+      - vault-worker
 
   scheduler:
     image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:master
@@ -425,16 +433,19 @@ services:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
-      - metadata
+      - consul
+      - logging
+      - redis
+      - vault-worker
 
   app-service-rules:
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    entrypoint: ["/app-service-configurable"]
+    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     ports:
       - "48100:48100"
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
-    entrypoint: ["/app-service-configurable"]
-    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     networks:
       edgex-network:
         aliases:
@@ -452,6 +463,7 @@ services:
       - consul
       - logging
       - data
+      - vault-worker
 
   rulesengine:
     image: emqx/kuiper:0.3.2
@@ -507,8 +519,10 @@ services:
       <<: *common-variables
       Service_Host: edgex-device-virtual
     depends_on:
-    - data
-    - command
+      - consul
+      - logging
+      - data
+      - metadata
 
   # device-random:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go:master
