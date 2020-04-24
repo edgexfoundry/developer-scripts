@@ -102,9 +102,10 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-support-logging
+      Writable_Persistence: file
+      Databases_Primary_Type: file
       Logging_EnableRemote: "false"
-    volumes:
-      - log-data:/edgex/logs:z
+      Logging_File: ""
     depends_on:
       - volume
 
