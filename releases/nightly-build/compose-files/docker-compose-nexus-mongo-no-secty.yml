@@ -231,9 +231,9 @@ services:
           - edgex-app-service-configurable-rules
     environment:
       <<: *common-variables
-      edgex_service: http://edgex-app-service-configurable-rules:48100
       edgex_profile: rules-engine
       Service_Host: edgex-app-service-configurable-rules
+      Service_Port: 48100
       edgex_registry: consul://edgex-core-consul:8500
       MessageBus_SubscribeHost_Host: edgex-core-data
       Binding_PublishTopic: events
