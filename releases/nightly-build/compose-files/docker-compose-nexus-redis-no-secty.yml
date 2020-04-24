@@ -103,7 +103,6 @@ services:
       Writable_Persistence: file
       Databases_Primary_Type: file
       Logging_EnableRemote: "false"
-      Logging_File: ""
     depends_on:
       - volume
 

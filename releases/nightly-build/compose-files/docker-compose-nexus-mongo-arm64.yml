@@ -297,7 +297,6 @@ services:
       Writable_Persistence: file
       Databases_Primary_Type: file
       Logging_EnableRemote: "false"
-      Logging_File: ""
     volumes:
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
