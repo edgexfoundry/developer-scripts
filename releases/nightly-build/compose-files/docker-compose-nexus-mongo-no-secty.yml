@@ -128,9 +128,6 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-support-notifications
-      # TODO: Remove these when back in configuration.toml
-      Databases_Primary_Password: 'password'
-      Databases_Primary_Username: 'notifications'
     depends_on:
       - consul
       - logging
@@ -148,9 +145,6 @@ services:
       <<: *common-variables
       Service_Host: edgex-core-metadata
       Notifications_Sender: edgex-core-metadata
-      # TODO: Remove these when back in configuration.toml
-      Databases_Primary_Password: 'password'
-      Databases_Primary_Username: 'meta'
     depends_on:
       - consul
       - logging
@@ -169,9 +163,6 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-core-data
-      # TODO: Remove these when back in configuration.toml
-      Databases_Primary_Password: 'password'
-      Databases_Primary_Username: 'core'
     depends_on:
       - consul
       - logging
@@ -189,9 +180,6 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-core-command
-      # TODO: Remove these when back in configuration.toml
-      Databases_Primary_Password: 'password'
-      Databases_Primary_Username: 'meta'
     depends_on:
       - consul
       - logging
@@ -211,9 +199,6 @@ services:
       Service_Host: edgex-support-scheduler
       IntervalActions_ScrubPushed_Host: edgex-core-data
       IntervalActions_ScrubAged_Host: edgex-core-data
-      # TODO: Remove these when back in configuration.toml
-      Databases_Primary_Password: 'password'
-      Databases_Primary_Username: 'scheduler'
     depends_on:
       - consul
       - logging
