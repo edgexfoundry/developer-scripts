@@ -45,18 +45,6 @@ volumes:
   consul-data:
 
 services:
-  volume:
-    image: ubuntu:latest
-    container_name: edgex-files
-    networks:
-      - edgex-network
-    volumes:
-      - db-data:/data/db:z
-      - log-data:/edgex/logs:z
-      - consul-config:/consul/config:z
-      - consul-data:/consul/data:z
-    entrypoint: [ "tail", "-f", "/dev/null" ]
-
   consul:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
     ports:
@@ -71,8 +59,6 @@ services:
     volumes:
       - consul-config:/consul/config:z
       - consul-data:/consul/data:z
-    depends_on:
-      - volume
     environment: 
       - EDGEX_DB=mongo
       - EDGEX_SECURE=false
@@ -89,8 +75,6 @@ services:
       <<: *common-variables
     volumes:
       - db-data:/data/db:z
-    depends_on:
-      - volume
 
   logging:
     image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:master
@@ -107,7 +91,7 @@ services:
       Databases_Primary_Type: file
       Logging_EnableRemote: "false"
     depends_on:
-      - volume
+      - consul
 
   system:
     image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:master
@@ -125,7 +109,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
+      - consul
       - logging
+      - scheduler
+      - notifications
+      - metadata
+      - data
+      - command
 
   notifications:
     image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:master
@@ -139,7 +129,9 @@ services:
       <<: *common-variables
       Service_Host: edgex-support-notifications
     depends_on:
+      - consul
       - logging
+      - mongo
 
   metadata:
     image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:master
@@ -154,7 +146,10 @@ services:
       Service_Host: edgex-core-metadata
       Notifications_Sender: edgex-core-metadata
     depends_on:
+      - consul
       - logging
+      - mongo
+      - notifications
 
   data:
     image: nexus3.edgexfoundry.org:10004/docker-core-data-go:master
@@ -169,7 +164,10 @@ services:
       <<: *common-variables
       Service_Host: edgex-core-data
     depends_on:
+      - consul
       - logging
+      - mongo
+      - metadata
 
   command:
     image: nexus3.edgexfoundry.org:10004/docker-core-command-go:master
@@ -183,6 +181,9 @@ services:
       <<: *common-variables
       Service_Host: edgex-core-command
     depends_on:
+      - consul
+      - logging
+      - mongo
       - metadata
 
   scheduler:
@@ -199,16 +200,18 @@ services:
       IntervalActions_ScrubPushed_Host: edgex-core-data
       IntervalActions_ScrubAged_Host: edgex-core-data
     depends_on:
-      - metadata
+      - consul
+      - logging
+      - mongo
 
   app-service-rules:
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    entrypoint: ["/app-service-configurable"]
+    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     ports:
       - "48100:48100"
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
-    entrypoint: ["/app-service-configurable"]
-    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     networks:
       edgex-network:
         aliases:
@@ -225,7 +228,7 @@ services:
       - consul
       - logging
       - data
-      
+
   rulesengine:
     image: emqx/kuiper:0.3.2
     ports:
@@ -280,8 +283,10 @@ services:
       <<: *common-variables
       Service_Host: edgex-device-virtual
     depends_on:
-    - data
-    - command
+      - consul
+      - logging
+      - data
+      - metadata
 
   # device-random:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go:master
