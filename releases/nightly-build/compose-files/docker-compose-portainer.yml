@@ -25,7 +25,7 @@ services:
   portainer:
     image:  portainer/portainer
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
     container_name: portainer
     command: -H unix:///var/run/docker.sock
     volumes:
