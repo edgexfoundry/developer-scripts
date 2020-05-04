@@ -27,7 +27,6 @@ x-common-env-variables: &common-variables
   EDGEX_SECURITY_SECRET_STORE: "false"
   Registry_Host: edgex-core-consul
   Clients_CoreData_Host: edgex-core-data
-  Clients_Logging_Host: edgex-support-logging
   Clients_Notifications_Host: edgex-support-notifications
   Clients_Metadata_Host: edgex-core-metadata
   Clients_Command_Host: edgex-core-command
@@ -37,6 +36,8 @@ x-common-env-variables: &common-variables
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
+#  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
+#  Logging_EnableRemote: "true" # un-comment if re-enabling logging service for remote logging
 
 volumes:
   db-data:
@@ -76,22 +77,27 @@ services:
     volumes:
       - db-data:/data/db:z
 
-  logging:
-    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go-arm64:master
-    ports:
-      - "127.0.0.1:48061:48061"
-    container_name: edgex-support-logging
-    hostname: edgex-support-logging
-    networks:
-      - edgex-network
-    environment:
-      <<: *common-variables
-      Service_Host: edgex-support-logging
-      Writable_Persistence: file
-      Databases_Primary_Type: file
-      Logging_EnableRemote: "false"
-    depends_on:
-      - consul
+# The logging service has been deprecated in Geneva release and will be removed in the Hanoi release.
+# All services are configure to send logging to STDOUT, i.e. not remote which requires this logging service
+# If you still must use remote logging, un-comment the block below, all the related depends that have been commented out
+# and the related global override that are commented out at the top.
+#
+#  logging:
+#    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go-arm64:master
+#    ports:
+#      - "127.0.0.1:48061:48061"
+#    container_name: edgex-support-logging
+#    hostname: edgex-support-logging
+#    networks:
+#      - edgex-network
+#    environment:
+#      <<: *common-variables
+#      Service_Host: edgex-support-logging
+#      Writable_Persistence: file
+#      Databases_Primary_Type: file
+#      Logging_EnableRemote: "false"
+#    depends_on:
+#      - consul
 
   system:
     image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go-arm64:master
@@ -110,7 +116,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - scheduler
       - notifications
       - metadata
@@ -130,7 +136,7 @@ services:
       Service_Host: edgex-support-notifications
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
 
   metadata:
@@ -147,7 +153,7 @@ services:
       Notifications_Sender: edgex-core-metadata
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - notifications
 
@@ -165,7 +171,7 @@ services:
       Service_Host: edgex-core-data
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - metadata
 
@@ -182,7 +188,7 @@ services:
       Service_Host: edgex-core-command
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - metadata
 
@@ -201,7 +207,7 @@ services:
       IntervalActions_ScrubAged_Host: edgex-core-data
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
 
   app-service-rules:
@@ -223,7 +229,7 @@ services:
       Binding_PublishTopic: events
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - data
 
   rulesengine:
@@ -281,7 +287,7 @@ services:
       Service_Host: edgex-device-virtual
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - data
       - metadata
 

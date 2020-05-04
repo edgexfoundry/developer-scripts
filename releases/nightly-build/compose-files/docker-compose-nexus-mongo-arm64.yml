@@ -22,7 +22,6 @@ version: '3.4'
 x-common-env-variables: &common-variables
   Registry_Host: edgex-core-consul
   Clients_CoreData_Host: edgex-core-data
-  Clients_Logging_Host: edgex-support-logging
   Clients_Notifications_Host: edgex-support-notifications
   Clients_Metadata_Host: edgex-core-metadata
   Clients_Command_Host: edgex-core-command
@@ -35,6 +34,8 @@ x-common-env-variables: &common-variables
   SecretStore_Host: edgex-vault
   SecretStore_ServerName: edgex-vault
   SecretStore_RootCaCertPath: /tmp/edgex/secrets/ca/ca.pem
+#  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
+#  Logging_EnableRemote: "true" # un-comment if re-enabling logging service for remote logging
 
 volumes:
   db-data:
@@ -272,27 +273,32 @@ services:
       - consul
       - vault-worker
 
-  logging:
-    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go-arm64:master
-    ports:
-      - "127.0.0.1:48061:48061"
-    container_name: edgex-support-logging
-    hostname: edgex-support-logging
-    networks:
-      - edgex-network
-    environment:
-      <<: *common-variables
-      SecretStore_TokenFile: /tmp/edgex/secrets/edgex-support-logging/secrets-token.json
-      Service_Host: edgex-support-logging
-      Writable_Persistence: file
-      Databases_Primary_Type: file
-      Logging_EnableRemote: "false"
-    volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
-      - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
-    depends_on:
-      - consul
-      - vault-worker
+# The logging service has been deprecated in Geneva release and will be removed in the Hanoi release.
+# All services are configure to send logging to STDOUT, i.e. not remote which requires this logging service
+# If you still must use remote logging, un-comment the block below, all the related depends that have been commented out
+# and the related global override that are commented out at the top.
+#
+#  logging:
+#    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go-arm64:master
+#    ports:
+#      - "127.0.0.1:48061:48061"
+#    container_name: edgex-support-logging
+#    hostname: edgex-support-logging
+#    networks:
+#      - edgex-network
+#    environment:
+#      <<: *common-variables
+#      SecretStore_TokenFile: /tmp/edgex/secrets/edgex-support-logging/secrets-token.json
+#      Service_Host: edgex-support-logging
+#      Writable_Persistence: file
+#      Databases_Primary_Type: file
+#      Logging_EnableRemote: "false"
+#    volumes:
+#      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+#      - /tmp/edgex/secrets/edgex-support-logging:/tmp/edgex/secrets/edgex-support-logging:ro,z
+#    depends_on:
+#      - consul
+#      - vault-worker
 
   system:
     image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go-arm64:master
@@ -311,7 +317,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - scheduler
       - notifications
       - metadata
@@ -335,7 +341,7 @@ services:
       - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - vault-worker
 
@@ -357,7 +363,7 @@ services:
       - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - notifications
       - vault-worker
@@ -380,7 +386,7 @@ services:
       - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - metadata
       - vault-worker
@@ -402,7 +408,7 @@ services:
       - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - metadata
       - vault-worker
@@ -426,7 +432,7 @@ services:
       - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - mongo
       - vault-worker
 
@@ -451,7 +457,7 @@ services:
       Binding_PublishTopic: events
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - data
       - vault-worker
 
@@ -510,7 +516,7 @@ services:
       Service_Host: edgex-device-virtual
     depends_on:
       - consul
-      - logging
+#      - logging  # uncomment is re-enabled remote logging
       - data
       - metadata
 
