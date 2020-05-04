@@ -206,8 +206,6 @@ services:
 
   app-service-rules:
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
-    entrypoint: ["/app-service-configurable"]
-    command: ["--registry","--confdir=/res", "--skipVersionCheck=true"]
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -221,7 +219,6 @@ services:
       edgex_profile: rules-engine
       Service_Host: edgex-app-service-configurable-rules
       Service_Port: 48100
-      edgex_registry: consul://edgex-core-consul:8500
       MessageBus_SubscribeHost_Host: edgex-core-data
       Binding_PublishTopic: events
     depends_on:
