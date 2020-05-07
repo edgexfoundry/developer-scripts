@@ -114,6 +114,8 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go-arm64:master
     container_name: edgex-secrets-setup
     hostname: edgex-secrets-setup
+    environment:
+      <<: *redis5-variables
     tmpfs:
       - /tmp
       - /run
@@ -266,8 +268,8 @@ services:
       <<: *redis5-variables
     command: |
       /bin/sh -c "
-      until [ -r $${REDIS5_PASSWORD_PATHNAME} ]; do sleep 1; done
-      /usr/local/bin/docker-entrypoint.sh --requirepass `cat $${REDIS5_PASSWORD_PATHNAME}` \
+      until [ -r $${REDIS5_PASSWORD_PATHNAME} ] && [ -s $${REDIS5_PASSWORD_PATHNAME} ]; do sleep 1; done
+      exec /usr/local/bin/docker-entrypoint.sh --requirepass `cat $${REDIS5_PASSWORD_PATHNAME}` \
         --dir /data \
         --save 900 1 \
         --save 300 10 \
