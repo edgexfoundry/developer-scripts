@@ -33,8 +33,10 @@ x-common-env-variables: &common-variables
   SecretStore_Host: edgex-vault
   SecretStore_ServerName: edgex-vault
   SecretStore_RootCaCertPath: /tmp/edgex/secrets/ca/ca.pem
-#  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
-#  Logging_EnableRemote: "true" # un-comment if re-enabling logging service for remote logging
+  # Require in case old configuration from previous release used.
+  # Change to "true" if re-enabling logging service for remote logging
+  Logging_EnableRemote: "false"
+  #  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
 
 # REDIS5_PASSWORD_PATHNAME must have the same value as
 # security-secretstore-read/res/configuration.toml SecretStore.Passwordfile. Note edgex-go issue

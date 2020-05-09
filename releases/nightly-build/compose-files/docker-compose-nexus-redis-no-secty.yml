@@ -34,8 +34,10 @@ x-common-env-variables: &common-variables
   Clients_RulesEngine_Host: edgex-kuiper
   Clients_VirtualDevice_Host: edgex-device-virtual
   Databases_Primary_Host: edgex-redis
-#  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
-#  Logging_EnableRemote: "true" # un-comment if re-enabling logging service for remote logging
+  # Require in case old configuration from previous release used.
+  # Change to "true" if re-enabling logging service for remote logging
+  Logging_EnableRemote: "false"
+  #  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
 
 volumes:
   db-data:
