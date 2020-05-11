@@ -36,8 +36,10 @@ x-common-env-variables: &common-variables
   Databases_Primary_Type: mongodb
   Databases_Primary_Host: edgex-mongo
   Databases_Primary_Port: 27017
-#  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
-#  Logging_EnableRemote: "true" # un-comment if re-enabling logging service for remote logging
+  # Require in case old configuration from previous release used.
+  # Change to "true" if re-enabling logging service for remote logging
+  Logging_EnableRemote: "false"
+  #  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
 
 volumes:
   db-data:
