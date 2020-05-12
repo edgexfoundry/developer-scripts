@@ -522,6 +522,24 @@ services:
       - data
       - metadata
 
+  device-rest:
+    image: nexus3.edgexfoundry.org:10004/docker-device-rest-go:master
+    ports:
+      - "127.0.0.1:49986:49986"
+    container_name: edgex-device-rest
+    hostname: edgex-device-rest
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-device-rest
+    environment:
+      <<: *common-variables
+      Service_Host: edgex-device-rest
+    depends_on:
+      - data
+      - command
+  #      - logging  # uncomment if re-enabled remote logging
+
   # device-random:
   #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go-arm64:master
   #   ports:
