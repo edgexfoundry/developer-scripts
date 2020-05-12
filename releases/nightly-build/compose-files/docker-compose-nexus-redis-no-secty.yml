@@ -37,7 +37,7 @@ x-common-env-variables: &common-variables
   # Require in case old configuration from previous release used.
   # Change to "true" if re-enabling logging service for remote logging
   Logging_EnableRemote: "false"
-  #  Clients_Notifications_Host: edgex-support-notifications # un-comment if re-enabling logging service for remote logging
+  #  Clients_Logging_Host: edgex-support-logging # un-comment if re-enabling logging service for remote logging
 
 volumes:
   db-data:
