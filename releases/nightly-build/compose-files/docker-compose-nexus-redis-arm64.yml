@@ -261,7 +261,7 @@ services:
 # end of containers for reverse proxy
 
   redis:
-    image: redis:5.0.8-alpine
+    image: arm64v8/redis:5.0.8-alpine
     ports:
       - "127.0.0.1:6379:6379"
     container_name: edgex-redis
