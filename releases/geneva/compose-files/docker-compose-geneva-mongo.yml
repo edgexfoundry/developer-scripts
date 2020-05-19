@@ -615,22 +615,6 @@ services:
   #     - data
   #     - command
 
-#################################################################
-# UIs
-#################################################################
-  ui:
-    image: edgexfoundry/docker-edgex-ui-go:1.2.0
-    ports:
-      - "127.0.0.1:4000:4000"
-    container_name: edgex-ui-go
-    hostname: edgex-ui-go
-    networks:
-      - edgex-network
-    depends_on:
-      - data
-      - command
-
 networks:
   edgex-network:
     driver: "bridge"
-

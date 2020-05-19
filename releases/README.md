@@ -26,7 +26,6 @@ This folder contains supporting files to run various current and historical vers
 ### Docker Compose for Nightly Build
 
 * Available releases include:
-    
 * [`docker-compose-nexus-redis.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/nightly-build/compose-files/docker-compose-geneva-redis.yml)
       uses the latest EdgeX **master **branch container images with Redis for persistence. 
 * [`docker-compose-nexus-mongo.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/nightly-build/compose-files/docker-compose-geneva-mongo.yml)
@@ -50,12 +49,20 @@ Available releases include:
 
 * [`docker-compose-geneva-redis.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/geneva/compose-files/docker-compose-geneva-redis.yml)
   uses the EdgeX **Geneva release 1.2.0** container images with Redis for persistence. 
+  
 * [`docker-compose-geneva-mongo.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/geneva/compose-files/docker-compose-geneva-mongo.yml)
   uses the EdgeX **Geneva release 1.2.0** container images with Mongo for persistence. 
+  
 * [`docker-compose-geneva-redis-no-secty.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/geneva/compose-files/docker-compose-geneva-redis-no-secty.yml) 
   uses the EdgeX **Geneva release 1.2.0** container images with Redis for persistence and does not include security services.
+  
 * [`docker-compose-geneva-mongo-no-secty.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/geneva/compose-files/docker-compose-geneva-mongo-no-secty.yml) 
   uses the EdgeX **Geneva release 1.2.0** container images with Mongo for persistence and does not include security services.
+  
+* [`docker-compose-geneva-ui.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/nightly-build/compose-files/docker-compose-geneva-ui.yml)
+  
+  uses the optional EdgeX **Geneva release 1.2.0** UI container image for development or demo purposes.
+  
 * [`docker-compose-portainer.yml`](https://github.com/edgexfoundry/developer-scripts/blob/master/releases/geneva/compose-files/docker-compose-portainer.yml) 
   uses the Portianer container image for optional container management
 
