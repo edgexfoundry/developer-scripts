@@ -1,0 +1,87 @@
+# /*******************************************************************************
+#  * Copyright 2020 Intel
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  *
+#  * @author: Leonard Goodell
+#  * EdgeX Foundry, Hanoi, version "master"
+#  * added: May, 2020
+#  *******************************************************************************/
+
+version: '3.7'
+
+# all common shared environment variables defined here:
+x-common-env-variables: &common-variables
+  # These have to be repeated from base compose since extensions are not shared across multiple compose files
+  CLIENTS_COREDATA_HOST: edgex-core-data
+  CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+  CLIENTS_METADATA_HOST: edgex-core-metadata
+  CLIENTS_COMMAND_HOST: edgex-core-command
+  CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+  CLIENTS_RULESENGINE_HOST: edgex-kuiper
+  CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+
+services:
+  mqtt:
+    image: eclipse-mosquitto:1.6.3
+    ports:
+      - "127.0.0.1:1883:1883"
+    container_name: edgex-mqtt-broker
+    hostname: edgex-mqtt-broker
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-mqtt-broker
+    depends_on:
+      - data
+
+  data:
+    environment:
+      MESSAGEQUEUE_HOST: edgex-mqtt-broker
+      MESSAGEQUEUE_PORT: 1883
+      MESSAGEQUEUE_TYPE: mqtt
+      MESSAGEQUEUE_OPTIONAL_CLIENTID: edgex-core-data
+
+  device-mqtt:
+    image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go${ARCH}:master
+    ports:
+      - "127.0.0.1:49982:49982"
+    container_name: edgex-device-mqtt
+    hostname: edgex-device-mqtt
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-device-mqtt
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-device-mqtt
+      DRIVER_INCOMINGHOST: edgex-mqtt-broker
+      DRIVER_RESPONSEHOST: edgex-mqtt-broker
+    depends_on:
+      - data
+      - command
+
+  app-service-rules:
+    environment:
+      EDGEX_PROFILE: rules-engine-mqtt
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-mqtt-broker
+      MESSAGEBUS_PUBLISHHOST_HOST: edgex-mqtt-broker
+      BINDING_PUBLISHTOPIC: rules-events
+
+# Note: that version 0.3.2 of Kuiper doesn't support the EDGEX_TYPE variable below and currently will not work in this
+#       configuration.The EMQ team is adding support for this and the rest of the MQTT config via env vars.
+# TODO: Update Kuiper image to 0.4.0 in base compose file once available and update env vars name below if needed
+  rulesengine:
+    environment:
+      EDGEX_SERVER: edgex-mqtt-broker
+      EDGEX_TOPIC: rules-events
+      EDGEX_PORT: 1883
+      EDGEX_TYPE: mqtt

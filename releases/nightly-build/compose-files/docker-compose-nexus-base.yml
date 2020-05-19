@@ -1,0 +1,337 @@
+# /*******************************************************************************
+#  * Copyright 2020 Redis Labs Inc.
+#  * Copyright 2020 Intel Corporation.
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  *
+#  * @author: Jim White, Dell
+#  * @author: Andre Srinivasan, Redis Labs
+#  * @author: Leonard Goodell
+#  * EdgeX Foundry, Hanoi, version "master"
+#  * added: May, 2020
+#  *******************************************************************************/
+
+# NOTE:  this Docker Compose file does not contain the security services - namely the API Gateway
+# and Secret Store
+
+version: '3.7'
+
+# all common shared environment variables defined here:
+x-common-env-variables: &common-variables
+  EDGEX_SECURITY_SECRET_STORE: "false"
+  REGISTRY_HOST: edgex-core-consul
+  CLIENTS_COREDATA_HOST: edgex-core-data
+  CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+  CLIENTS_METADATA_HOST: edgex-core-metadata
+  CLIENTS_COMMAND_HOST: edgex-core-command
+  CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+  CLIENTS_RULESENGINE_HOST: edgex-kuiper
+  CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+  DATABASES_PRIMARY_HOST: edgex-redis
+
+networks:
+  edgex-network:
+    driver: "bridge"
+
+volumes:
+  db-data:
+  log-data:
+  consul-config:
+  consul-data:
+
+services:
+  consul:
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-consul${ARCH}:master
+    ports:
+      - "127.0.0.1:8400:8400"
+      - "127.0.0.1:8500:8500"
+    container_name: edgex-core-consul
+    hostname: edgex-core-consul
+    networks:
+      edgex-network:
+        aliases:
+            - edgex-core-consul
+    volumes:
+      - consul-config:/consul/config:z
+      - consul-data:/consul/data:z
+    environment: 
+      EDGEX_DB: redis
+      EDGEX_SECURE: "false"
+
+  redis:
+    image: ${REDIS_ARCH}redis:5.0.8-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
+    container_name: edgex-redis
+    hostname: edgex-redis
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+    volumes:
+      - db-data:/data:z
+
+  system:
+    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go${ARCH}:master
+    ports:
+      - "127.0.0.1:48090:48090"
+    container_name: edgex-sys-mgmt-agent
+    hostname: edgex-sys-mgmt-agent
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-sys-mgmt-agent
+      EXECUTORPATH: /sys-mgmt-executor
+      METRICSMECHANISM: executor
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:z
+    depends_on:
+      - consul
+      - scheduler
+      - notifications
+      - metadata
+      - data
+      - command
+
+  notifications:
+    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go${ARCH}:master
+    ports:
+      - "127.0.0.1:48060:48060"
+    container_name: edgex-support-notifications
+    hostname: edgex-support-notifications
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-support-notifications
+    depends_on:
+      - consul
+      - redis
+
+  metadata:
+    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go${ARCH}:master
+    ports:
+      - "127.0.0.1:48081:48081"
+    container_name: edgex-core-metadata
+    hostname: edgex-core-metadata
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-core-metadata
+      NOTIFICATIONS_SENDER: edgex-core-metadata
+    depends_on:
+      - consul
+      - redis
+      - notifications
+
+  data:
+    image: nexus3.edgexfoundry.org:10004/docker-core-data-go${ARCH}:1.2.0
+    ports:
+      - "127.0.0.1:48080:48080"
+      - "127.0.0.1:5563:5563"
+    container_name: edgex-core-data
+    hostname: edgex-core-data
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-core-data
+    depends_on:
+      - consul
+      - redis
+      - metadata
+
+  command:
+    image: nexus3.edgexfoundry.org:10004/docker-core-command-go${ARCH}:master
+    ports:
+      - "127.0.0.1:48082:48082"
+    container_name: edgex-core-command
+    hostname: edgex-core-command
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-core-command
+    depends_on:
+      - consul
+      - redis
+      - metadata
+
+  scheduler:
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go${ARCH}:master
+    ports:
+      - "127.0.0.1:48085:48085"
+    container_name: edgex-support-scheduler
+    hostname: edgex-support-scheduler
+    networks:
+      - edgex-network
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-support-scheduler
+      INTERVALACTIONS_SCRUBPUSHED_HOST: edgex-core-data
+      INTERVALACTIONS_SCRUBAGED_HOST: edgex-core-data
+    depends_on:
+      - consul
+      - redis
+
+  app-service-rules:
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable${ARCH}:master
+    ports:
+      - "127.0.0.1:48100:48100"
+    container_name: edgex-app-service-configurable-rules
+    hostname: edgex-app-service-configurable-rules
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-app-service-configurable-rules
+    environment:
+      <<: *common-variables
+      EDGEX_PROFILE: rules-engine
+      SERVICE_HOST: edgex-app-service-configurable-rules
+      SERVICE_PORT: 48100
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      BINDING_PUBLISHTOPIC: events
+    depends_on:
+      - consul
+      - data
+
+  # TODO: Update Kuiper image to 0.4.0 once available
+  rulesengine:
+    image: emqx/kuiper:0.3.2
+    ports:
+      - "127.0.0.1:48075:48075"
+      - "127.0.0.1:20498:20498"
+    container_name: edgex-kuiper
+    hostname: edgex-kuiper
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-kuiper
+    environment:
+      # KUIPER_DEBUG: "true"
+      KUIPER_CONSOLE_LOG: "true"
+      KUIPER_REST_PORT: 48075
+      EDGEX_SERVER: edgex-app-service-configurable-rules
+      EDGEX_SERVICE_SERVER: http://edgex-core-data:48080
+      EDGEX_TOPIC: events
+      EDGEX_PROTOCOL: tcp
+      EDGEX_PORT: 5566
+    depends_on:
+      - app-service-rules
+
+#################################################################
+# Device Services
+#################################################################
+
+  device-virtual:
+    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go${ARCH}:master
+    ports:
+    - "127.0.0.1:49990:49990"
+    container_name: edgex-device-virtual
+    hostname: edgex-device-virtual
+    networks:
+      edgex-network:
+        aliases:
+        - edgex-device-virtual
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-device-virtual
+    depends_on:
+      - consul
+      - data
+      - metadata
+
+  device-rest:
+    image: nexus3.edgexfoundry.org:10004/docker-device-rest-go${ARCH}:master
+    ports:
+      - "127.0.0.1:49986:49986"
+    container_name: edgex-device-rest
+    hostname: edgex-device-rest
+    networks:
+      edgex-network:
+        aliases:
+          - edgex-device-rest
+    environment:
+      <<: *common-variables
+      SERVICE_HOST: edgex-device-rest
+    depends_on:
+      - data
+      - command
+
+#  device-random:
+#    image: nexus3.edgexfoundry.org:10004/docker-device-random-go${ARCH}:master
+#    ports:
+#      - "127.0.0.1:49988:49988"
+#    container_name: edgex-device-random
+#    hostname: edgex-device-random
+#    networks:
+#      edgex-network:
+#        aliases:
+#          - edgex-device-random
+#    environment:
+#      <<: *common-variables
+#      SERVICE_HOST: edgex-device-random
+#    depends_on:
+#      - data
+#      - command
+#
+#  device-mqtt:
+#    image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go${ARCH}:master
+#    ports:
+#      - "127.0.0.1:49982:49982"
+#    container_name: edgex-device-mqtt
+#    hostname: edgex-device-mqtt
+#    networks:
+#      edgex-network:
+#        aliases:
+#          - edgex-device-mqtt
+#    environment:
+#      <<: *common-variables
+#      SERVICE_HOST: edgex-device-mqtt
+#    depends_on:
+#      - data
+#      - command
+#
+#  device-modbus:
+#    image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go${ARCH}:master
+#    ports:
+#      - "127.0.0.1:49991:49991"
+#    container_name: edgex-device-modbus
+#    hostname: edgex-device-modbus
+#    networks:
+#      edgex-network:
+#        aliases:
+#          - edgex-device-modbus
+#    environment:
+#      <<: *common-variables
+#      SERVICE_HOST: edgex-device-modbus
+#    depends_on:
+#      - data
+#      - command
+#
+#  device-snmp:
+#    image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go${ARCH}:master
+#    ports:
+#      - "127.0.0.1:49993:49993"
+#    container_name: edgex-device-snmp
+#    hostname: edgex-device-snmp
+#    networks:
+#      edgex-network:
+#        aliases:
+#          - edgex-device-snmp
+#    environment:
+#      <<: *common-variables
+#      SERVICE_HOST: edgex-device-snmp
+#    depends_on:
+#      - data
+#      - command
