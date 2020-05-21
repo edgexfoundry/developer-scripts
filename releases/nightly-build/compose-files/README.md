@@ -4,9 +4,9 @@ This folder contain the docker compose files that pull and run the EdgeX images 
 
 > *Note: Docker does not re-pull newer instances of these images. You must explicitly remove old instances so the new instances are pulled. See the `make remove` command below that will do this for you.*
 
-These approach used for these compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
+The approach used for these compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
 
-The `Extending using multiple Compose files` approach removes the majority of the duplication in the multiple composes file that previous Edgex release compose file endure. This approach does make actual running of the solution more complicated due to having to list the multiple compose file required to run a particular configuration. To help alleviate this complexity, a `Makefile`has been provided with commands that make it easy to run the multiple possible configurations. See the Makefile section below for details on these commands
+The `Extending using multiple Compose files` approach removes the majority of the duplication found in previous EdgeX compose files. This approach makes running the solution more complicated due to having to list the multiple compose file required to run a particular configuration. To help alleviate this complexity, a `Makefile`has been provided with commands that make it easy to run the multiple possible configurations. See the Makefile section below for details on these commands
 
 ### Compose Files
 
@@ -30,15 +30,14 @@ This folder contains a `Makefile` that provides helper commands for running, sto
 | make portainer-down      | Stops **`Portainer`** independent of the EdgeX services      |
 | make run                 | Runs the EdgeX services in **secure mode**                   |
 | make run-no-sec          | Runs the EdgeX services in **non-secure mode**               |
-| make run-mqtt            | Runs the EdgeX services using MQTT Message Buss in **secure mode**, including the Device MQTT service. |
-| make run-mqtt-no-sec     | Runs the EdgeX services using MQTT Message Buss in **non-secure** mode, including the Device MQTT service. |
-| make run-ui              | Runs the optional EdgeX UI service.                          |
-| make run-arm             | Runs the **ARM64** EdgeX services in **secure mode**         |
-| make run-arm-no-sec      | Runs the **ARM64** EdgeX services in **non-secure mode**     |
-| make run-mqtt-arm        | Runs the **ARM64** EdgeX services using MQTT Message Buss in **secure mode**, including the Device MQTT service. |
-| make run-mqtt-arm-no-sec | Runs the **ARM64** EdgeX services using MQTT Message Buss in **non-secure** mode, including the Device MQTT service. |
-| make run-ui-arm          | Runs the optional **ARM64** EdgeX UI service.                |
-| make down                | Stops all EdgeX no matter which configuration they are running in. |
+| make run-mqtt            | Runs the EdgeX services using MQTT Message Buss in **secure mode**, including the Device MQTT service |
+| make run-mqtt-no-sec     | Runs the EdgeX services using MQTT Message Buss in **non-secure** mode, including the Device MQTT service |
+| make run-ui              | Runs the optional EdgeX UI service                           |
+| make run-arm             | Same as `run`, but using **ARM64** images                    |
+| make run-arm-no-sec      | Same as `run-no-sec`, but using **ARM64** images             |
+| make run-mqtt-arm        | Same as `run-mqtt`, but using **ARM64** images               |
+| make run-mqtt-no-sec-arm | Same as `run-mqtt-no-sec`, but using **ARM64** images        |
+| make run-ui-arm          | Same as `run-ui`, but using **ARM64** image                  |
+| make down                | Stops all EdgeX service no matter which configuration started them |
 | make clean               | Runs **`down`** and then removes any stopped containers, prunes unused volumes and networks |
-| make remove              | Runs **`clean`** and then removes all docker images with the **`master`** tag. This is how you make sure you are using the very latest **`master`** images. It is highly recommended to run this command prior to any validation of you current pull request. |
-
+| make remove              | Runs **`clean`** and then removes all docker images with the **`master`** tag <br />This is how you make sure you are using the very latest **`master`** images<br />It is highly recommended that you run this command prior to any validation of your current pull request |
