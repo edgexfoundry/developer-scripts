@@ -28,17 +28,25 @@ portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
 
 run:
+	ARCH="" \
+	REDIS_ARCH="" \
+	KONG_UBUNTU="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-security.yml \
 		up -d
 
 run-no-sec:
+	ARCH="" \
+	REDIS_ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		up -d
 
 run-mqtt:
+	ARCH="" \
+	REDIS_ARCH="" \
+	KONG_UBUNTU="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
@@ -46,6 +54,8 @@ run-mqtt:
 		up -d
 
 run-mqtt-no-sec:
+	ARCH="" \
+	REDIS_ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		up -d
@@ -84,6 +94,7 @@ run-mqtt-arm-no-sec:
 		up -d
 
 run-ui:
+	ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-ui.yml \
 		up -d
