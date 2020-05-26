@@ -20,12 +20,19 @@ help:
 	echo "   remove              - Runs 'clean' and then removes all docker images with the 'master' tag"
 	echo "                         This is how you make sure you are using the very latest 'master' images"
 	echo "                         It is highly recommended to run this command prior to any validation of your current pull request"
+	echo ""
+	echo "*** Note that all 'run' commands take optional list of service(s) to run"
 
 portainer:
 	docker-compose -p portainer -f docker-compose-portainer.yml up -d
 
 portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
+
+
+RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+# ...and turn them into do-nothing targets
+$(eval $(RUN_ARGS):;@:)
 
 run:
 	ARCH="" \
@@ -34,14 +41,14 @@ run:
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 run-no-sec:
 	ARCH="" \
 	REDIS_ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 run-mqtt:
 	ARCH="" \
@@ -51,14 +58,15 @@ run-mqtt:
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 run-mqtt-no-sec:
 	ARCH="" \
 	REDIS_ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
-		up -d
+		-f docker-compose-nexus-add-mqtt.yml \
+		up -d $(RUN_ARGS)
 
 run-arm:
 	ARCH="-arm64" \
@@ -67,14 +75,14 @@ run-arm:
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 run-arm-no-sec:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 run-mqtt-arm:
 	ARCH="-arm64" \
@@ -84,28 +92,32 @@ run-mqtt-arm:
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
-run-mqtt-arm-no-sec:
+run-mqtt-no-sec-arm:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
-		up -d
+		-f docker-compose-nexus-add-mqtt.yml \
+		up -d $(RUN_ARGS)
 
 run-ui:
 	ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-ui.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 run-ui-arm:
 	ARCH="-arm64" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-ui.yml \
-		up -d
+		up -d $(RUN_ARGS)
 
 down:
+	ARCH="" \
+	REDIS_ARCH="" \
+	KONG_UBUNTU="" \
 	docker-compose  -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \

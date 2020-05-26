@@ -24,6 +24,8 @@ This folder contains the following compose files:
 
 This folder contains a `Makefile` that provides helper commands for running, stopping and cleaning the various EdgeX configurations.
 
+> *Note: All 'run' commands below take optional list of service(s) to run* 
+
 | Command                  | Description                                                  |
 | ------------------------ | ------------------------------------------------------------ |
 | make portainer           | Runs **`Portainer`** independent of the EdgeX services       |
