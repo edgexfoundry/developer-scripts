@@ -30,9 +30,8 @@ portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
 
 
-RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-# ...and turn them into do-nothing targets
-$(eval $(RUN_ARGS):;@:)
+SERVICES_TO_RUN := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+$(eval $(SERVICES_TO_RUN):;@:)
 
 run:
 	ARCH="" \
@@ -41,14 +40,14 @@ run:
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-no-sec:
 	ARCH="" \
 	REDIS_ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-mqtt:
 	ARCH="" \
@@ -58,7 +57,7 @@ run-mqtt:
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-mqtt-no-sec:
 	ARCH="" \
@@ -66,7 +65,7 @@ run-mqtt-no-sec:
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-arm:
 	ARCH="-arm64" \
@@ -75,14 +74,14 @@ run-arm:
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-arm-no-sec:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-mqtt-arm:
 	ARCH="-arm64" \
@@ -92,7 +91,7 @@ run-mqtt-arm:
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
 		-f docker-compose-nexus-add-security.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-mqtt-no-sec-arm:
 	ARCH="-arm64" \
@@ -100,19 +99,19 @@ run-mqtt-no-sec-arm:
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-ui:
 	ARCH="" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-ui.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 run-ui-arm:
 	ARCH="-arm64" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-ui.yml \
-		up -d $(RUN_ARGS)
+		up -d $(SERVICES_TO_RUN)
 
 down:
 	ARCH="" \

@@ -67,9 +67,7 @@ services:
     container_name: edgex-vault
     hostname: edgex-vault
     networks:
-      edgex-network:
-        aliases:
-            - edgex-vault
+      - edgex-network
     ports:
       - "127.0.0.1:8200:8200"
     cap_add:
@@ -113,9 +111,7 @@ services:
       <<: *redis5-variables
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     networks:
-      edgex-network:
-        aliases:
-            - edgex-vault-worker
+      - edgex-network
     tmpfs:
       - /run
     volumes:
@@ -133,9 +129,7 @@ services:
     container_name: kong-db
     hostname: kong-db
     networks:
-      edgex-network:
-        aliases:
-            - kong-db
+      - edgex-network
     ports:
         - "127.0.0.1:5432:5432"
     environment:
@@ -149,9 +143,7 @@ services:
     image: kong:${KONG_VERSION:-2.0.1}${KONG_UBUNTU}
     container_name: kong-migrations
     networks:
-      edgex-network:
-        aliases:
-            - kong-migrations
+      - edgex-network
     environment:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-db
@@ -177,9 +169,7 @@ services:
     container_name: kong
     hostname: kong
     networks:
-      edgex-network:
-        aliases:
-            - kong
+      - edgex-network
     ports:
         - "8000:8000"
         - "127.0.0.1:8001:8001"
@@ -217,9 +207,7 @@ services:
       until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup; do sleep 1; done;
       /edgex/security-proxy-setup --init=true"
     networks:
-      edgex-network:
-        aliases:
-            - edgex-proxy
+      - edgex-network
     environment:
       <<: *common-variables
       KONGURL_SERVER: kong

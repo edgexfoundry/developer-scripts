@@ -37,9 +37,7 @@ services:
     container_name: edgex-mqtt-broker
     hostname: edgex-mqtt-broker
     networks:
-      edgex-network:
-        aliases:
-          - edgex-mqtt-broker
+      - edgex-network
     depends_on:
       - data
 
@@ -57,9 +55,7 @@ services:
     container_name: edgex-device-mqtt
     hostname: edgex-device-mqtt
     networks:
-      edgex-network:
-        aliases:
-          - edgex-device-mqtt
+      - edgex-network
     environment:
       <<: *common-variables
       SERVICE_HOST: edgex-device-mqtt

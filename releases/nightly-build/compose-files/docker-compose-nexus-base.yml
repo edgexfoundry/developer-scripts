@@ -57,8 +57,6 @@ services:
     hostname: edgex-core-consul
     networks:
       edgex-network:
-        aliases:
-            - edgex-core-consul
     volumes:
       - consul-config:/consul/config:z
       - consul-data:/consul/data:z
@@ -191,9 +189,7 @@ services:
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
     networks:
-      edgex-network:
-        aliases:
-          - edgex-app-service-configurable-rules
+      - edgex-network
     environment:
       <<: *common-variables
       EDGEX_PROFILE: rules-engine
@@ -214,9 +210,7 @@ services:
     container_name: edgex-kuiper
     hostname: edgex-kuiper
     networks:
-      edgex-network:
-        aliases:
-          - edgex-kuiper
+      - edgex-network
     environment:
       # KUIPER_DEBUG: "true"
       KUIPER_CONSOLE_LOG: "true"
@@ -240,9 +234,7 @@ services:
     container_name: edgex-device-virtual
     hostname: edgex-device-virtual
     networks:
-      edgex-network:
-        aliases:
-        - edgex-device-virtual
+      - edgex-network
     environment:
       <<: *common-variables
       SERVICE_HOST: edgex-device-virtual
@@ -258,9 +250,7 @@ services:
     container_name: edgex-device-rest
     hostname: edgex-device-rest
     networks:
-      edgex-network:
-        aliases:
-          - edgex-device-rest
+      - edgex-network
     environment:
       <<: *common-variables
       SERVICE_HOST: edgex-device-rest
@@ -275,9 +265,7 @@ services:
 #    container_name: edgex-device-random
 #    hostname: edgex-device-random
 #    networks:
-#      edgex-network:
-#        aliases:
-#          - edgex-device-random
+#      - edgex-network
 #    environment:
 #      <<: *common-variables
 #      SERVICE_HOST: edgex-device-random
@@ -292,9 +280,7 @@ services:
 #    container_name: edgex-device-mqtt
 #    hostname: edgex-device-mqtt
 #    networks:
-#      edgex-network:
-#        aliases:
-#          - edgex-device-mqtt
+#      - edgex-network
 #    environment:
 #      <<: *common-variables
 #      SERVICE_HOST: edgex-device-mqtt
@@ -309,9 +295,7 @@ services:
 #    container_name: edgex-device-modbus
 #    hostname: edgex-device-modbus
 #    networks:
-#      edgex-network:
-#        aliases:
-#          - edgex-device-modbus
+#      - edgex-network
 #    environment:
 #      <<: *common-variables
 #      SERVICE_HOST: edgex-device-modbus
@@ -326,9 +310,7 @@ services:
 #    container_name: edgex-device-snmp
 #    hostname: edgex-device-snmp
 #    networks:
-#      edgex-network:
-#        aliases:
-#          - edgex-device-snmp
+#      - edgex-network
 #    environment:
 #      <<: *common-variables
 #      SERVICE_HOST: edgex-device-snmp
