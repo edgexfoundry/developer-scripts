@@ -1,25 +1,25 @@
-.PHONY: help portainer portainer-down run run-no-sec run-mqtt run-mqtt-no-sec run-ui run-arm run-mqtt-arm run-mqtt-no-sec-arm run-ui-arm down clean remove
+.PHONY: help portainer portainer-down run run-no-secty run-mqtt run-mqtt-no-secty run-ui run-arm64 run-mqtt-arm64 run-mqtt-no-secty-arm64 run-ui-arm64 down clean remove
 .SILENT: help
 
 help:
 	echo "Usage: make <target> where target is:"
-	echo "   portainer           - Runs Portainer independent of the EdgeX services"
-	echo "   portainer-down      - Stops Portainer independent of the EdgeX services"
-	echo "   run                 - Runs the EdgeX services in secure mode"
-	echo "   run-no-sec          - Runs the EdgeX services in non-secure mode"
-	echo "   run-mqtt            - Runs the EdgeX services using MQTT Message Buss in secure mode, including the Device MQTT service"
-	echo "   run-mqtt-no-sec     - Runs the EdgeX services using MQTT Message Buss in non-secure mode, including the Device MQTT service"
-	echo "   run-ui              - Runs the optional EdgeX UI service"
-	echo "   run-arm             - Same as 'run', but using ARM64 images"
-	echo "   run-no-sec-arm      - Same as 'run-no-sec', but using ARM64 images"
-	echo "   run-mqtt-arm        - Same as 'run-mqtt', but using ARM64 images"
-	echo "   run-mqtt-no-sec-arm - Same as 'run-mqtt-no-sec', but using ARM64 images"
-	echo "   run-ui-arm          - Same as 'run-ui', but using ARM64 image"
-	echo "   down                - Stops all EdgeX service no matter which configuration started them"
-	echo "   clean               - Runs 'down' and then removes any stopped containers, prunes unused volumes and networks"
-	echo "   remove              - Runs 'clean' and then removes all docker images with the 'master' tag"
-	echo "                         This is how you make sure you are using the very latest 'master' images"
-	echo "                         It is highly recommended to run this command prior to any validation of your current pull request"
+	echo "   portainer               - Runs Portainer independent of the EdgeX services"
+	echo "   portainer-down          - Stops Portainer independent of the EdgeX services"
+	echo "   run                     - Runs the EdgeX services in secure mode"
+	echo "   run-no-secty            - Runs the EdgeX services in non-secure mode"
+	echo "   run-mqtt                - Runs the EdgeX services using MQTT Message Buss in secure mode, including the Device MQTT service"
+	echo "   run-mqtt-no-secty       - Runs the EdgeX services using MQTT Message Buss in non-secure mode, including the Device MQTT service"
+	echo "   run-ui                  - Runs the optional EdgeX UI service"
+	echo "   run-arm64               - Same as 'run', but using ARM64 images"
+	echo "   run-no-secty-arm64      - Same as 'run-no-secty', but using ARM64 images"
+	echo "   run-mqtt-arm64          - Same as 'run-mqtt', but using ARM64 images"
+	echo "   run-mqtt-no-secty-arm64 - Same as 'run-mqtt-no-secty', but using ARM64 images"
+	echo "   run-ui-arm64            - Same as 'run-ui', but using ARM64 image"
+	echo "   down                    - Stops all EdgeX service no matter which configuration started them"
+	echo "   clean                   - Runs 'down' and then removes any stopped containers, prunes unused volumes and networks"
+	echo "   remove                  - Runs 'clean' and then removes all docker images with the 'master' tag"
+	echo "                             This is how you make sure you are using the very latest 'master' images"
+	echo "                             It is highly recommended to run this command prior to any validation of your current pull request"
 	echo ""
 	echo "*** Note that all 'run' commands take optional list of service(s) to run"
 
@@ -42,7 +42,7 @@ run:
 		-f docker-compose-nexus-add-security.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-no-sec:
+run-no-secty:
 	ARCH="" \
 	REDIS_ARCH="" \
 	docker-compose -p edgex \
@@ -59,7 +59,7 @@ run-mqtt:
 		-f docker-compose-nexus-add-security.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-mqtt-no-sec:
+run-mqtt-no-secty:
 	ARCH="" \
 	REDIS_ARCH="" \
 	docker-compose -p edgex \
@@ -67,7 +67,7 @@ run-mqtt-no-sec:
 		-f docker-compose-nexus-add-mqtt.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-arm:
+run-arm64:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	KONG_UBUNTU="-ubuntu" \
@@ -76,14 +76,14 @@ run-arm:
 		-f docker-compose-nexus-add-security.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-arm-no-sec:
+run-no-secty-arm64:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-base.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-mqtt-arm:
+run-mqtt-arm64:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	KONG_UBUNTU="-ubuntu" \
@@ -93,7 +93,7 @@ run-mqtt-arm:
 		-f docker-compose-nexus-add-security.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-mqtt-no-sec-arm:
+run-mqtt-no-secty-arm64:
 	ARCH="-arm64" \
 	REDIS_ARCH="arm64v8/" \
 	docker-compose -p edgex \
@@ -107,7 +107,7 @@ run-ui:
 		-f docker-compose-nexus-ui.yml \
 		up -d $(SERVICES_TO_RUN)
 
-run-ui-arm:
+run-ui-arm64:
 	ARCH="-arm64" \
 	docker-compose -p edgex \
 		-f docker-compose-nexus-ui.yml \
