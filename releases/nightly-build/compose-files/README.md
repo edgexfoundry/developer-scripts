@@ -24,22 +24,15 @@ This folder contains the following compose files:
 
 This folder contains a `Makefile` that provides helper commands for running, stopping and cleaning the various EdgeX configurations.
 
-> *Note: All 'run' commands below take optional list of service(s) to run* 
+```
+Usage: make <target> where target is:
+```
 
-| Command                    | Description                                                  |
-| -------------------------- | ------------------------------------------------------------ |
-| make portainer             | Runs **`Portainer`** independent of the EdgeX services       |
-| make portainer-down        | Stops **`Portainer`** independent of the EdgeX services      |
-| make run                   | Runs the EdgeX services in **secure mode**                   |
-| make run-no-sec            | Runs the EdgeX services in **non-secure mode**               |
-| make run-mqtt              | Runs the EdgeX services using MQTT Message Buss in **secure mode**, including the Device MQTT service |
-| make run-mqtt-no-sec       | Runs the EdgeX services using MQTT Message Buss in **non-secure** mode, including the Device MQTT service |
-| make run-ui                | Runs the optional EdgeX UI service                           |
-| make run-arm64             | Same as `run`, but using **ARM64** images                    |
-| make run-no-sec-arm64      | Same as `run-no-sec`, but using **ARM64** images             |
-| make run-mqtt-arm64        | Same as `run-mqtt`, but using **ARM64** images               |
-| make run-mqtt-no-sec-arm64 | Same as `run-mqtt-no-sec`, but using **ARM64** images        |
-| make run-ui-arm64          | Same as `run-ui`, but using **ARM64** image                  |
-| make down                  | Stops all EdgeX service no matter which configuration started them |
-| make clean                 | Runs **`down`** and then removes any stopped containers, prunes unused volumes and networks |
-| make remove                | Runs **`clean`** and then removes all docker images with the **`master`** tag <br />This is how you make sure you are using the very latest **`master`** images<br />It is highly recommended that you run this command prior to any validation of your current pull request |
+| Target                   | Description                                                  |
+| ------------------------ | ------------------------------------------------------------ |
+| portainer                | Runs **`Portainer`** independent of the EdgeX services       |
+| portainer-down           | Stops **`Portainer`** independent of the EdgeX services      |
+| run [options] [services] | Runs the EdgeX services as specified by<br />Options:<br />    no-secty:    Runs in Non-Secure Mode, otherwise runs in Secure Mode<br />    mqtt:           Runs using MQTT Message Bus and Device MQTT service<br />    ui:                Runs only the option EdgeX UI service. 'mqtt' & 'no-secty' are ignored<br />                        Typically used after the other Edgex Services have been started<br />    arm64:        Runs using ARM64 images<br />Services:<br />    <names...>: Runs only services listed (and their dependent services) where 'name'<br />                          matches a service name in one of the compose files used |
+| down                     | Stops all EdgeX service no matter which configuration started them |
+| clean                    | Runs **`down`** , then removes any stopped containers and then prunes unused volumes and networks |
+| remove                   | Runs **`clean`** and then removes all docker images with the **`master`** tag <br />This is how you make sure you are using the very latest **`master`** images<br />It is highly recommended that you run this command prior to any validation of your current pull request |

@@ -21,6 +21,7 @@ version: '3.7'
 # all common shared environment variables defined here:
 x-common-env-variables: &common-variables
   # These have to be repeated from base compose since extensions are not shared across multiple compose files
+  REGISTRY_HOST: edgex-core-consul
   CLIENTS_COREDATA_HOST: edgex-core-data
   CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
   CLIENTS_METADATA_HOST: edgex-core-metadata
@@ -30,7 +31,7 @@ x-common-env-variables: &common-variables
   CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
 
 services:
-  mqtt:
+  mqtt-broker:
     image: eclipse-mosquitto:1.6.3
     ports:
       - "127.0.0.1:1883:1883"
