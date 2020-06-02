@@ -1,4 +1,4 @@
-.PHONY: help portainer portainer-down run run-no-secty run-mqtt run-mqtt-no-secty run-ui run-arm64 run-mqtt-arm64 run-mqtt-no-secty-arm64 run-ui-arm64 down clean remove
+.PHONY: help portainer portainer-down run gen down clean remove
 .SILENT: help
 
 COMPOSE_FILES:=-f docker-compose-nexus-base.yml
@@ -13,9 +13,9 @@ ifeq (arm64, $(filter arm64,$(ARGS)))
 	KONG_UBUNTU:="-ubuntu"
 endif
 ifeq (no-secty, $(filter no-secty,$(ARGS)))
-	SECURITY:=NO
+	SECURITY:="NO"
 else
-	SECURITY:=YES
+	SECURITY:="YES"
 	COMPOSE_FILES:=${COMPOSE_FILES} -f docker-compose-nexus-add-security.yml
 endif
 ifeq (mqtt, $(filter mqtt,$(ARGS)))
@@ -46,6 +46,13 @@ help:
 	echo "         <names...>: runs only services listed (and their dependent services) where 'name'"
 	echo "                     matches a service name in one of the compose files used"
 	echo " "
+	echo "   gen [options] - Generates temporary single file compose file (docker-compose.yml) as specified by:"
+	echo "      Options:"
+	echo "         no-secty:   Generates non-secure compose file, otherwise generates secure compose file"
+	echo "         mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service"
+	echo "         arm64:      Generates compose file using ARM64 images"
+	echo "         ui:         Generates compose file for only EdgeX UI, not useful, but possible"
+	echo " "
 	echo "   down   - Stops all EdgeX services, including UI, no matter which configuration started them"
 	echo "   clean  - Runs 'down' and then removes any stopped containers, prunes unused volumes and networks"
 	echo "   remove - Runs 'clean' and then removes all docker images with the 'master' tag"
@@ -63,6 +70,12 @@ run:
 	REDIS_ARCH=$(REDIS_ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) up -d $(SERVICES)
+
+gen:
+	ARCH=$(ARCH) \
+	REDIS_ARCH=$(REDIS_ARCH) \
+	KONG_UBUNTU=$(KONG_UBUNTU) \
+	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 down:
 	ARCH="" \
