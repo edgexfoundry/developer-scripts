@@ -2,7 +2,7 @@
 .SILENT: help
 
 COMPOSE_FILES:=-f docker-compose-nexus-base.yml
-OPTIONS:=" arm64 no-secty mqtt ui " # Must have spaces around words for `filter-out` function to work properly
+OPTIONS:=" arm64 no-secty no-ds mqtt ui " # Must have spaces around words for `filter-out` function to work properly
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -11,6 +11,9 @@ ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:="-arm64"
 	REDIS_ARCH:="arm64v8/"
 	KONG_UBUNTU:="-ubuntu"
+endif
+ifneq (no-ds, $(filter no-ds,$(ARGS)))
+	COMPOSE_FILES:=${COMPOSE_FILES} -f docker-compose-nexus-add-device-services.yml
 endif
 ifeq (no-secty, $(filter no-secty,$(ARGS)))
 	SECURITY:="NO"
@@ -38,6 +41,7 @@ help:
 	echo "   run [options] [services] - Runs the EdgeX services as specified by:"
 	echo "      Options:"
 	echo "         no-secty:   Runs in Non-Secure Mode, otherwise runs in Secure Mode"
+	echo "         no-ds       Runs without the default device services"
 	echo "         mqtt:       Runs using MQTT Message Bus and Device MQTT service"
 	echo "         ui:         Runs only the option EdgeX UI service. 'mqtt' & 'no-secty' are ignored"
 	echo "                     Typically used after the other Edgex Services have been started  "
@@ -49,6 +53,7 @@ help:
 	echo "   gen [options] - Generates temporary single file compose file (docker-compose.yml) as specified by:"
 	echo "      Options:"
 	echo "         no-secty:   Generates non-secure compose file, otherwise generates secure compose file"
+	echo "         no-ds       Generates compose file without the default device services"
 	echo "         mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service"
 	echo "         arm64:      Generates compose file using ARM64 images"
 	echo "         ui:         Generates compose file for only EdgeX UI, not useful, but possible"
@@ -83,6 +88,7 @@ down:
 	KONG_UBUNTU="" \
 	docker-compose  -p edgex \
 		-f docker-compose-nexus-base.yml \
+		-f docker-compose-nexus-add-device-services.yml \
 		-f docker-compose-nexus-add-mqtt.yml \
 		-f docker-compose-nexus-add-security.yml \
 		-f docker-compose-nexus-ui.yml \
