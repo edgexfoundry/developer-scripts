@@ -133,7 +133,7 @@ services:
       - notifications
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go${ARCH}:1.2.0
+    image: nexus3.edgexfoundry.org:10004/docker-core-data-go${ARCH}:master
     ports:
       - "127.0.0.1:48080:48080"
       - "127.0.0.1:5563:5563"
