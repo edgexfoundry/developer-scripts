@@ -1,5 +1,5 @@
 .PHONY: help portainer portainer-down run gen down clean remove
-.SILENT: help
+.SILENT: help get-token del-token
 
 COMPOSE_FILES:=-f docker-compose-nexus-base.yml
 OPTIONS:=" arm64 no-secty no-ds mqtt ui " # Must have spaces around words for `filter-out` function to work properly
@@ -32,6 +32,7 @@ ifeq (ui, $(filter ui,$(ARGS)))
 	COMPOSE_FILES:=-f docker-compose-nexus-ui.yml
 endif
 SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
+USER:=$(wordlist 1,$(words $(SERVICES)),$(SERVICES)) # for use on get-token and del-token
 
 help:
 	echo "Usage: make <target> where target is:"
@@ -81,6 +82,38 @@ gen:
 	REDIS_ARCH=$(REDIS_ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
+
+get-token:
+	ARCH=$(ARCH) \
+	REDIS_ARCH=$(REDIS_ARCH) \
+	KONG_UBUNTU=$(KONG_UBUNTU) \
+	docker run --rm \
+		-e SECRETSERVICE_SERVER=edgex-vault \
+		-e KONGURL_SERVER=kong \
+		-e SECRETSERVICE_TOKENPATH=/tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json \
+		-e SECRETSERVICE_CACERTPATH=/tmp/edgex/secrets/ca/ca.pem \
+		--network edgex_edgex-network \
+		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
+		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
+		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master \
+		--init=false --useradd=${USER} --group=admin \
+		| grep " access token for user" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
+
+del-token:
+	ARCH=$(ARCH) \
+	REDIS_ARCH=$(REDIS_ARCH) \
+	KONG_UBUNTU=$(KONG_UBUNTU) \
+	docker run --rm \
+		-e SECRETSERVICE_SERVER=edgex-vault \
+		-e KONGURL_SERVER=kong \
+		-e SECRETSERVICE_TOKENPATH=/tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json \
+		-e SECRETSERVICE_CACERTPATH=/tmp/edgex/secrets/ca/ca.pem \
+		--network edgex_edgex-network \
+		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
+		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
+		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master \
+		--init=false --userdel=${USER} \
+		| grep "successful to delete"
 
 down:
 	ARCH="" \
