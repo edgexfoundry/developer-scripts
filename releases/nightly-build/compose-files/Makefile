@@ -1,12 +1,15 @@
-.PHONY: help portainer portainer-down run gen down clean remove
+.PHONY: help portainer portainer-down run pull gen down clean remove
 .SILENT: help get-token del-token
 
 COMPOSE_FILES:=-f docker-compose-nexus-base.yml
-OPTIONS:=" arm64 no-secty no-ds mqtt ui " # Must have spaces around words for `filter-out` function to work properly
+OPTIONS:=" arm64 no-secty no-ds mqtt dev ui " # Must have spaces around words for `filter-out` function to work properly
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
+ifeq (dev, $(filter dev,$(ARGS)))
+	DEV:="-dev"
+endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:="-arm64"
 	REDIS_ARCH:="arm64v8/"
@@ -35,35 +38,7 @@ SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
 USER:=$(wordlist 1,$(words $(SERVICES)),$(SERVICES)) # for use on get-token and del-token
 
 help:
-	echo "Usage: make <target> where target is:"
-	echo "   portainer      - Runs Portainer independent of the EdgeX services"
-	echo "   portainer-down - Stops Portainer independent of the EdgeX services"
-	echo " "
-	echo "   run [options] [services] - Runs the EdgeX services as specified by:"
-	echo "      Options:"
-	echo "         no-secty:   Runs in Non-Secure Mode, otherwise runs in Secure Mode"
-	echo "         no-ds       Runs without the default device services"
-	echo "         mqtt:       Runs using MQTT Message Bus and Device MQTT service"
-	echo "         ui:         Runs only the option EdgeX UI service. 'mqtt' & 'no-secty' are ignored"
-	echo "                     Typically used after the other Edgex Services have been started  "
-	echo "         arm64:      Runs using ARM64 images"
-	echo "      Services:"
-	echo "         <names...>: runs only services listed (and their dependent services) where 'name'"
-	echo "                     matches a service name in one of the compose files used"
-	echo " "
-	echo "   gen [options] - Generates temporary single file compose file (docker-compose.yml) as specified by:"
-	echo "      Options:"
-	echo "         no-secty:   Generates non-secure compose file, otherwise generates secure compose file"
-	echo "         no-ds       Generates compose file without the default device services"
-	echo "         mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service"
-	echo "         arm64:      Generates compose file using ARM64 images"
-	echo "         ui:         Generates compose file for only EdgeX UI, not useful, but possible"
-	echo " "
-	echo "   down   - Stops all EdgeX services, including UI, no matter which configuration started them"
-	echo "   clean  - Runs 'down' and then removes any stopped containers, prunes unused volumes and networks"
-	echo "   remove - Runs 'clean' and then removes all docker images with the 'master' tag"
-	echo "            This is how you make sure you are using the very latest 'master' images"
-	echo "            It is highly recommended to run this command prior to any validation of your current pull request"
+	echo "See README.md in this folder"
 
 portainer:
 	docker-compose -p portainer -f docker-compose-portainer.yml up -d
@@ -72,21 +47,28 @@ portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
 
 run:
+	DEV=$(DEV) \
 	ARCH=$(ARCH) \
 	REDIS_ARCH=$(REDIS_ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) up -d $(SERVICES)
 
+pull:
+	ARCH=$(ARCH) \
+	REDIS_ARCH=$(REDIS_ARCH) \
+	KONG_UBUNTU=$(KONG_UBUNTU) \
+	docker-compose -p edgex $(COMPOSE_FILES) pull $(SERVICES)
+
 gen:
+	DEV=$(DEV) \
 	ARCH=$(ARCH) \
 	REDIS_ARCH=$(REDIS_ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 get-token:
+	DEV=$(DEV) \
 	ARCH=$(ARCH) \
-	REDIS_ARCH=$(REDIS_ARCH) \
-	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker run --rm \
 		-e SECRETSERVICE_SERVER=edgex-vault \
 		-e KONGURL_SERVER=kong \
@@ -95,14 +77,13 @@ get-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master \
+		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master${DEV} \
 		--init=false --useradd=${USER} --group=admin \
 		| grep " access token for user" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
 
 del-token:
+	DEV=$(DEV) \
 	ARCH=$(ARCH) \
-	REDIS_ARCH=$(REDIS_ARCH) \
-	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker run --rm \
 		-e SECRETSERVICE_SERVER=edgex-vault \
 		-e KONGURL_SERVER=kong \
@@ -111,11 +92,12 @@ del-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master \
+		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master${DEV} \
 		--init=false --userdel=${USER} \
 		| grep "successful to delete"
 
 down:
+	DEV="" \
 	ARCH="" \
 	REDIS_ARCH="" \
 	KONG_UBUNTU="" \

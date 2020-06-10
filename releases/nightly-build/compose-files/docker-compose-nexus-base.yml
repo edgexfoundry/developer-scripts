@@ -78,7 +78,7 @@ services:
       - db-data:/data:z
 
   system:
-    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go${ARCH}:master${DEV}
     ports:
       - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -101,7 +101,7 @@ services:
       - command
 
   notifications:
-    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go${ARCH}:master${DEV}
     ports:
       - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
@@ -116,7 +116,7 @@ services:
       - redis
 
   metadata:
-    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go${ARCH}:master${DEV}
     ports:
       - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
@@ -133,7 +133,7 @@ services:
       - notifications
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-core-data-go${ARCH}:master${DEV}
     ports:
       - "127.0.0.1:48080:48080"
       - "127.0.0.1:5563:5563"
@@ -150,7 +150,7 @@ services:
       - metadata
 
   command:
-    image: nexus3.edgexfoundry.org:10004/docker-core-command-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-core-command-go${ARCH}:master${DEV}
     ports:
       - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
@@ -166,7 +166,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go${ARCH}:master${DEV}
     ports:
       - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler

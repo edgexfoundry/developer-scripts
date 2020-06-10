@@ -89,7 +89,7 @@ services:
       - security-secrets-setup
 
   security-secrets-setup:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go${ARCH}:master${DEV}
     container_name: edgex-secrets-setup
     hostname: edgex-secrets-setup
     environment:
@@ -104,7 +104,7 @@ services:
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
 
   vault-worker:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go${ARCH}:master${DEV}
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
     environment:
@@ -198,7 +198,7 @@ services:
       - kong-migrations
 
   edgex-proxy:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master
+    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master${DEV}
     container_name: edgex-proxy
     hostname: edgex-proxy
     entrypoint: >
