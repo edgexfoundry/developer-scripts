@@ -233,7 +233,7 @@ services:
       - data
 
   rulesengine:
-    image: emqx/kuiper:0.3.2
+    image: emqx/kuiper:${KUIPER_VERSION}
     ports:
       - "127.0.0.1:48075:48075"
       - "127.0.0.1:20498:20498"
