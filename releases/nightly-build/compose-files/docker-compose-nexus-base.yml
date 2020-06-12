@@ -49,7 +49,7 @@ volumes:
 
 services:
   consul:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-consul${ARCH}:master
+    image: ${REPOSITORY}/docker-edgex-consul${ARCH}:master
     ports:
       - "127.0.0.1:8400:8400"
       - "127.0.0.1:8500:8500"
@@ -64,7 +64,7 @@ services:
       EDGEX_DB: redis
       EDGEX_SECURE: "false"
 
-  redis:
+  database:
     image: ${REDIS_ARCH}redis:5.0.8-alpine
     ports:
       - "127.0.0.1:6379:6379"
@@ -78,7 +78,7 @@ services:
       - db-data:/data:z
 
   system:
-    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go${ARCH}:master${DEV}
+    image: ${REPOSITORY}/docker-sys-mgmt-agent-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -101,7 +101,7 @@ services:
       - command
 
   notifications:
-    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go${ARCH}:master${DEV}
+    image: ${REPOSITORY}/docker-support-notifications-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
@@ -116,7 +116,7 @@ services:
       - redis
 
   metadata:
-    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go${ARCH}:master${DEV}
+    image: ${REPOSITORY}/docker-core-metadata-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
@@ -133,7 +133,7 @@ services:
       - notifications
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go${ARCH}:master${DEV}
+    image: ${REPOSITORY}/docker-core-data-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48080:48080"
       - "127.0.0.1:5563:5563"
@@ -150,7 +150,7 @@ services:
       - metadata
 
   command:
-    image: nexus3.edgexfoundry.org:10004/docker-core-command-go${ARCH}:master${DEV}
+    image: ${REPOSITORY}/docker-core-command-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
@@ -166,7 +166,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go${ARCH}:master${DEV}
+    image: ${REPOSITORY}/docker-support-scheduler-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler
@@ -183,7 +183,7 @@ services:
       - redis
 
   app-service-rules:
-    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable${ARCH}:master
+    image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:master
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -201,9 +201,8 @@ services:
       - consul
       - data
 
-  # TODO: Update Kuiper image to 0.4.0 once available
   rulesengine:
-    image: emqx/kuiper:0.3.2
+    image: emqx/kuiper:0.4.2
     ports:
       - "127.0.0.1:48075:48075"
       - "127.0.0.1:20498:20498"

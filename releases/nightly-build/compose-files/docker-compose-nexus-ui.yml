@@ -20,10 +20,10 @@ version: '3.7'
 
 services:
   ui:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go${ARCH}:master
+    image: ${REPOSITORY}/docker-edgex-ui-go${ARCH}:${CORE_EDGEX_VERSION}
     ports:
       - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
     hostname: edgex-ui-go
-    network_mode: host
-
+    networks:
+      - edgex-network

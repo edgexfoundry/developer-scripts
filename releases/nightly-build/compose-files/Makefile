@@ -1,6 +1,12 @@
 .PHONY: help portainer portainer-down run pull gen down clean remove
 .SILENT: help get-token del-token
 
+# TODO: When cutting next release change these to edgexfoundry & the actual Edgex release version
+REPOSITORY:=nexus3.edgexfoundry.org:10004
+CORE_EDGEX_VERSION:=master
+# Note: Device services, consul and App Services versions may differ from the Edgex release version
+#	    The versions for these services still have to be changed in the compose file as they all may be different.
+
 COMPOSE_FILES:=-f docker-compose-nexus-base.yml
 OPTIONS:=" arm64 no-secty no-ds mqtt dev ui " # Must have spaces around words for `filter-out` function to work properly
 
@@ -8,12 +14,12 @@ ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
 ifeq (dev, $(filter dev,$(ARGS)))
-	DEV:="-dev"
+	DEV:=-dev
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
-	ARCH:="-arm64"
-	REDIS_ARCH:="arm64v8/"
-	KONG_UBUNTU:="-ubuntu"
+	ARCH:=-arm64
+	REDIS_ARCH:=arm64v8/
+	KONG_UBUNTU:=-ubuntu
 endif
 ifneq (no-ds, $(filter no-ds,$(ARGS)))
 	COMPOSE_FILES:=${COMPOSE_FILES} -f docker-compose-nexus-add-device-services.yml
@@ -47,6 +53,8 @@ portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
 
 run:
+	REPOSITORY=$(REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	DEV=$(DEV) \
 	ARCH=$(ARCH) \
 	REDIS_ARCH=$(REDIS_ARCH) \
@@ -54,12 +62,16 @@ run:
 	docker-compose -p edgex $(COMPOSE_FILES) up -d $(SERVICES)
 
 pull:
+	REPOSITORY=$(REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	ARCH=$(ARCH) \
 	REDIS_ARCH=$(REDIS_ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) pull $(SERVICES)
 
 gen:
+	REPOSITORY=$(REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	DEV=$(DEV) \
 	ARCH=$(ARCH) \
 	REDIS_ARCH=$(REDIS_ARCH) \
@@ -67,8 +79,6 @@ gen:
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 get-token:
-	DEV=$(DEV) \
-	ARCH=$(ARCH) \
 	docker run --rm \
 		-e SECRETSERVICE_SERVER=edgex-vault \
 		-e KONGURL_SERVER=kong \
@@ -77,13 +87,11 @@ get-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master${DEV} \
+		$(REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
 		--init=false --useradd=${USER} --group=admin \
 		| grep " access token for user" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
 
 del-token:
-	DEV=$(DEV) \
-	ARCH=$(ARCH) \
 	docker run --rm \
 		-e SECRETSERVICE_SERVER=edgex-vault \
 		-e KONGURL_SERVER=kong \
@@ -92,11 +100,13 @@ del-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go${ARCH}:master${DEV} \
+		$(REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
 		--init=false --userdel=${USER} \
 		| grep "successful to delete"
 
 down:
+	REPOSITORY=$(REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	DEV="" \
 	ARCH="" \
 	REDIS_ARCH="" \

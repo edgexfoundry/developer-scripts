@@ -50,7 +50,7 @@ services:
       MESSAGEQUEUE_OPTIONAL_CLIENTID: edgex-core-data
 
   device-mqtt:
-    image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go${ARCH}:master
+    image: ${REPOSITORY}/docker-device-mqtt-go${ARCH}:master
     ports:
       - "127.0.0.1:49982:49982"
     container_name: edgex-device-mqtt
@@ -73,9 +73,8 @@ services:
       MESSAGEBUS_PUBLISHHOST_HOST: edgex-mqtt-broker
       BINDING_PUBLISHTOPIC: rules-events
 
-# Note: that version 0.3.2 of Kuiper doesn't support the EDGEX_TYPE variable below and currently will not work in this
-#       configuration.The EMQ team is adding support for this and the rest of the MQTT config via env vars.
-# TODO: Update Kuiper image to 0.4.0 in base compose file once available and update env vars name below if needed
+  # TODO: Determine the proper ENV VAR from Kuiper 0.4.2 to set the Message Bus type to `mqtt`.
+  #      EDGEX_TYPE doesn't work
   rulesengine:
     environment:
       EDGEX_SERVER: edgex-mqtt-broker
