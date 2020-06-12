@@ -49,7 +49,7 @@ volumes:
 
 services:
   consul:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
+    image: ${REPOSITORY}/docker-edgex-consul:master
     ports:
       - "127.0.0.1:8400:8400"
       - "127.0.0.1:8500:8500"
@@ -67,7 +67,7 @@ services:
       - EDGEX_SECURE=false
 
   mongo:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-mongo:master
+    image: ${REPOSITORY}/docker-edgex-mongo:master
     ports:
       - "127.0.0.1:27017:27017"
     container_name: edgex-mongo
@@ -85,7 +85,7 @@ services:
 # and the related global override that are commented out at the top.
 #
 #  logging:
-#    image: nexus3.edgexfoundry.org:10004/docker-support-logging-go:master
+#    image: ${REPOSITORY}/docker-support-logging-go:master
 #    ports:
 #      - "127.0.0.1:48061:48061"
 #    container_name: edgex-support-logging
@@ -102,7 +102,7 @@ services:
 #      - consul
 
   system:
-    image: nexus3.edgexfoundry.org:10004/docker-sys-mgmt-agent-go:master
+    image: ${REPOSITORY}/docker-sys-mgmt-agent-go:master
     ports:
       - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -126,7 +126,7 @@ services:
       - command
 
   notifications:
-    image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go:master
+    image: ${REPOSITORY}/docker-support-notifications-go:master
     ports:
       - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
@@ -142,7 +142,7 @@ services:
       - mongo
 
   metadata:
-    image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go:master
+    image: ${REPOSITORY}/docker-core-metadata-go:master
     ports:
       - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
@@ -160,7 +160,7 @@ services:
       - notifications
 
   data:
-    image: nexus3.edgexfoundry.org:10004/docker-core-data-go:master
+    image: ${REPOSITORY}/docker-core-data-go:master
     ports:
       - "127.0.0.1:48080:48080"
       - "127.0.0.1:5563:5563"
@@ -178,7 +178,7 @@ services:
       - metadata
 
   command:
-    image: nexus3.edgexfoundry.org:10004/docker-core-command-go:master
+    image: ${REPOSITORY}/docker-core-command-go:master
     ports:
       - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
@@ -195,7 +195,7 @@ services:
       - metadata
 
   scheduler:
-    image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go:master
+    image: ${REPOSITORY}/docker-support-scheduler-go:master
     ports:
       - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler
@@ -213,7 +213,7 @@ services:
       - mongo
 
   app-service-rules:
-    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    image: ${REPOSITORY}/docker-app-service-configurable:master
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -258,7 +258,7 @@ services:
       - app-service-rules
 
   # rulesengine:
-  #   image: nexus3.edgexfoundry.org:10004/docker-support-rulesengine:master
+  #   image: ${REPOSITORY}/docker-support-rulesengine:master
   #   ports:
   #     - "127.0.0.1:48075:48075"
   #   container_name: edgex-support-rulesengine
@@ -275,7 +275,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: nexus3.edgexfoundry.org:10004/docker-device-virtual-go:master
+    image: ${REPOSITORY}/docker-device-virtual-go:master
     ports:
     - "127.0.0.1:49990:49990"
     container_name: edgex-device-virtual
@@ -294,7 +294,7 @@ services:
       - metadata
 
   device-rest:
-    image: nexus3.edgexfoundry.org:10004/docker-device-rest-go:master
+    image: ${REPOSITORY}/docker-device-rest-go:master
     ports:
       - "127.0.0.1:49986:49986"
     container_name: edgex-device-rest
@@ -312,7 +312,7 @@ services:
   #      - logging  # uncomment if re-enabled remote logging
 
   # device-random:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-random-go:master
+  #   image: ${REPOSITORY}/docker-device-random-go:master
   #   ports:
   #     - "127.0.0.1:49988:49988"
   #   container_name: edgex-device-random
@@ -329,7 +329,7 @@ services:
   #     - command
   #
   # device-mqtt:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-mqtt-go:master
+  #   image: ${REPOSITORY}/docker-device-mqtt-go:master
   #   ports:
   #     - "127.0.0.1:49982:49982"
   #   container_name: edgex-device-mqtt
@@ -346,7 +346,7 @@ services:
   #     - command
   #
   # device-modbus:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go:master
+  #   image: ${REPOSITORY}/docker-device-modbus-go:master
   #   ports:
   #     - "127.0.0.1:49991:49991"
   #   container_name: edgex-device-modbus
@@ -363,7 +363,7 @@ services:
   #     - command
   #
   # device-snmp:
-  #   image: nexus3.edgexfoundry.org:10004/docker-device-snmp-go:master
+  #   image: ${REPOSITORY}/docker-device-snmp-go:master
   #   ports:
   #     - "127.0.0.1:49993:49993"
   #   container_name: edgex-device-snmp
@@ -383,7 +383,7 @@ services:
 # UIs
 #################################################################
   ui:
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go:master
+    image: ${REPOSITORY}/docker-edgex-ui-go:master
     ports:
       - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
