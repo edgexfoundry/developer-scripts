@@ -168,7 +168,7 @@ services:
       - security-secrets-setup
 
   kong-migrations:
-    image: kong:${KONG_VERSION:-2.0.1}
+    image: kong:${KONG_VERSION}
     container_name: kong-migrations
     networks:
       edgex-network:
@@ -195,7 +195,7 @@ services:
       - kong-db
 
   kong:
-    image: kong:${KONG_VERSION:-2.0.1}
+    image: kong:${KONG_VERSION}
     container_name: kong
     hostname: kong
     networks:
