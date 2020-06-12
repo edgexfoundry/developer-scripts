@@ -49,7 +49,7 @@ volumes:
 
 services:
   consul:
-    image: ${REPOSITORY}/docker-edgex-consul:master
+    image: ${REPOSITORY}/docker-edgex-consul${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:8400:8400"
       - "127.0.0.1:8500:8500"
@@ -67,7 +67,7 @@ services:
       - EDGEX_SECURE=false
 
   mongo:
-    image: ${REPOSITORY}/docker-edgex-mongo:master
+    image: ${REPOSITORY}/docker-edgex-mongo${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:27017:27017"
     container_name: edgex-mongo
@@ -85,7 +85,7 @@ services:
 # and the related global override that are commented out at the top.
 #
 #  logging:
-#    image: ${REPOSITORY}/docker-support-logging-go:master
+#    image: ${REPOSITORY}/docker-support-logging-go${ARCHITECTURE}:master
 #    ports:
 #      - "127.0.0.1:48061:48061"
 #    container_name: edgex-support-logging
@@ -102,7 +102,7 @@ services:
 #      - consul
 
   system:
-    image: ${REPOSITORY}/docker-sys-mgmt-agent-go:master
+    image: ${REPOSITORY}/docker-sys-mgmt-agent-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -126,7 +126,7 @@ services:
       - command
 
   notifications:
-    image: ${REPOSITORY}/docker-support-notifications-go:master
+    image: ${REPOSITORY}/docker-support-notifications-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
@@ -142,7 +142,7 @@ services:
       - mongo
 
   metadata:
-    image: ${REPOSITORY}/docker-core-metadata-go:master
+    image: ${REPOSITORY}/docker-core-metadata-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
@@ -160,7 +160,7 @@ services:
       - notifications
 
   data:
-    image: ${REPOSITORY}/docker-core-data-go:master
+    image: ${REPOSITORY}/docker-core-data-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48080:48080"
       - "127.0.0.1:5563:5563"
@@ -178,7 +178,7 @@ services:
       - metadata
 
   command:
-    image: ${REPOSITORY}/docker-core-command-go:master
+    image: ${REPOSITORY}/docker-core-command-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
@@ -195,7 +195,7 @@ services:
       - metadata
 
   scheduler:
-    image: ${REPOSITORY}/docker-support-scheduler-go:master
+    image: ${REPOSITORY}/docker-support-scheduler-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler
@@ -213,7 +213,7 @@ services:
       - mongo
 
   app-service-rules:
-    image: ${REPOSITORY}/docker-app-service-configurable:master
+    image: ${REPOSITORY}/docker-app-service-configurable${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -258,7 +258,7 @@ services:
       - app-service-rules
 
   # rulesengine:
-  #   image: ${REPOSITORY}/docker-support-rulesengine:master
+  #   image: ${REPOSITORY}/docker-support-rulesengine${ARCHITECTURE}:master
   #   ports:
   #     - "127.0.0.1:48075:48075"
   #   container_name: edgex-support-rulesengine
@@ -275,7 +275,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: ${REPOSITORY}/docker-device-virtual-go:master
+    image: ${REPOSITORY}/docker-device-virtual-go${ARCHITECTURE}:master
     ports:
     - "127.0.0.1:49990:49990"
     container_name: edgex-device-virtual
@@ -294,7 +294,7 @@ services:
       - metadata
 
   device-rest:
-    image: ${REPOSITORY}/docker-device-rest-go:master
+    image: ${REPOSITORY}/docker-device-rest-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:49986:49986"
     container_name: edgex-device-rest
@@ -312,7 +312,7 @@ services:
   #      - logging  # uncomment if re-enabled remote logging
 
   # device-random:
-  #   image: ${REPOSITORY}/docker-device-random-go:master
+  #   image: ${REPOSITORY}/docker-device-random-go${ARCHITECTURE}:master
   #   ports:
   #     - "127.0.0.1:49988:49988"
   #   container_name: edgex-device-random
@@ -329,7 +329,7 @@ services:
   #     - command
   #
   # device-mqtt:
-  #   image: ${REPOSITORY}/docker-device-mqtt-go:master
+  #   image: ${REPOSITORY}/docker-device-mqtt-go${ARCHITECTURE}:master
   #   ports:
   #     - "127.0.0.1:49982:49982"
   #   container_name: edgex-device-mqtt
@@ -346,7 +346,7 @@ services:
   #     - command
   #
   # device-modbus:
-  #   image: ${REPOSITORY}/docker-device-modbus-go:master
+  #   image: ${REPOSITORY}/docker-device-modbus-go${ARCHITECTURE}:master
   #   ports:
   #     - "127.0.0.1:49991:49991"
   #   container_name: edgex-device-modbus
@@ -363,7 +363,7 @@ services:
   #     - command
   #
   # device-snmp:
-  #   image: ${REPOSITORY}/docker-device-snmp-go:master
+  #   image: ${REPOSITORY}/docker-device-snmp-go${ARCHITECTURE}:master
   #   ports:
   #     - "127.0.0.1:49993:49993"
   #   container_name: edgex-device-snmp
@@ -383,7 +383,7 @@ services:
 # UIs
 #################################################################
   ui:
-    image: ${REPOSITORY}/docker-edgex-ui-go:master
+    image: ${REPOSITORY}/docker-edgex-ui-go${ARCHITECTURE}:master
     ports:
       - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
