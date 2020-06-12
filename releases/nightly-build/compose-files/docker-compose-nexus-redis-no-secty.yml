@@ -65,7 +65,7 @@ services:
       - EDGEX_SECURE=false
 
   redis:
-    image: redis:5.0.8-alpine
+    image: redis:${REDIS_VERSION}
     ports:
       - "127.0.0.1:6379:6379"
     container_name: edgex-redis
