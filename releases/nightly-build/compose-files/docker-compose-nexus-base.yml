@@ -113,7 +113,7 @@ services:
       SERVICE_HOST: edgex-support-notifications
     depends_on:
       - consul
-      - redis
+      - database
 
   metadata:
     image: ${REPOSITORY}/docker-core-metadata-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -129,7 +129,7 @@ services:
       NOTIFICATIONS_SENDER: edgex-core-metadata
     depends_on:
       - consul
-      - redis
+      - database
       - notifications
 
   data:
@@ -146,7 +146,7 @@ services:
       SERVICE_HOST: edgex-core-data
     depends_on:
       - consul
-      - redis
+      - database
       - metadata
 
   command:
@@ -162,7 +162,7 @@ services:
       SERVICE_HOST: edgex-core-command
     depends_on:
       - consul
-      - redis
+      - database
       - metadata
 
   scheduler:
@@ -180,7 +180,7 @@ services:
       INTERVALACTIONS_SCRUBAGED_HOST: edgex-core-data
     depends_on:
       - consul
-      - redis
+      - database
 
   app-service-rules:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:master

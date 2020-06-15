@@ -80,4 +80,5 @@ services:
       EDGEX_SERVER: edgex-mqtt-broker
       EDGEX_TOPIC: rules-events
       EDGEX_PORT: 1883
-      EDGEX_TYPE: mqtt
+      EDGEX__DEFAULT__TYPE: mqtt
+      EDGEX__DEFAULT__OPTIONAL__CLIENTID: kuiper-rules-engine
