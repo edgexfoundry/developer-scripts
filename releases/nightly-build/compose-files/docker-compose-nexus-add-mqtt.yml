@@ -73,12 +73,10 @@ services:
       MESSAGEBUS_PUBLISHHOST_HOST: edgex-mqtt-broker
       BINDING_PUBLISHTOPIC: rules-events
 
-  # TODO: Determine the proper ENV VAR from Kuiper 0.4.2 to set the Message Bus type to `mqtt`.
-  #      EDGEX_TYPE doesn't work
   rulesengine:
     environment:
-      EDGEX_SERVER: edgex-mqtt-broker
-      EDGEX_TOPIC: rules-events
-      EDGEX_PORT: 1883
+      EDGEX__DEFAULT__SERVER: edgex-mqtt-broker
+      EDGEX__DEFAULT__TOPIC: rules-events
+      EDGEX__DEFAULT__PORT: 1883
       EDGEX__DEFAULT__TYPE: mqtt
       EDGEX__DEFAULT__OPTIONAL__CLIENTID: kuiper-rules-engine
