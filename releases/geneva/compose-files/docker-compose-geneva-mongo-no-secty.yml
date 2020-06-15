@@ -288,7 +288,6 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-device-virtual
-      Service_Timeout: "20000"
     depends_on:
       - consul
 #      - logging  # uncomment if re-enabled remote logging
@@ -306,7 +305,6 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-device-rest
-      Service_Timeout: "20000"
     depends_on:
       - data
       - command
@@ -323,7 +321,6 @@ services:
 #    environment:
 #      <<: *common-variables
 #      Service_Host: edgex-device-random
-#      Service_Timeout: "20000"
 #    depends_on:
 #      - data
 #      - command
@@ -339,7 +336,6 @@ services:
 #    environment:
 #      <<: *common-variables
 #      Service_Host: edgex-device-mqtt
-#      Service_Timeout: "20000"
 #    depends_on:
 #      - data
 #      - command
@@ -355,7 +351,6 @@ services:
 #    environment:
 #      <<: *common-variables
 #      Service_Host: edgex-device-modbus
-#      Service_Timeout: "20000"
 #    depends_on:
 #      - data
 #      - command
@@ -371,7 +366,6 @@ services:
 #    environment:
 #      <<: *common-variables
 #      Service_Host: edgex-device-snmp
-#      Service_Timeout: "20000"
 #    depends_on:
 #      - data
 #      - command
