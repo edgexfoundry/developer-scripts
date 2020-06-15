@@ -350,6 +350,7 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-core-metadata
+      Service_Timeout: "20000"
       Notifications_Sender: edgex-core-metadata
       SecretStore_TokenFile: /tmp/edgex/secrets/edgex-core-metadata/secrets-token.json
     volumes:

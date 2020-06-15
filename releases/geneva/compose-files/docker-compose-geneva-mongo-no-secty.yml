@@ -157,6 +157,7 @@ services:
     environment:
       <<: *common-variables
       Service_Host: edgex-core-metadata
+      Service_Timeout: "20000"
       Notifications_Sender: edgex-core-metadata
     depends_on:
       - consul
