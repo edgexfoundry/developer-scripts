@@ -18,12 +18,17 @@
 
 version: '3.4'
 
+networks:
+  compose-files_edgex-network:
+    external: true
+
 services:
   ui:
-    image: edgexfoundry/docker-edgex-ui-go-arm64:1.2.0
+    image: edgexfoundry/docker-edgex-ui-go-arm64:1.2.1
     ports:
       - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
     hostname: edgex-ui-go
-    network_mode: host
+    networks:
+      - compose-files_edgex-network
 
