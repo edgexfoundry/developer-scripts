@@ -202,7 +202,7 @@ services:
       - data
 
   rulesengine:
-    image: emqx/kuiper:0.4.2
+    image: emqx/kuiper:0.4.2-alpine
     ports:
       - "127.0.0.1:48075:48075"
       - "127.0.0.1:20498:20498"
@@ -219,5 +219,6 @@ services:
       EDGEX__DEFAULT__TOPIC: events
       EDGEX__DEFAULT__PROTOCOL: tcp
       EDGEX__DEFAULT__PORT: 5566
+      EDGEX__DEFAULT__TYPE: zero
     depends_on:
       - app-service-rules
