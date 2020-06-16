@@ -219,7 +219,7 @@ services:
       - mongo
 
   app-service-rules:
-    image: edgexfoundry/docker-app-service-configurable-arm64:1.1.0
+    image: eedgexfoundry/docker-app-service-configurable-arm64:1.2.0
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
