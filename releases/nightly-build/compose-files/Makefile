@@ -1,11 +1,7 @@
 .PHONY: help portainer portainer-down run pull gen down clean remove
 .SILENT: help get-token del-token
 
-# TODO: When cutting next release change these to edgexfoundry & the actual Edgex release version
-REPOSITORY:=nexus3.edgexfoundry.org:10004
-CORE_EDGEX_VERSION:=master
-# Note: Device services, consul and App Services versions may differ from the Edgex release version
-#	    The versions for these services still have to be changed in the compose file as they all may be different.
+include .env
 
 COMPOSE_FILES:=-f docker-compose-nexus-base.yml
 OPTIONS:=" arm64 no-secty no-ds mqtt dev ui " # Must have spaces around words for `filter-out` function to work properly
@@ -52,26 +48,13 @@ portainer:
 portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
 
-run:
-	REPOSITORY=$(REPOSITORY) \
-	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
-	DEV=$(DEV) \
-	ARCH=$(ARCH) \
-	REDIS_ARCH=$(REDIS_ARCH) \
-	KONG_UBUNTU=$(KONG_UBUNTU) \
-	docker-compose -p edgex $(COMPOSE_FILES) up -d $(SERVICES)
+run: gen
+	docker-compose -p edgex up -d $(SERVICES)
 
-pull:
-	REPOSITORY=$(REPOSITORY) \
-	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
-	ARCH=$(ARCH) \
-	REDIS_ARCH=$(REDIS_ARCH) \
-	KONG_UBUNTU=$(KONG_UBUNTU) \
-	docker-compose -p edgex $(COMPOSE_FILES) pull $(SERVICES)
+pull: gen
+	docker-compose pull $(SERVICES)
 
 gen:
-	REPOSITORY=$(REPOSITORY) \
-	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	DEV=$(DEV) \
 	ARCH=$(ARCH) \
 	REDIS_ARCH=$(REDIS_ARCH) \
@@ -92,6 +75,7 @@ get-token:
 		| grep " access token for user" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
 
 del-token:
+	source .env
 	docker run --rm \
 		-e SECRETSERVICE_SERVER=edgex-vault \
 		-e KONGURL_SERVER=kong \
@@ -105,25 +89,9 @@ del-token:
 		| grep "successful to delete"
 
 down:
-	REPOSITORY=$(REPOSITORY) \
-	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
-	DEV="" \
-	ARCH="" \
-	REDIS_ARCH="" \
-	KONG_UBUNTU="" \
-	docker-compose  -p edgex \
-		-f docker-compose-nexus-base.yml \
-		-f docker-compose-nexus-add-device-services.yml \
-		-f docker-compose-nexus-add-mqtt.yml \
-		-f docker-compose-nexus-add-security.yml \
-		-f docker-compose-nexus-ui.yml \
-		down
+	docker-compose -p edgex down
 
 clean: down
 	-docker rm $$(docker ps --filter "network=edgex_edgex-network" --filter "network=edgex_default" -aq) 2> /dev/null
 	docker volume prune -f && \
 	docker network prune -f
-
-#TODO: When cutting next release, remove this make target as it only needed when release = "master".
-remove: clean
-	-docker rmi -f $$(docker images | grep master | awk '{print $$3}') 2> /dev/null

@@ -49,7 +49,7 @@ volumes:
 
 services:
   consul:
-    image: ${REPOSITORY}/docker-edgex-consul${ARCH}:master
+    image: ${REPOSITORY}/docker-edgex-consul${ARCH}:${CONSUL_VERSION}
     ports:
       - "127.0.0.1:8400:8400"
       - "127.0.0.1:8500:8500"
@@ -65,7 +65,7 @@ services:
       EDGEX_SECURE: "false"
 
   database:
-    image: ${REDIS_ARCH}redis:5.0.8-alpine
+    image: ${REDIS_ARCH}redis:${REDIS_VERSION}
     ports:
       - "127.0.0.1:6379:6379"
     container_name: edgex-redis
@@ -183,7 +183,7 @@ services:
       - database
 
   app-service-rules:
-    image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:master
+    image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -202,7 +202,7 @@ services:
       - data
 
   rulesengine:
-    image: emqx/kuiper:0.4.2-alpine
+    image: emqx/kuiper:${KUIPER_VERSION}
     ports:
       - "127.0.0.1:48075:48075"
       - "127.0.0.1:20498:20498"

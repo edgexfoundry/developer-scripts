@@ -22,7 +22,7 @@ version: '3.7'
 x-common-env-variables: &common-variables
   # These have to be repeated from base compose since extensions are not shared across multiple compose files
   REGISTRY_HOST: edgex-core-consul
-  CLIENTS_COREDATA_HOST: edgex-core-data
+  CLIENTS_DATA_HOST: edgex-core-data # For device Services only
   CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
   CLIENTS_METADATA_HOST: edgex-core-metadata
   CLIENTS_COMMAND_HOST: edgex-core-command
@@ -32,7 +32,7 @@ x-common-env-variables: &common-variables
 
 services:
   mqtt-broker:
-    image: eclipse-mosquitto:1.6.3
+    image: eclipse-mosquitto:${MOSQUITTO_VERSION}
     ports:
       - "127.0.0.1:1883:1883"
     container_name: edgex-mqtt-broker
@@ -50,7 +50,7 @@ services:
       MESSAGEQUEUE_OPTIONAL_CLIENTID: edgex-core-data
 
   device-mqtt:
-    image: ${REPOSITORY}/docker-device-mqtt-go${ARCH}:master
+    image: ${REPOSITORY}/docker-device-mqtt-go${ARCH}:${DEVICE_MQTT_VERSION}
     ports:
       - "127.0.0.1:49982:49982"
     container_name: edgex-device-mqtt

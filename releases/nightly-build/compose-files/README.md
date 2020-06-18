@@ -34,60 +34,60 @@ This folder contains a `Makefile` that provides helper commands for running, sto
 Usage: make <target> where target is:
 ```
 ```
-portainer		Runs Portainer independent of the EdgeX services
+portainer       Runs Portainer independent of the EdgeX services
 portainer-down	Stops Portainer independent of the EdgeX services
 ```
 ```
 run [options] [services]
 Runs the EdgeX services as specified by:
 Options:
-	no-secty:	Runs in Non-Secure Mode, otherwise runs in Secure Mode
-	dev:		Runs using local dev built images from edgex-go repo's    `make docker`which creates docker images tagged with `master-dev`
-	no-ds:		Runs without the default device services
-	mqtt:		Runs using MQTT Message Bus and Device MQTT service
-	arm64:		Runs using ARM64 images
-	ui:			Runs only the EdgeX UI service. 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
+	no-secty:   Runs in Non-Secure Mode, otherwise runs in Secure Mode
+	dev:        Runs using local dev built images from edgex-go repo's    `make docker`which creates docker images tagged with `master-dev`
+	no-ds:      Runs without the default device services
+	mqtt:       Runs using MQTT Message Bus and Device MQTT service
+	arm64:      Runs using ARM64 images
+	ui:         Runs only the EdgeX UI service. 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
 Services:
-	<names...>:	Runs only services listed (and their dependent services) where 'name' matches a service name in one of the compose files used
+	<names...>: Runs only services listed (and their dependent services) where 'name' matches a service name in one of the compose files used
 ```
 ```				
 pull [options] [services]
 Pulls the EdgeX service images as specified :
 Options:
-	no-secty:	Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
-	no-ds:		Pulls images without the default device services
-	mqtt:		Pulls images including MQTT Message Bus and Device MQTT service
-	arm64:		Pulls ARM64 version of images
-	ui:			Pulls only the EdgeX UI service image. 'mqtt', 'no-ds' & 'no-secty' are ignored
+	no-secty:   Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
+	no-ds:      Pulls images without the default device services
+	mqtt:       Pulls images including MQTT Message Bus and Device MQTT service
+	arm64:      Pulls ARM64 version of images
+	ui:         Pulls only the EdgeX UI service image. 'mqtt', 'no-ds' & 'no-secty' are ignored
 Services:
-	<names...>:	Pulls only images for the service(s) listed
+	<names...>: Pulls only images for the service(s) listed
 ```
 ```	
 gen [options]
 Generates temporary single file compose file (`docker-compose.yml`) as specified by:
 Options:
-	no-secty:	Generates non-secure compose file, otherwise generates secure compose file
-	dev:		Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with 'master-dev'
-	no-ds:		Generates compose file without the default device services
-	mqtt:		Generates compose file with MQTT Message Bus and Device MQTT service
-	arm64:		Generates single file compose file using ARM64 images
-	ui:			Generates single file compose file for only EdgeX UI, not useful, but possible
+	no-secty:   Generates non-secure compose file, otherwise generates secure compose file
+	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with 'master-dev'
+	no-ds:      Generates compose file without the default device services
+	mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service
+	arm64:      Generates single file compose file using ARM64 images
+	ui:         Generates single file compose file for only EdgeX UI, not useful, but possible
 ```
 ```
 get-token [options] <user>
 Generates a Kong access token for the specified `user` as specified by:
 Options:
-	dev:	Generates a Kong access token using local dev built docker image
+	dev:    Generates a Kong access token using local dev built docker image
 			'make docker', which creates docker images tagged with 'master-dev'
-	arm64:	Generates a Kong access token using ARM64 image
+	arm64:  Generates a Kong access token using ARM64 image
 ```
 ```    
 del-token [options] <user>
 Deletes a Kong access tokens for the specified 'user' as specified by:
 Options:
-	dev:	Deletes Kong access tokens using local dev built docker image
+    dev:    Deletes Kong access tokens using local dev built docker image
 			'make docker', which creates docker images tagged with 'master-dev'
-    arm64:	Deletes Kong access tokens using ARM64 image
+    arm64:  Deletes Kong access tokens using ARM64 image
 ```
 ```    
 down
@@ -96,10 +96,6 @@ Stops all EdgeX service no matter which configuration started them
 ```
 clean
 Runs 'down' , then removes any stopped containers and then prunes unused volumes and networks
-```
-```
-remove
-Runs 'clean' and then removes all docker images with the 'master' tag. This is how you make sure you are using the very latest 'master' images. It is highly recommended that you run this command prior to any validation of your current pull request
 ```
 
 
