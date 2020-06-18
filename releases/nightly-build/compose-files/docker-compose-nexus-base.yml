@@ -24,19 +24,6 @@
 
 version: '3.7'
 
-# all common shared environment variables defined here:
-x-common-env-variables: &common-variables
-  EDGEX_SECURITY_SECRET_STORE: "false"
-  REGISTRY_HOST: edgex-core-consul
-  CLIENTS_COREDATA_HOST: edgex-core-data
-  CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
-  CLIENTS_METADATA_HOST: edgex-core-metadata
-  CLIENTS_COMMAND_HOST: edgex-core-command
-  CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
-  CLIENTS_RULESENGINE_HOST: edgex-kuiper
-  CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
-  DATABASES_PRIMARY_HOST: edgex-redis
-
 networks:
   edgex-network:
     driver: "bridge"
@@ -65,15 +52,15 @@ services:
       EDGEX_SECURE: "false"
 
   database:
-    image: ${REDIS_ARCH}redis:${REDIS_VERSION}
+    image: redis:${REDIS_VERSION}
     ports:
       - "127.0.0.1:6379:6379"
     container_name: edgex-redis
     hostname: edgex-redis
     networks:
       - edgex-network
-    environment:
-      <<: *common-variables
+    env_file:
+      - common.env
     volumes:
       - db-data:/data:z
 
@@ -85,8 +72,9 @@ services:
     hostname: edgex-sys-mgmt-agent
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-sys-mgmt-agent
       EXECUTORPATH: /sys-mgmt-executor
       METRICSMECHANISM: executor
@@ -108,8 +96,9 @@ services:
     hostname: edgex-support-notifications
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-support-notifications
     depends_on:
       - consul
@@ -123,8 +112,9 @@ services:
     hostname: edgex-core-metadata
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-core-metadata
       NOTIFICATIONS_SENDER: edgex-core-metadata
     depends_on:
@@ -141,8 +131,9 @@ services:
     hostname: edgex-core-data
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-core-data
     depends_on:
       - consul
@@ -157,8 +148,9 @@ services:
     hostname: edgex-core-command
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-core-command
     depends_on:
       - consul
@@ -173,8 +165,9 @@ services:
     hostname: edgex-support-scheduler
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-support-scheduler
       INTERVALACTIONS_SCRUBPUSHED_HOST: edgex-core-data
       INTERVALACTIONS_SCRUBAGED_HOST: edgex-core-data
@@ -190,8 +183,9 @@ services:
     hostname: edgex-app-service-configurable-rules
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       EDGEX_PROFILE: rules-engine
       SERVICE_HOST: edgex-app-service-configurable-rules
       SERVICE_PORT: 48100

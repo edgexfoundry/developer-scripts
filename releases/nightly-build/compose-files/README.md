@@ -25,10 +25,20 @@ This folder contains the following compose files:
 - **docker-compose-nexus-ui.yml**
     Stand-alone compose file for running the optional EdgeX UI. Runs in `host` network mode and only supports connecting to local Edgex services via 127.0.0.1 IP address.
 
+### Environment Files
+
+This folder contains the following environment files:
+
+- **.env**
+    This file contains the registry and image versions variables referenced in compose files. Docker compose implicitly use the ".env" file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
+- **comon.env**
+    This file contains the common environment overrides used by all Edgex services.
+- **common-security.env**
+    This file contains the common security related environment overrides used many Edgex services.
 
 ### Makefile
 
-This folder contains a `Makefile` that provides helper commands for running, stopping and cleaning the various EdgeX configurations.
+This folder contains a `Makefile` that provides commands for running, stopping and cleaning the various EdgeX configurations.
 
 ```
 Usage: make <target> where target is:

@@ -1,3 +1,18 @@
+# /*******************************************************************************
+#  * Copyright 2020 Intel
+#  *
+#  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+#  * in compliance with the License. You may obtain a copy of the License at
+#  *
+#  * http://www.apache.org/licenses/LICENSE-2.0
+#  *
+#  * Unless required by applicable law or agreed to in writing, software distributed under the License
+#  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+#  * or implied. See the License for the specific language governing permissions and limitations under
+#  * the License.
+#  *
+#  *******************************************************************************/
+
 .PHONY: help portainer portainer-down run pull gen down clean remove
 .SILENT: help get-token del-token
 
@@ -14,7 +29,6 @@ ifeq (dev, $(filter dev,$(ARGS)))
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:=-arm64
-	REDIS_ARCH:=arm64v8/
 	KONG_UBUNTU:=-ubuntu
 endif
 ifneq (no-ds, $(filter no-ds,$(ARGS)))
@@ -57,7 +71,6 @@ pull: gen
 gen:
 	DEV=$(DEV) \
 	ARCH=$(ARCH) \
-	REDIS_ARCH=$(REDIS_ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 

@@ -21,14 +21,6 @@
 
 version: '3.7'
 
-# all common shared environment variables defined here:
-x-common-env-variables: &common-variables
-  REGISTRY_HOST: edgex-core-consul
-  CLIENTS_DATA_HOST: edgex-core-data # For device Services only
-  CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
-  CLIENTS_METADATA_HOST: edgex-core-metadata
-  CLIENTS_COMMAND_HOST: edgex-core-command
-
 services:
   device-virtual:
     image: ${REPOSITORY}/docker-device-virtual-go${ARCH}:${DEVICE_VIRTUAL_VERSION}
@@ -38,8 +30,9 @@ services:
     hostname: edgex-device-virtual
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-device-virtual
     depends_on:
       - consul
@@ -54,8 +47,9 @@ services:
     hostname: edgex-device-rest
     networks:
       - edgex-network
+    env_file:
+      - common.env
     environment:
-      <<: *common-variables
       SERVICE_HOST: edgex-device-rest
     depends_on:
       - data
@@ -69,8 +63,9 @@ services:
 #    hostname: edgex-device-random
 #    networks:
 #      - edgex-network
+#    env_file:
+#      - common.env
 #    environment:
-#      <<: *common-variables
 #      SERVICE_HOST: edgex-device-random
 #    depends_on:
 #      - data
@@ -84,8 +79,9 @@ services:
 #    hostname: edgex-device-modbus
 #    networks:
 #      - edgex-network
+#    env_file:
+#      - common.env
 #    environment:
-#      <<: *common-variables
 #      SERVICE_HOST: edgex-device-modbus
 #    depends_on:
 #      - data
@@ -99,8 +95,9 @@ services:
 #    hostname: edgex-device-snmp
 #    networks:
 #      - edgex-network
+#    env_file:
+#      - common.env
 #    environment:
-#      <<: *common-variables
 #      SERVICE_HOST: edgex-device-snmp
 #    depends_on:
 #      - data
