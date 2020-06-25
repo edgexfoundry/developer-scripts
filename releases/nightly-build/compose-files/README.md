@@ -2,11 +2,13 @@
 
 This folder contain the docker compose files that pull and run the EdgeX images from the Nexus3 docker registry that are tagged `master`. These images are build from the Edgex CI Pipeline when PRs are merged into the `master` branch.
 
-> *Note: Docker does not re-pull newer instances of these images. You must explicitly remove old instances so the new instances are pulled. See the `make remove` command below that will do this for you.*
+> *Note: Docker does not re-pull newer instances of these images. You must pull the new image instances. See the `make pull` command below that will do this for you.*
 
 The approach used for these compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
 
-The `Extending using multiple Compose files` approach removes the majority of the duplication found in previous EdgeX compose files. This approach makes running the solution more complicated due to having to list the multiple compose file required to run a particular configuration. To help alleviate this complexity, a `Makefile`has been provided with commands that make it easy to run the multiple possible configurations. See the Makefile section below for details on these commands
+The `Extending using multiple Compose files` approach along with environment files removes the majority of the duplication found in previous EdgeX compose files. This approach makes running the solution more complicated due to having to list the multiple compose files required to run a particular configuration. To help alleviate this complexity, a `Makefile`has been provided with commands that make it easy to run the multiple possible configurations. See the Makefile section below for details on these commands.
+
+> *Note: The `make run`, `make pull` and `make gen` commands all generate a single `docker-compose.yml` file containing the content from the multiple compose files, environment files with all variables resolved for the specified options used. See below for list of options.*
 
 ### Compose Files
 
@@ -30,11 +32,11 @@ This folder contains the following compose files:
 This folder contains the following environment files:
 
 - **.env**
-    This file contains the registry and image versions variables referenced in compose files. Docker compose implicitly use the ".env" file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
+    This file contains the registry and image version variables referenced in compose files. Docker compose implicitly use the ".env" file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
 - **comon.env**
     This file contains the common environment overrides used by all Edgex services.
 - **common-security.env**
-    This file contains the common security related environment overrides used many Edgex services.
+    This file contains the common security related environment overrides used by many Edgex services.
 
 ### Makefile
 

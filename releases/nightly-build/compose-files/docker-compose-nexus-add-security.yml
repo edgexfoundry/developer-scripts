@@ -74,7 +74,7 @@ services:
       - security-secrets-setup
 
   security-secrets-setup:
-    image: ${REPOSITORY}/docker-edgex-secrets-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-secrets-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-secrets-setup
     hostname: edgex-secrets-setup
     environment:
@@ -89,7 +89,7 @@ services:
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
 
   vault-worker:
-    image: ${REPOSITORY}/docker-edgex-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
     environment:
@@ -183,7 +183,7 @@ services:
       - kong-migrations
 
   edgex-proxy:
-    image: ${REPOSITORY}/docker-edgex-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-proxy
     hostname: edgex-proxy
     entrypoint: >

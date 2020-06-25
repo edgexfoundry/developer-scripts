@@ -25,6 +25,7 @@ ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
 ifeq (dev, $(filter dev,$(ARGS)))
+	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
@@ -70,6 +71,7 @@ pull: gen
 
 gen:
 	DEV=$(DEV) \
+	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	ARCH=$(ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
@@ -83,7 +85,7 @@ get-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		$(REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
+		$(CORE_EDGEX_REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
 		--init=false --useradd=${USER} --group=admin \
 		| grep " access token for user" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
 
@@ -97,7 +99,7 @@ del-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		$(REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
+		$(CORE_EDGEX_REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
 		--init=false --userdel=${USER} \
 		| grep "successful to delete"
 

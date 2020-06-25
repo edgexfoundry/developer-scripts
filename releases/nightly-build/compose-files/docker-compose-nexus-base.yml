@@ -65,7 +65,7 @@ services:
       - db-data:/data:z
 
   system:
-    image: ${REPOSITORY}/docker-sys-mgmt-agent-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-sys-mgmt-agent-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
@@ -89,7 +89,7 @@ services:
       - command
 
   notifications:
-    image: ${REPOSITORY}/docker-support-notifications-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-support-notifications-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
@@ -105,7 +105,7 @@ services:
       - database
 
   metadata:
-    image: ${REPOSITORY}/docker-core-metadata-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-core-metadata-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
@@ -123,7 +123,7 @@ services:
       - notifications
 
   data:
-    image: ${REPOSITORY}/docker-core-data-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-core-data-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48080:48080"
       - "127.0.0.1:5563:5563"
@@ -141,7 +141,7 @@ services:
       - metadata
 
   command:
-    image: ${REPOSITORY}/docker-core-command-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-core-command-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
@@ -158,7 +158,7 @@ services:
       - metadata
 
   scheduler:
-    image: ${REPOSITORY}/docker-support-scheduler-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-support-scheduler-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     ports:
       - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler
