@@ -1,12 +1,19 @@
-## Edgex Docker Compose for `master` builds
 
-This folder contains the docker compose files that pull and run the EdgeX images from the Nexus3 docker registry that are tagged `master`. These images are built from the Edgex CI Pipeline when PRs are merged into the `master` branch.
 
-> *Note: Docker does not re-pull newer instances of these images. You must pull the new image instances. See the `make pull` command below that will do this for you.*
+## Source for Edgex Docker Compose for `master` builds
 
-The approach used for these compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
+This folder contains the **source** compose and environment files for generating the single file docker composes files one level up. 
 
-The `Extending using multiple Compose files` approach along with environment files removes the majority of the duplication found in previous EdgeX compose files. This approach makes running the solution more complicated due to having to list the multiple compose files required to run a particular configuration. To help alleviate this complexity, a `Makefile`has been provided with commands that make it easy to run the multiple possible configurations. See the Makefile section below for details on these commands.
+> **Note**: 
+> *The files here are targeted for EdgeX community developers. Those just needing to run Edgex should use the generated compose files and Makefile one level up. See the accompanying [README](../README.md) for details.*
+
+> **Note to Developers**: 
+> *Once you have edited and tested your changes to these source files you **MUST** regenerate the composes using the `Makefile` one level up. See `build-all` in the accompanying [README](../README.md) for details.*
+
+The approach used with these source compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
+
+
+The `Extending using multiple Compose files` approach along with environment files removes the all of the duplication found in previous EdgeX compose files. This approach makes running the solution more complicated due to having to list the multiple compose files required to run a particular configuration. To alleviate this complexity we are providing the generated single file compose files one level up and a `Makefile` has been provided here with commands that make it easy to run the multiple possible configurations while testing your changes. See the Makefile section below for details on these commands.
 
 > *Note: The `make run`, `make pull` and `make gen` commands all generate a single `docker-compose.yml` file containing the content from the multiple compose files, environment files with all variables resolved for the specified options used. See below for list of options.*
 
@@ -14,8 +21,6 @@ The `Extending using multiple Compose files` approach along with environment fil
 
 This folder contains the following compose files:
 
-- **docker-compose-portainer.yml**
-    Stand-alone compose file for running Portianer which is a  Docker container management tool. Visit here https://www.portainer.io/ for more details on Portianer.
 - **docker-compose-nexus-base.yml**
     Base non-secure mode compose file. Contains all the services that run in the non-secure configuration.  
 - **docker-compose-nexus-add-security.yml**
@@ -42,7 +47,7 @@ This folder contains the following environment files:
 
 ### Makefile
 
-This folder contains a `Makefile` that provides commands for running, stopping and cleaning the various EdgeX configurations.
+This folder contains a `Makefile` that provides commands for running, stopping and cleaning the various EdgeX configurations during **development** of the compose files or testing `dev` versions of the service images.
 
 ```
 Usage: make <target> where target is:
@@ -51,6 +56,29 @@ Usage: make <target> where target is:
 portainer       Runs Portainer independent of the EdgeX services
 portainer-down	Stops Portainer independent of the EdgeX services
 ```
+```
+build
+Generates the all standard Edgex compose file variations and stores then one directory level up. Current variations are:
+   full secure
+   full secure for arm64
+   non-secure
+   nonsecure for arm64
+   stand-alone UI
+   stand-alone UI for arm64
+```
+
+```
+compose [options] 
+Generates the EdgeX compose file as specified by options and stores it one directory level up with appropriate name for the options used.
+Options:
+	no-secty:   Generates non-secure compose file, otherwise generates secure compose file
+	arm64:      Generates compose file using ARM64 images
+	mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service
+	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with 'master-dev'
+	no-ds:      Generates compose file without the default device services
+	ui:         Generates stand-alone compose file for EdgeX UI	
+```
+
 ```
 run [options] [services]
 Runs the EdgeX services as specified by:
@@ -84,28 +112,26 @@ Options:
 	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with 'master-dev'
 	no-ds:      Generates compose file without the default device services
 	mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service
-	arm64:      Generates single file compose file using ARM64 images
-	ui:         Generates single file compose file for only EdgeX UI, not useful, but possible
+	arm64:      Generates compose file using ARM64 images
+	ui:         Generates stand-alone compose file for EdgeX UI
 ```
 ```
-get-token [options] <user>
-Generates a Kong access token for the specified `user` as specified by:
+get-token [options] 
+Generates a Kong access token as specified by:
 Options:
 	dev:    Generates a Kong access token using local dev built docker image
 			'make docker', which creates docker images tagged with 'master-dev'
 	arm64:  Generates a Kong access token using ARM64 image
 ```
-```    
-del-token [options] <user>
-Deletes a Kong access tokens for the specified 'user' as specified by:
-Options:
-    dev:    Deletes Kong access tokens using local dev built docker image
-			'make docker', which creates docker images tagged with 'master-dev'
-    arm64:  Deletes Kong access tokens using ARM64 image
 ```
+ui-down 
+Stops the optional EdgeX UI service
+```
+
 ```    
+
 down
-Stops all EdgeX service no matter which configuration started them
+Stops all EdgeX services no matter which configuration started them
 ```
 ```
 clean

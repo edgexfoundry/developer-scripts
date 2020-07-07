@@ -13,30 +13,62 @@
 #  *
 #  *******************************************************************************/
 
-.PHONY: secure secure-arm64 non-secure non-secure-arm64 ui ui-arm64
+.PHONY: help portainer portainer-down pull run pull-ui run-ui down-ui down clean
+.SILENT: help get-token
 
-all: secure secure-arm64 non-secure non-secure-arm64 ui ui-arm64
+help:
+	echo "See README.md in this folder"
 
-secure:
+ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+$(eval $(ARGS):;@:)
+
+OPTIONS:=" arm64 no-secty " # Must have spaces around words for `filter-out` function to work properly
+
+ifeq (arm64, $(filter arm64,$(ARGS)))
+	ARM64=-arm64
+	ARM64_OPTION=arm64
+endif
+ifeq (no-secty, $(filter no-secty,$(ARGS)))
+	NO_SECURITY:=-no-secty
+endif
+
+SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
+
+portainer:
+	docker-compose -p portainer -f docker-compose-portainer.yml up -d
+
+portainer-down:
+	docker-compose -p portainer -f docker-compose-portainer.yml down
+
+build:
 	cd source; \
-	make build ../docker-compose-nexus.yml
+	make build
 
-secure-arm64:
-	cd source; \
-	make build arm64 ../docker-compose-nexus-arm64.yml
+pull:
+	docker-compose -f docker-compose-nexus${NO_SECURITY}${ARM64}.yml pull ${SERVICES}
 
-non-secure:
-	cd source; \
-	make build no-secty ../docker-compose-nexus-no-secty.yml
+run:
+	docker-compose -p edgex -f docker-compose-nexus${NO_SECURITY}${ARM64}.yml up -d ${SERVICES}
 
-non-secure-arm64:
-	cd source; \
-	make build no-secty arm64 ../docker-compose-nexus-no-secty-arm64.yml
+pull-ui:
+	docker-compose -p edgex -f docker-compose-nexus-ui${ARM64}.yml pull
 
-ui:
-	cd source; \
-	make build ui ../docker-compose-nexus-ui.yml
+run-ui:
+	docker-compose -p edgex -f docker-compose-nexus-ui${ARM64}.yml up -d
 
-ui-arm64:
+down-ui:
+	docker-compose -p edgex -f docker-compose-nexus-ui${ARM64}.yml down
+
+down: down-ui
+	# Make sure UI is down first and then use secure version since it is a super set and
+	# can down all service even if not include in what was brought up.
+	docker-compose -p edgex -f docker-compose-nexus.yml down
+
+clean: down
+	-docker rm $$(docker ps --filter "network=edgex_edgex-network" --filter "network=edgex_default" -aq) 2> /dev/null
+	docker volume prune -f && \
+	docker network prune -f
+
+get-token:
 	cd source; \
-	make build ui arm64 ../docker-compose-nexus-ui-arm64.yml
+	make get-token ${ARM64_OPTION}
