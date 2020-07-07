@@ -1,6 +1,6 @@
 ## Edgex Docker Compose for `master` builds
 
-This folder contain the docker compose files that pull and run the EdgeX images from the Nexus3 docker registry that are tagged `master`. These images are build from the Edgex CI Pipeline when PRs are merged into the `master` branch.
+This folder contains the docker compose files that pull and run the EdgeX images from the Nexus3 docker registry that are tagged `master`. These images are built from the Edgex CI Pipeline when PRs are merged into the `master` branch.
 
 > *Note: Docker does not re-pull newer instances of these images. You must pull the new image instances. See the `make pull` command below that will do this for you.*
 
@@ -15,7 +15,7 @@ The `Extending using multiple Compose files` approach along with environment fil
 This folder contains the following compose files:
 
 - **docker-compose-portainer.yml**
-    Stand-alone compose file for running Portianer which is a  Docker container management tool. Got here https://www.portainer.io/ for more details on Portianer.
+    Stand-alone compose file for running Portianer which is a  Docker container management tool. Visit here https://www.portainer.io/ for more details on Portianer.
 - **docker-compose-nexus-base.yml**
     Base non-secure mode compose file. Contains all the services that run in the non-secure configuration.  
 - **docker-compose-nexus-add-security.yml**
@@ -23,7 +23,7 @@ This folder contains the following compose files:
 - **docker-compose-nexus-add-device-services.yml**
     Device Service **extending** compose file. Adds the default **Device Virtual** and **Device REST** services with other device services commented out to be added by end user. Note: **Device MQTT** device service is in `docker-compose-nexus-add-mqtt.yml`
 - **docker-compose-nexus-add-mqtt.yml**
-    MQTT **extending** compose file. Adds a MQTT Broker and additional configuration of services so that the `MQTT` implementation of the Edgex Message Buss is used. Also adds the Device MQTT device service which is of course dependent on a MQTT Broker.
+    MQTT **extending** compose file. Adds a MQTT Broker and additional configuration of services so that the `MQTT` implementation of the Edgex Message Bus is used. Also adds the Device MQTT device service which is of course dependent on a MQTT Broker.
 - **docker-compose-nexus-ui.yml**
     Stand-alone compose file for running the optional EdgeX UI. Runs in `host` network mode and only supports connecting to local Edgex services via 127.0.0.1 IP address.
 
@@ -32,11 +32,13 @@ This folder contains the following compose files:
 This folder contains the following environment files:
 
 - **.env**
-    This file contains the registry and image version variables referenced in compose files. Docker compose implicitly use the ".env" file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
-- **comon.env**
+    This file contains the registry and image version variables referenced in compose files. Docker compose implicitly uses the ".env" file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
+- **common.env**
     This file contains the common environment overrides used by all Edgex services.
 - **common-security.env**
     This file contains the common security related environment overrides used by many Edgex services.
+- **database-security.env**
+    This file contains the database specific security related environment overrides used by a few Edgex services.
 
 ### Makefile
 

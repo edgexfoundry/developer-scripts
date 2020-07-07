@@ -18,12 +18,6 @@
 
 version: '3.7'
 
-# REDIS5_PASSWORD_PATHNAME must have the same value as
-# security-secretstore-read/res/configuration.toml SecretStore.Passwordfile. Note edgex-go issue
-# #2503 that will address this.
-x-redis5-env-variables: &redis5-variables
-  REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
-
 volumes:
   consul-scripts:
   vault-init:
@@ -77,8 +71,8 @@ services:
     image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-secrets-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-secrets-setup
     hostname: edgex-secrets-setup
-    environment:
-      <<: *redis5-variables
+    env_file:
+      - database-security.env
     tmpfs:
       - /tmp
       - /run
@@ -92,8 +86,9 @@ services:
     image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
+    env_file:
+      - database-security.env
     environment:
-      <<: *redis5-variables
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     networks:
       - edgex-network
@@ -214,8 +209,8 @@ services:
 # end of containers for reverse proxy
 
   database:
-    environment:
-      <<: *redis5-variables
+    env_file:
+      - database-security.env
     command: |
       /bin/sh -c "
       until [ -r $${REDIS5_PASSWORD_PATHNAME} ] && [ -s $${REDIS5_PASSWORD_PATHNAME} ]; do sleep 1; done

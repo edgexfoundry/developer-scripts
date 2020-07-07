@@ -20,18 +20,3 @@
 # Permanent changes can be made to the source compose files in the source folder
 # and then use `make all` to regenerate all compose files variations
 #
-networks:
-  edgex-network:
-    external: true
-    name: edgex_edgex-network
-services:
-  ui:
-    container_name: edgex-ui-go
-    hostname: edgex-ui-go
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-ui-go:master
-    networks:
-      edgex-network: null
-    ports:
-    - 127.0.0.1:4000:4000/tcp
-version: '3.7'
-
