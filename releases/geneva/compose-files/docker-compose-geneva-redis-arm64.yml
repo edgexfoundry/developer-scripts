@@ -501,7 +501,7 @@ services:
 #################################################################
 
   device-virtual:
-    image: edgexfoundry/docker-device-virtual-go-arm64:1.2.1
+    image: edgexfoundry/docker-device-virtual-go-arm64:1.2.2
     ports:
     - "127.0.0.1:49990:49990"
     container_name: edgex-device-virtual
