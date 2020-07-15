@@ -11,24 +11,24 @@
 #  * or implied. See the License for the specific language governing permissions and limitations under
 #  * the License.
 #  *
-#  * @author: Leonard Goodell
-#  * EdgeX Foundry, Hanoi, version "master"
-#  * added: May, 2020
+#  * @author: Leonard Goodell, Intel
+#  * EdgeX Foundry, Geneva, version 1.2.0
+#  * added: May 14, 2020
 #  *******************************************************************************/
 
 version: '3.7'
 
-volumes:
-  portainer_data:
+networks:
+  edgex-network:
+    external:
+      name: edgex_edgex-network
 
 services:
-  portainer:
-    image:  portainer/portainer
+  ui:
+    image: ${REPOSITORY}/docker-edgex-ui-go${ARCH}:${CORE_EDGEX_VERSION}
     ports:
-      - "127.0.0.1:9000:9000"
-    container_name: portainer
-    command: -H unix:///var/run/docker.sock
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:z
-      - portainer_data:/data
-
+      - "127.0.0.1:4000:4000"
+    container_name: edgex-ui-go
+    hostname: edgex-ui-go
+    networks:
+      - edgex-network
