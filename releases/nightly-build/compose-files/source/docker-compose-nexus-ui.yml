@@ -30,5 +30,6 @@ services:
       - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
     hostname: edgex-ui-go
+    read_only: true
     networks:
       - edgex-network

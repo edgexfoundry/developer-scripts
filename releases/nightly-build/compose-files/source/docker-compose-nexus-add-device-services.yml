@@ -45,6 +45,7 @@ services:
       - "127.0.0.1:49986:49986"
     container_name: edgex-device-rest
     hostname: edgex-device-rest
+    read_only: true
     networks:
       - edgex-network
     env_file:
