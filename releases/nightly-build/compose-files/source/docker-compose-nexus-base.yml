@@ -38,7 +38,6 @@ services:
   consul:
     image: ${REPOSITORY}/docker-edgex-consul${ARCH}:${CONSUL_VERSION}
     ports:
-      - "127.0.0.1:8400:8400"
       - "127.0.0.1:8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul

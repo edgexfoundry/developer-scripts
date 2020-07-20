@@ -87,7 +87,6 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:8400:8400/tcp
     - 127.0.0.1:8500:8500/tcp
     volumes:
     - consul-config:/consul/config:z
