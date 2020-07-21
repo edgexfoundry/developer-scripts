@@ -24,6 +24,7 @@ volumes:
   vault-config:
   vault-file:
   vault-logs:
+  kong:
   # non-shared volumes
   secrets-setup-cache:
 
@@ -73,6 +74,7 @@ services:
     hostname: edgex-secrets-setup
     env_file:
       - database-security.env
+    read_only: true
     tmpfs:
       - /tmp
       - /run
@@ -90,10 +92,12 @@ services:
       - database-security.env
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
+    read_only: true
     networks:
       - edgex-network
     tmpfs:
       - /run
+      - /vault
     volumes:
       - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
@@ -108,10 +112,15 @@ services:
     image: postgres:${POSTGRES_VERSION}
     container_name: kong-db
     hostname: kong-db
+    read_only: true
     networks:
       - edgex-network
     ports:
         - "127.0.0.1:5432:5432"
+    tmpfs:
+      - /var/run
+      - /tmp
+      - /run
     environment:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
@@ -122,6 +131,7 @@ services:
   kong-migrations:
     image: kong:${KONG_VERSION}${KONG_UBUNTU}
     container_name: kong-migrations
+    read_only: true
     networks:
       - edgex-network
     environment:
@@ -138,6 +148,8 @@ services:
       if [ $$code -eq 5 ]; then
         kong migrations up && kong migrations finish;
       fi'
+    tmpfs:
+      - /tmp
     volumes:
       - consul-scripts:/consul/scripts:ro,z
     depends_on:
@@ -148,6 +160,7 @@ services:
     image: kong:${KONG_VERSION}${KONG_UBUNTU}
     container_name: kong
     hostname: kong
+    read_only: true
     networks:
       - edgex-network
     ports:
@@ -166,11 +179,15 @@ services:
       KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_ADMIN_LISTEN: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
     restart: on-failure
+    tmpfs:
+      - /run
+      - /tmp
     command: >
       /bin/sh -c 
       "until /consul/scripts/consul-svc-healthy.sh kong-migrations; do sleep 1; done;
       /docker-entrypoint.sh kong docker-start"
     volumes:
+      - kong:/usr/local/kong
       - consul-scripts:/consul/scripts:ro,z
     depends_on:
       - consul
@@ -186,6 +203,7 @@ services:
       "until /consul/scripts/consul-svc-healthy.sh kong; do sleep 1; done;
       until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup; do sleep 1; done;
       /edgex/security-proxy-setup --init=true"
+    read_only: true
     networks:
       - edgex-network
     env_file:

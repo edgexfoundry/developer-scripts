@@ -56,6 +56,7 @@ services:
       - "127.0.0.1:6379:6379"
     container_name: edgex-redis
     hostname: edgex-redis
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -69,6 +70,7 @@ services:
       - "127.0.0.1:48090:48090"
     container_name: edgex-sys-mgmt-agent
     hostname: edgex-sys-mgmt-agent
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -93,6 +95,7 @@ services:
       - "127.0.0.1:48060:48060"
     container_name: edgex-support-notifications
     hostname: edgex-support-notifications
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -109,6 +112,7 @@ services:
       - "127.0.0.1:48081:48081"
     container_name: edgex-core-metadata
     hostname: edgex-core-metadata
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -128,6 +132,7 @@ services:
       - "127.0.0.1:5563:5563"
     container_name: edgex-core-data
     hostname: edgex-core-data
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -145,6 +150,7 @@ services:
       - "127.0.0.1:48082:48082"
     container_name: edgex-core-command
     hostname: edgex-core-command
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -162,6 +168,7 @@ services:
       - "127.0.0.1:48085:48085"
     container_name: edgex-support-scheduler
     hostname: edgex-support-scheduler
+    read_only: true
     networks:
       - edgex-network
     env_file:
@@ -180,6 +187,7 @@ services:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
     hostname: edgex-app-service-configurable-rules
+    read_only: true
     networks:
       - edgex-network
     env_file:

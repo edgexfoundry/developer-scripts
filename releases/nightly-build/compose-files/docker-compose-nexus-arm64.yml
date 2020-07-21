@@ -52,6 +52,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48100:48100/tcp
+    read_only: true
   command:
     container_name: edgex-core-command
     depends_on:
@@ -82,6 +83,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48082:48082/tcp
+    read_only: true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
@@ -138,6 +140,7 @@ services:
     ports:
     - 127.0.0.1:5563:5563/tcp
     - 127.0.0.1:48080:48080/tcp
+    read_only: true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
@@ -168,6 +171,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:6379:6379/tcp
+    read_only: true
     volumes:
     - db-data:/data:z
     - /tmp/edgex/secrets/edgex-redis:/tmp/edgex/secrets/edgex-redis:z
@@ -195,6 +199,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:49986:49986/tcp
+    read_only: true
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
@@ -255,6 +260,7 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go-arm64:master
     networks:
       edgex-network: {}
+    read_only: true
     volumes:
     - consul-scripts:/consul/scripts:ro,z
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
@@ -289,10 +295,15 @@ services:
     - published: 8443
       target: 8443
     - 127.0.0.1:8444:8444/tcp
+    read_only: true
     restart: on-failure
+    tmpfs:
+    - /run
+    - /tmp
     tty: true
     volumes:
     - consul-scripts:/consul/scripts:ro,z
+    - kong:/usr/local/kong:rw
   kong-db:
     container_name: kong-db
     depends_on:
@@ -307,6 +318,11 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:5432:5432/tcp
+    read_only: true
+    tmpfs:
+    - /var/run
+    - /tmp
+    - /run
   kong-migrations:
     command: "/bin/sh -cx  'until /consul/scripts/consul-svc-healthy.sh kong-db;\n\
       \   do sleep 1;\ndone && kong migrations bootstrap; kong migrations list; code=$$?;\
@@ -323,6 +339,9 @@ services:
     image: kong:2.0.1-ubuntu
     networks:
       edgex-network: {}
+    read_only: true
+    tmpfs:
+    - /tmp
     volumes:
     - consul-scripts:/consul/scripts:ro,z
   metadata:
@@ -356,6 +375,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48081:48081/tcp
+    read_only: true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
@@ -388,6 +408,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48060:48060/tcp
+    read_only: true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
@@ -442,6 +463,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48085:48085/tcp
+    read_only: true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
@@ -452,6 +474,7 @@ services:
       REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
     hostname: edgex-secrets-setup
     image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go-arm64:master
+    read_only: true
     tmpfs:
     - /tmp
     - /run
@@ -489,6 +512,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48090:48090/tcp
+    read_only: true
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
   vault:
@@ -530,8 +554,10 @@ services:
     image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go-arm64:master
     networks:
       edgex-network: {}
+    read_only: true
     tmpfs:
     - /run
+    - /vault
     volumes:
     - consul-scripts:/consul/scripts:ro,z
     - /tmp/edgex/secrets:/tmp/edgex/secrets:z
@@ -542,6 +568,7 @@ volumes:
   consul-data: {}
   consul-scripts: {}
   db-data: {}
+  kong: {}
   log-data: {}
   secrets-setup-cache: {}
   vault-config: {}

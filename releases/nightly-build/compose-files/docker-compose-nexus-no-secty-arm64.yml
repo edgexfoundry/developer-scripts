@@ -52,6 +52,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48100:48100/tcp
+    read_only: true
   command:
     container_name: edgex-core-command
     depends_on:
@@ -77,6 +78,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48082:48082/tcp
+    read_only: true
   consul:
     container_name: edgex-core-consul
     environment:
@@ -117,6 +119,7 @@ services:
     ports:
     - 127.0.0.1:5563:5563/tcp
     - 127.0.0.1:48080:48080/tcp
+    read_only: true
   database:
     container_name: edgex-redis
     environment:
@@ -137,6 +140,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:6379:6379/tcp
+    read_only: true
     volumes:
     - db-data:/data:z
   device-rest:
@@ -163,6 +167,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:49986:49986/tcp
+    read_only: true
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
@@ -214,6 +219,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48081:48081/tcp
+    read_only: true
   notifications:
     container_name: edgex-support-notifications
     depends_on:
@@ -238,6 +244,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48060:48060/tcp
+    read_only: true
   rulesengine:
     container_name: edgex-kuiper
     depends_on:
@@ -284,6 +291,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48085:48085/tcp
+    read_only: true
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
@@ -314,6 +322,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:48090:48090/tcp
+    read_only: true
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
 version: '3.7'
