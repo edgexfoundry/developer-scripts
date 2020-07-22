@@ -41,6 +41,7 @@ services:
       - "127.0.0.1:8500:8500"
     container_name: edgex-core-consul
     hostname: edgex-core-consul
+    read_only: true
     networks:
       edgex-network:
     volumes:
