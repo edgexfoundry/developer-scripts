@@ -101,6 +101,7 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:8500:8500/tcp
+    read_only: true
     volumes:
     - consul-config:/consul/config:z
     - consul-data:/consul/data:z
