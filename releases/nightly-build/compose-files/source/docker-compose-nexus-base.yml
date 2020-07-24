@@ -33,6 +33,7 @@ volumes:
   log-data:
   consul-config:
   consul-data:
+  consul-scripts:
 
 services:
   consul:
@@ -47,6 +48,7 @@ services:
     volumes:
       - consul-config:/consul/config:z
       - consul-data:/consul/data:z
+      - consul-scripts:/consul/scripts:z
     environment: 
       EDGEX_DB: redis
       EDGEX_SECURE: "false"

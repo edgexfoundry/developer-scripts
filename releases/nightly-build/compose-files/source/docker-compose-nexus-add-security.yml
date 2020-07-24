@@ -19,7 +19,6 @@
 version: '3.7'
 
 volumes:
-  consul-scripts:
   vault-init:
   vault-config:
   vault-file:
@@ -34,7 +33,6 @@ services:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
       EDGEX_SECURE: "true"
     volumes:
-      - consul-scripts:/consul/scripts:z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
       - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
