@@ -25,7 +25,7 @@ ports:
 ## Network name
 By default, the containers are brought up on a network that is named for the owning directory or folder.  By default, it is assumed that your Compose files are in a folder called `compose-files`.  Therefore, the network name takes the folder `compose-files` as its prefix followed by `_edgex-network` for a full name of `compose-files_edgex-network`.  
 
-When using the Portainer or EdgeX UI Compose files to bring up the associated UIs, note that the network configuration in these Compose files assumes the default network name.
+When using the EdgeX UI Compose files to bring up the associated UI, note that the network configuration in these Compose files assumes the default network name.
 
 ``` yaml
 networks:
@@ -33,7 +33,7 @@ networks:
     external: true
 ```
 
-Should your Compose files be in an alternate folder, make sure you change the newtork name accordingly in the Portainer or UI Compose files.
+Should your Compose files be in an alternate folder, make sure you change the newtork name accordingly in the UI Compose files.
 
 ## Release Notes
 For more details on the EdgeX Geneva release, see the [release notes](https://wiki.edgexfoundry.org/display/FA/Geneva). 
