@@ -25,6 +25,7 @@ volumes:
   vault-logs:
   kong:
   # non-shared volumes
+  postgres-data:
   secrets-setup-cache:
 
 services:
@@ -119,6 +120,8 @@ services:
       - /var/run
       - /tmp
       - /run
+    volumes:
+      - postgres-data:/var/lib/postgresql/data:z
     environment:
       POSTGRES_DB: kong
       POSTGRES_USER: kong

@@ -314,7 +314,7 @@ services:
       POSTGRES_PASSWORD: kong
       POSTGRES_USER: kong
     hostname: kong-db
-    image: postgres:12.1-alpine
+    image: postgres:12.3-alpine
     networks:
       edgex-network: {}
     ports:
@@ -324,6 +324,8 @@ services:
     - /var/run
     - /tmp
     - /run
+    volumes:
+    - postgres-data:/var/lib/postgresql/data:z
   kong-migrations:
     command: "/bin/sh -cx  'until /consul/scripts/consul-svc-healthy.sh kong-db;\n\
       \   do sleep 1;\ndone && kong migrations bootstrap; kong migrations list; code=$$?;\
@@ -571,6 +573,7 @@ volumes:
   db-data: {}
   kong: {}
   log-data: {}
+  postgres-data: {}
   secrets-setup-cache: {}
   vault-config: {}
   vault-file: {}
