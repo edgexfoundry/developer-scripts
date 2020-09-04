@@ -167,7 +167,7 @@ services:
       REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
       REGISTRY_HOST: edgex-core-consul
     hostname: edgex-redis
-    image: redis:5.0.8-alpine
+    image: redis:6.0-alpine
     networks:
       edgex-network: {}
     ports:
