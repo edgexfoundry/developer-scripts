@@ -286,7 +286,7 @@ services:
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
     hostname: kong
-    image: kong:2.0.1-ubuntu
+    image: kong:2.1-ubuntu
     networks:
       edgex-network: {}
     ports:
@@ -339,7 +339,7 @@ services:
       KONG_DATABASE: postgres
       KONG_PG_HOST: kong-db
       KONG_PG_PASSWORD: kong
-    image: kong:2.0.1-ubuntu
+    image: kong:2.1-ubuntu
     networks:
       edgex-network: {}
     read_only: true
