@@ -532,7 +532,7 @@ services:
       VAULT_CONFIG_DIR: /vault/config
       VAULT_UI: "true"
     hostname: edgex-vault
-    image: vault:1.5
+    image: vault:1.5.3
     networks:
       edgex-network: {}
     ports:
