@@ -42,6 +42,7 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: rules-engine
       EDGEX_SECURITY_SECRET_STORE: "false"
+      EDGEX_STARTUP_DURATION: '60'
       MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: edgex-app-service-configurable-rules
@@ -71,6 +72,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "true"
+      EDGEX_STARTUP_DURATION: '60'
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
@@ -128,6 +130,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "true"
+      EDGEX_STARTUP_DURATION: '60'
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
@@ -164,6 +167,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "false"
+      EDGEX_STARTUP_DURATION: '60'
       REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
       REGISTRY_HOST: edgex-core-consul
     hostname: edgex-redis
@@ -192,6 +196,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "false"
+      EDGEX_STARTUP_DURATION: '60'
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: edgex-device-rest
     hostname: edgex-device-rest
@@ -218,6 +223,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "false"
+      EDGEX_STARTUP_DURATION: '60'
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: edgex-device-virtual
     hostname: edgex-device-virtual
@@ -248,6 +254,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "true"
+      EDGEX_STARTUP_DURATION: '60'
       KONGURL_SERVER: kong
       REGISTRY_HOST: edgex-core-consul
       SECRETSERVICE_CACERTPATH: /tmp/edgex/secrets/ca/ca.pem
@@ -365,6 +372,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "true"
+      EDGEX_STARTUP_DURATION: '60'
       NOTIFICATIONS_SENDER: edgex-core-metadata
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
@@ -399,6 +407,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "true"
+      EDGEX_STARTUP_DURATION: '60'
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
@@ -452,6 +461,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "true"
+      EDGEX_STARTUP_DURATION: '60'
       INTERVALACTIONS_SCRUBAGED_HOST: edgex-core-data
       INTERVALACTIONS_SCRUBPUSHED_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
@@ -505,6 +515,7 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "false"
+      EDGEX_STARTUP_DURATION: '60'
       EXECUTORPATH: /sys-mgmt-executor
       METRICSMECHANISM: executor
       REGISTRY_HOST: edgex-core-consul
