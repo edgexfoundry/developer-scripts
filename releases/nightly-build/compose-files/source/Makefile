@@ -28,6 +28,8 @@ $(eval $(ARGS):;@:)
 ifeq (dev, $(filter dev,$(ARGS)))
 	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
+	# matches the way that edgex-go to versioning the docker images for `make docker`
+	CORE_EDGEX_VERSION:="0.0.0"
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:=-arm64
@@ -84,6 +86,7 @@ pull: gen
 gen:
 	DEV=$(DEV) \
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	ARCH=$(ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml

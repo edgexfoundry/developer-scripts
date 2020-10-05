@@ -74,7 +74,7 @@ Options:
 	no-secty:   Generates non-secure compose file, otherwise generates secure compose file
 	arm64:      Generates compose file using ARM64 images
 	mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service
-	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with 'master-dev'
+	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with '0.0.0-dev'
 	no-ds:      Generates compose file without the default device services
 	ui:         Generates stand-alone compose file for EdgeX UI	
 ```
@@ -84,7 +84,7 @@ run [options] [services]
 Runs the EdgeX services as specified by:
 Options:
 	no-secty:   Runs in Non-Secure Mode, otherwise runs in Secure Mode
-	dev:        Runs using local dev built images from edgex-go repo's    `make docker`which creates docker images tagged with `master-dev`
+	dev:        Runs using local dev built images from edgex-go repo's    `make docker`which creates docker images tagged with `0.0.0-dev`
 	no-ds:      Runs without the default device services
 	mqtt:       Runs using MQTT Message Bus and Device MQTT service
 	arm64:      Runs using ARM64 images
@@ -109,7 +109,7 @@ gen [options]
 Generates temporary single file compose file (`docker-compose.yml`) as specified by:
 Options:
 	no-secty:   Generates non-secure compose file, otherwise generates secure compose file
-	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with 'master-dev'
+	dev:        Generates compose file using local dev built images from edgex-go repo's 'make docker'                       which creates docker images tagged with '0.0.0-dev'
 	no-ds:      Generates compose file without the default device services
 	mqtt:       Generates compose file with MQTT Message Bus and Device MQTT service
 	arm64:      Generates compose file using ARM64 images
@@ -120,7 +120,7 @@ get-token [options]
 Generates a Kong access token as specified by:
 Options:
 	dev:    Generates a Kong access token using local dev built docker image
-			'make docker', which creates docker images tagged with 'master-dev'
+			'make docker', which creates docker images tagged with '0.0.0-dev'
 	arm64:  Generates a Kong access token using ARM64 image
 ```
 ```
