@@ -91,7 +91,7 @@ Options:
     dev:        Generates compose file using local dev built images from edgex-go repo's 
                 'make docker' which creates docker images tagged with '0.0.0-dev'    
     ds-bacnet:  Generates compose file with device-bacnet included
-    ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
+    ds-grove:   Generates compose file with device-grove included
     ds-modbus:  Generates compose file with device-modbus included
     ds-mqtt:    Generates compose file with device-mqtt included
     ds-random:  Generates compose file with device-random included
@@ -112,7 +112,7 @@ Options:
                 'make docker' which creates docker images tagged with '0.0.0-dev'
     ds-modbus:  Runs with device-modbus included
     ds-bacnet:  Runs with device-bacnet included
-    ds-grove:   Runs with device-grove included (valid only with arm64 option)
+    ds-grove:   Runs with device-grove included
     ds-mqtt:    Runs with device-mqtt included
     ds-random:  Runs with device-random included
     ds-rest:    Runs with device-rest included
@@ -130,7 +130,7 @@ Options:
     no-secty:   Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
     arm64:      Pulls ARM64 version of images    
     ds-bacnet:  Pull includes device-bacnet 
-    ds-grove:   Pull includes device-grove (valid only with arm64 option)
+    ds-grove:   Pull includes device-grove 
     ds-modbus:  Pull includes device-modbus 
     ds-mqtt:    Pull includes device-mqtt
     ds-random:  Pull includes device-random
@@ -152,7 +152,7 @@ Options:
                 'make docker' which creates docker images tagged with '0.0.0-dev'
     ds-modbus:  Generates compose file with device-modbus included
     ds-bacnet:  Generates compose file with device-bacnet included
-    ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
+    ds-grove:   Generates compose file with device-grove included
     ds-mqtt:    Generates compose file with device-mqtt included
     ds-random:  Generates compose file with device-random included
     ds-rest:    Generates compose file with device-rest included

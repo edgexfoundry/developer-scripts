@@ -24,7 +24,7 @@ OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-grove ds-modbus ds-mqtt ds-ra
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
-# Order of processing these arguments is important so the overrides in the 'add' compose files occur properly.
+# Order of processing these arguments is important so the overrides in the 'add` compose files occur properly.
 ifeq (dev, $(filter dev,$(ARGS)))
 	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
@@ -76,15 +76,7 @@ ifeq (ui, $(filter ui,$(ARGS)))
 	COMPOSE_FILES:=-f docker-compose-ui.yml
 	UI:=-ui
 endif
-
 SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
-
-ifeq (true, $(DS_GROVE))
- ifneq (-arm64, $(ARCH))
-	 GROVE_CHECK:="ds-grove option only valid with arm64 option"
-	 COMPOSE_FILES:=""
- endif
-endif
 
 help:
 	echo "See README.md in this folder"
@@ -106,6 +98,10 @@ build:
 	make compose ui arm64
 
 compose: gen
+#    if [ $(ARCH), "-arm64" ]
+#    	   echo "`ds-grove` option only valid with `arm64` option"
+#    	   exit
+#    endif
 	cat gen-header docker-compose.yml > ../docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
 
 run: gen
@@ -115,7 +111,6 @@ pull: gen
 	docker-compose pull $(SERVICES)
 
 gen:
-	$(GROVE_CHECK) \
 	DEV=$(DEV) \
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
