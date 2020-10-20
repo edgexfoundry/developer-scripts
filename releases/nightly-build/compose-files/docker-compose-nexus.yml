@@ -179,8 +179,9 @@ services:
   device-rest:
     container_name: edgex-device-rest
     depends_on:
-    - command
+    - consul
     - data
+    - metadata
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -290,11 +291,9 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - published: 8000
-      target: 8000
+    - 8000:8000/tcp
     - 127.0.0.1:8001:8001/tcp
-    - published: 8443
-      target: 8443
+    - 8443:8443/tcp
     - 127.0.0.1:8444:8444/tcp
     read_only: true
     restart: on-failure
