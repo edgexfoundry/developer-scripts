@@ -420,16 +420,15 @@ services:
     depends_on:
     - app-service-rules
     environment:
-      EDGEX_SERVICE_SERVER: http://edgex-core-data:48080
       EDGEX__DEFAULT__PORT: 5566
       EDGEX__DEFAULT__PROTOCOL: tcp
       EDGEX__DEFAULT__SERVER: edgex-app-service-configurable-rules
+      EDGEX__DEFAULT__SERVICESERVER: http://edgex-core-data:48080
       EDGEX__DEFAULT__TOPIC: events
-      EDGEX__DEFAULT__TYPE: zero
-      KUIPER_CONSOLE_LOG: "true"
-      KUIPER_REST_PORT: 48075
+      KUIPER__BASIC__CONSOLELOG: "true"
+      KUIPER__BASIC__RESTPORT: 48075
     hostname: edgex-kuiper
-    image: emqx/kuiper:0.4.2-alpine
+    image: emqx/kuiper:0.9.1-alpine
     networks:
       edgex-network: {}
     ports:
