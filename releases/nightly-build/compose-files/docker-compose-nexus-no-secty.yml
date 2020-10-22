@@ -148,8 +148,9 @@ services:
   device-rest:
     container_name: edgex-device-rest
     depends_on:
-    - command
+    - consul
     - data
+    - metadata
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data

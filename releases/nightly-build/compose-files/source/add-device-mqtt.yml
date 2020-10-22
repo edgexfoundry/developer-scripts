@@ -1,5 +1,5 @@
 # /*******************************************************************************
-#  * Copyright 2020 Intel
+#  * Copyright 2020 Intel Corporation.
 #  *
 #  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 #  * in compliance with the License. You may obtain a copy of the License at
@@ -13,31 +13,12 @@
 #  *
 #  * @author: Leonard Goodell
 #  * EdgeX Foundry, Hanoi, version "master"
-#  * added: May, 2020
+#  * added: October, 2020
 #  *******************************************************************************/
 
 version: '3.7'
 
 services:
-  mqtt-broker:
-    image: eclipse-mosquitto:${MOSQUITTO_VERSION}
-    ports:
-      - "127.0.0.1:1883:1883"
-    container_name: edgex-mqtt-broker
-    hostname: edgex-mqtt-broker
-    read_only: true
-    networks:
-      - edgex-network
-    depends_on:
-      - data
-
-  data:
-    environment:
-      MESSAGEQUEUE_HOST: edgex-mqtt-broker
-      MESSAGEQUEUE_PORT: 1883
-      MESSAGEQUEUE_TYPE: mqtt
-      MESSAGEQUEUE_OPTIONAL_CLIENTID: edgex-core-data
-
   device-mqtt:
     image: ${REPOSITORY}/docker-device-mqtt-go${ARCH}:${DEVICE_MQTT_VERSION}
     ports:
@@ -54,20 +35,6 @@ services:
       DRIVER_INCOMINGHOST: edgex-mqtt-broker
       DRIVER_RESPONSEHOST: edgex-mqtt-broker
     depends_on:
+      - consul
       - data
-      - command
-
-  app-service-rules:
-    environment:
-      EDGEX_PROFILE: rules-engine-mqtt
-      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-mqtt-broker
-      MESSAGEBUS_PUBLISHHOST_HOST: edgex-mqtt-broker
-      BINDING_PUBLISHTOPIC: rules-events
-
-  rulesengine:
-    environment:
-      EDGEX__DEFAULT__SERVER: edgex-mqtt-broker
-      EDGEX__DEFAULT__TOPIC: rules-events
-      EDGEX__DEFAULT__PORT: 1883
-      EDGEX__DEFAULT__TYPE: mqtt
-      EDGEX__DEFAULT__OPTIONAL__CLIENTID: kuiper-rules-engine
+      - metadata

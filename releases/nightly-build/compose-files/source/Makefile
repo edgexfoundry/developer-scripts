@@ -18,13 +18,13 @@
 
 include .env
 
-COMPOSE_FILES:=-f docker-compose-nexus-base.yml
-OPTIONS:=" arm64 no-secty no-ds mqtt dev ui " # Must have spaces around words for `filter-out` function to work properly
+COMPOSE_FILES:=-f docker-compose-base.yml
+OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual" # Must have spaces around words for `filter-out` function to work properly
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
 
-# Order of processing these arguments is important so the overrides in the 'add` compose files occur properly.
+# Order of processing these arguments is important so the overrides in the 'add' compose files occur properly.
 ifeq (dev, $(filter dev,$(ARGS)))
 	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
@@ -35,25 +35,56 @@ ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:=-arm64
 	KONG_UBUNTU:=-ubuntu
 endif
-ifneq (no-ds, $(filter no-ds,$(ARGS)))
-	COMPOSE_FILES:=$(COMPOSE_FILES) -f docker-compose-nexus-add-device-services.yml
-else
-	NO_DS:=-no-ds
+# Add Device Services
+ifeq (ds-bacnet, $(filter ds-bacnet,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-bacnet.yml
 endif
+ifeq (ds-grove, $(filter ds-grove,$(ARGS)))
+    DS_GROVE:=true
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-grove.yml
+endif
+ifeq (ds-modbus, $(filter ds-modbus,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-modbus.yml
+endif
+ifeq (ds-mqtt, $(filter ds-mqtt,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-mqtt.yml
+endif
+ifeq (ds-random, $(filter ds-random,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-random.yml
+endif
+ifeq (ds-rest, $(filter ds-rest,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-rest.yml
+endif
+ifeq (ds-snmp, $(filter ds-snmp,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-snmp.yml
+endif
+ifeq (ds-virtual, $(filter ds-virtual,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-virtual.yml
+endif
+# Add/switch to use MQTT Message Bus
 ifeq (mqtt, $(filter mqtt,$(ARGS)))
-	COMPOSE_FILES:=$(COMPOSE_FILES) -f docker-compose-nexus-add-mqtt.yml
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-mqtt-messagebus.yml
 	MQTT:=-mqtt
 endif
+# Add Security services and settings
 ifeq (no-secty, $(filter no-secty,$(ARGS)))
 	NO_SECURITY:=-no-secty
 else
-	COMPOSE_FILES:=$(COMPOSE_FILES) -f docker-compose-nexus-add-security.yml
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-security.yml
 endif
 ifeq (ui, $(filter ui,$(ARGS)))
-	COMPOSE_FILES:=-f docker-compose-nexus-ui.yml
+	COMPOSE_FILES:=-f docker-compose-ui.yml
 	UI:=-ui
 endif
+
 SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
+
+ifeq (true, $(DS_GROVE))
+ ifneq (-arm64, $(ARCH))
+	 GROVE_CHECK:="ds-grove option only valid with arm64 option"
+	 COMPOSE_FILES:=""
+ endif
+endif
 
 help:
 	echo "See README.md in this folder"
@@ -67,15 +98,15 @@ portainer-down:
 	make portainer-down
 
 build:
-	make compose
-	make compose arm64
-	make compose no-secty
-	make compose no-secty arm64
+	make compose ds-rest ds-virtual
+	make compose ds-rest ds-virtual arm64
+	make compose ds-rest ds-virtual no-secty
+	make compose ds-rest ds-virtual no-secty arm64
 	make compose ui
 	make compose ui arm64
 
 compose: gen
-	cat gen-header docker-compose.yml > ../docker-compose-$(RELEASE)$(NO_DS)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+	cat gen-header docker-compose.yml > ../docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
 
 run: gen
 	docker-compose -p edgex up -d $(SERVICES)
@@ -84,6 +115,7 @@ pull: gen
 	docker-compose pull $(SERVICES)
 
 gen:
+	$(GROVE_CHECK) \
 	DEV=$(DEV) \
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
@@ -109,7 +141,7 @@ ui-down:
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	ARCH= \
 	KONG_UBUNTU= \
-	docker-compose -p edgex -f docker-compose-nexus-ui.yml down
+	docker-compose -p edgex -f docker-compose-ui.yml down
 
 down: ui-down
 	DEV= \
@@ -117,10 +149,17 @@ down: ui-down
 	ARCH= \
 	KONG_UBUNTU= \
 	docker-compose -p edgex \
-		-f docker-compose-nexus-base.yml \
-		-f docker-compose-nexus-add-device-services.yml \
-		-f docker-compose-nexus-add-mqtt.yml \
-		-f docker-compose-nexus-add-security.yml \
+		-f docker-compose-base.yml \
+		-f add-device-bacnet.yml \
+		-f add-device-grove.yml \
+		-f add-device-modbus.yml \
+		-f add-device-mqtt.yml \
+		-f add-device-random.yml \
+		-f add-device-rest.yml \
+		-f add-device-snmp.yml \
+		-f add-device-virtual.yml \
+		-f add-mqtt-messagebus.yml \
+		-f add-security.yml \
 		down
 
 clean: down
