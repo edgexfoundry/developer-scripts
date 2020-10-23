@@ -4,7 +4,7 @@ This folder contains the docker compose files that pull and run the EdgeX images
 
 > *Note: Docker does not re-pull newer instances of these images. You must pull the new image instances. See the `make pull` command described below that will do this for you.*
 
-These compose files are auto generated from the multiple files contained in the `source` folder. See [README](./source/README.md) there for details on regenerating these files after making changes. 
+These compose files are auto generated from the multiple files contained in the `compose-builder` folder. See [README](../../../compose-builder/README.md) there for details on regenerating these files after making changes to the source files. 
 
 ### Compose Files
 
@@ -14,9 +14,9 @@ This folder contains the following compose files:
 
 > **NOTES: **
 >
-> - *DO NOT EDIT the files directly for permanent changes. Make all permanent changes to the source compose files in the `source` folder and then regenerate these files*
-> - Use `make build-all` to regenerate all the following compose files.
-> - See each description for the convenience `make` commands that are provided to work with that compose file.
+> - *DO NOT EDIT the files directly for permanent changes. Make all permanent changes to the source compose files in the `compose-builder` folder and then regenerate these files*
+> - Use `make build` to regenerate all the following compose files.
+> - See each description for the convenience `make` commands that are provided to work with these compose files.
 
 - **docker-compose-nexus.yml**
     Contains all the services required to run in secure configuration. 
@@ -69,8 +69,8 @@ This folder contains the following compose files:
 ### Additional make commands
 
 - `make build`
-Regenerates (aka builds) all the docker compose file variations from the source compose files located in the `source` directory.
-    
+Regenerates (aka builds) all the docker compose file variations from the source compose files located in the `compose-builder` folder.
+  
 - `make clean`
 
     Runs `down` commands, removes all stopped container and prunes all unused volumes and networks. Use this command when needing to do a fresh restart.
@@ -78,5 +78,5 @@ Regenerates (aka builds) all the docker compose file variations from the source 
 ### Additional compose files
 
 - **docker-compose-portainer.yml**
-    Stand-alone compose file for running Portianer which is a  Docker container management tool. Visit here https://www.portainer.io/ for more details on Portianer.
-    Use `make portianer`and `make portianer-down` to start and stop Portianer.
+    Stand-alone compose file for running Portainer which is a  Docker container management tool. Visit here https://www.portainer.io/ for more details on Portianer.
+    Use `make portainer`and `make portainer-down` to start and stop Portainer.

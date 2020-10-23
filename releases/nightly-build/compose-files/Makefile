@@ -41,7 +41,7 @@ portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
 
 build:
-	cd source; \
+	cd ../../../compose-builder; \
 	make build
 
 pull:

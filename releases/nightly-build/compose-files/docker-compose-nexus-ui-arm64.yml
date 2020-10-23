@@ -13,12 +13,16 @@
 #  * EdgeX Foundry, Hanoi, version "master"
 #  *******************************************************************************/
 #
-# **** This is a generated compose file ****
 #
-# DO NOT MAKE CHANGES that are intended to be permanent
 #
-# Permanent changes can be made to the source compose files in the source folder
-# and then use `make all` to regenerate all compose files variations
+# ************************ This is a generated compose file ****************************
+#
+# DO NOT MAKE CHANGES that are intended to be permanent to EdgeX developer-scripts repo.
+#
+# Permanent changes can be made to the source compose files located in the compose-builder folder
+# at the top level of the developer-scripts repo.
+#
+# From the compose-builder folder use `make build` to regenerate all standard compose files variations
 #
 networks:
   edgex-network:
