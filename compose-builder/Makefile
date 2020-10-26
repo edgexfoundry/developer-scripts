@@ -95,12 +95,10 @@ help:
 	echo "See README.md in this folder"
 
 portainer:
-	cd ./releases/nightly-build/compose-files; \
-	make portainer
+	make -C ../releases/nightly-build/compose-files portainer
 
 portainer-down:
-	cd ./releases/nightly-build/compose-files; \
-	make portainer-down
+	make -C ../releases/nightly-build/compose-files portainer-down
 
 build:
 	make compose ds-rest ds-virtual
