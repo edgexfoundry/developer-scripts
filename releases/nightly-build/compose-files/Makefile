@@ -13,7 +13,7 @@
 #  *
 #  *******************************************************************************/
 
-.PHONY: help portainer portainer-down pull run pull-ui run-ui down-ui down clean
+.PHONY: help portainer portainer-down pull run pull-ui run-ui down-ui down clean get-token
 .SILENT: help get-token
 
 help:
@@ -39,10 +39,6 @@ portainer:
 
 portainer-down:
 	docker-compose -p portainer -f docker-compose-portainer.yml down
-
-build:
-	cd ../../../compose-builder; \
-	make build
 
 pull:
 	docker-compose -f docker-compose-nexus${NO_SECURITY}${ARM64}.yml pull ${SERVICES}

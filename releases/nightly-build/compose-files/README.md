@@ -67,9 +67,6 @@ This folder contains the following compose files:
     - Use `make pull-ui arm64`  to pull image for the UI service in this compose file.
 
 ### Additional make commands
-
-- `make build`
-Regenerates (aka builds) all the docker compose file variations from the source compose files located in the `compose-builder` folder.
   
 - `make clean`
 
