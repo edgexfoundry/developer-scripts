@@ -86,16 +86,19 @@ ifeq (true, $(DS_GROVE))
  endif
 endif
 
+COMPOSE_FOLDER:=../releases/nightly-build/compose-files
+ifneq (nexus, $(RELEASE))
+	COMPOSE_FOLDER:=../releases/$(RELEASE)/compose-files
+endif
+
 help:
 	echo "See README.md in this folder"
 
 portainer:
-	cd ..; \
-	make portainer
+	make -C ../releases/nightly-build/compose-files portainer
 
 portainer-down:
-	cd ..; \
-	make portainer-down
+	make -C ../releases/nightly-build/compose-files portainer-down
 
 build:
 	make compose ds-rest ds-virtual
@@ -106,7 +109,7 @@ build:
 	make compose ui arm64
 
 compose: gen
-	cat gen-header docker-compose.yml > ../docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
 
 run: gen
 	docker-compose -p edgex up -d $(SERVICES)

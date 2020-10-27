@@ -1,14 +1,19 @@
 
 
-## Source for Edgex Docker Compose for `master` builds
+## Edgex Docker Compose Builder
 
-This folder contains the **source** compose and environment files for generating the single file docker composes files one level up. 
-
-> **Note**: 
-> *The files here are targeted for EdgeX community developers. Those just needing to run Edgex should use the generated compose files and Makefile one level up. See the accompanying [README](../README.md) for details.*
+This folder contains the `Compose Builder` which is made up of **source** compose and environment files and **makefile** for building the single file docker composes files for the configured `release`. The default release is `nexus` and the files are placed in `release/nightly-build/compose-files`. 
 
 > **Note to Developers**: 
-> *Once you have edited and tested your changes to these source files you **MUST** regenerate the composes using the `Makefile` one level up. See `build-all` in the accompanying [README](../README.md) for details.*
+> *Once you have edited and tested your changes to these source files you **MUST** regenerate the composes using the `make build` command.*
+
+Do the following to build compose files for next release such as `hanoi` 
+
+1. Update the `RELEASE`, `REPOSITORY`, `CORE_EDGEX_REPOSITORY` and `versions` contained in the `.env` file.
+2. Create the release folder, i.e `release/hanoi/compose-files`
+3. Run `make build` 
+4. **Undo changes made to `.env` file**. (committed values **must** remain as `nexus/nightly-build`)
+5. Commit changes and open PR
 
 The approach used with these source compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
 
@@ -51,7 +56,7 @@ This folder contains the following compose files:
 This folder contains the following environment files:
 
 - **.env**
-    This file contains the registry and image version variables referenced in compose files. Docker compose implicitly uses the ".env" file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
+    This file contains the `version`, `repositories` and image `version` variables referenced in compose files. Docker compose implicitly uses the `.env` file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
 - **common.env**
     This file contains the common environment overrides used by all Edgex services.
 - **common-security.env**
@@ -72,7 +77,8 @@ portainer-down	Stops Portainer independent of the EdgeX services
 ```
 ```
 build
-Generates the all standard Edgex compose file variations and stores them one directory level up. Each variation, except UI, includes Device REST & Device Virtual 
+Generates the all standard Edgex compose file variations and stores them in the configured relese folder. Each variation, except UI, includes Device REST & Device Virtual. Compose files are named appropriatly for release and options used to generate them.
+
 Current variations are:
    full secure 
    full secure for arm64
@@ -84,7 +90,8 @@ Current variations are:
 
 ```
 compose [options] 
-Generates the EdgeX compose file as specified by options and stores it one directory level up with appropriate name for the options used.
+Generates the EdgeX compose file as specified by options and stores them in the configured relese folder. Compose files are named appropriatly for release and options used to generate them.
+
 Options:
     no-secty:   Generates non-secure compose file, otherwise generates secure compose file
     arm64:      Generates compose file using ARM64 images
@@ -125,7 +132,7 @@ Services:
 ```
 ```				
 pull [options] [services]
-Pulls the EdgeX service images as specified :
+Pulls the EdgeX service images as specified by:
 Options:
     no-secty:   Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
     arm64:      Pulls ARM64 version of images    
