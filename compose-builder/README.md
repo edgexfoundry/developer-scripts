@@ -56,7 +56,7 @@ This folder contains the following compose files:
 This folder contains the following environment files:
 
 - **.env**
-    This file contains the the `version`, `repositories` and image `version` variables referenced in compose files. Docker compose implicitly uses the `.env` file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
+    This file contains the `version`, `repositories` and image `version` variables referenced in compose files. Docker compose implicitly uses the `.env` file, if it exists, so you will not see it referenced in the compose files. It is referenced in the Makefile so that it can also use these settings.
 - **common.env**
     This file contains the common environment overrides used by all Edgex services.
 - **common-security.env**
