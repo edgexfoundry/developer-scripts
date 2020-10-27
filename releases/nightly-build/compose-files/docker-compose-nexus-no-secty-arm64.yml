@@ -141,7 +141,7 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "false"
       REGISTRY_HOST: edgex-core-consul
     hostname: edgex-redis
-    image: redis:6.0-alpine
+    image: redis:6.0.9-alpine
     networks:
       edgex-network: {}
     ports:
