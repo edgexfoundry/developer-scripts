@@ -84,3 +84,5 @@ support-notifications-client/
 support-notifications/
 support-rulesengine/
 support-scheduler/
+
+docker-compose-nexus-dev.yml
