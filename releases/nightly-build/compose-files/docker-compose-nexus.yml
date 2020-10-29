@@ -63,6 +63,7 @@ services:
     - consul
     - database
     - metadata
+    - security-bootstrap-database
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -120,6 +121,7 @@ services:
     - consul
     - database
     - metadata
+    - security-bootstrap-database
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -150,13 +152,7 @@ services:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
   database:
-    command: "/bin/sh -c \"\nuntil [ -r $${REDIS5_PASSWORD_PATHNAME} ] && [ -s $${REDIS5_PASSWORD_PATHNAME}\
-      \ ]; do sleep 1; done\nexec /usr/local/bin/docker-entrypoint.sh --requirepass\
-      \ `cat $${REDIS5_PASSWORD_PATHNAME}` \\\n  --dir /data \\\n  --save 900 1 \\\
-      \n  --save 300 10 \\\n  --save 60 10000\n\"\n"
     container_name: edgex-redis
-    depends_on:
-    - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -168,7 +164,6 @@ services:
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_SECURITY_SECRET_STORE: "false"
-      REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
       REGISTRY_HOST: edgex-core-consul
     hostname: edgex-redis
     image: redis:6.0.9-alpine
@@ -179,7 +174,6 @@ services:
     read_only: true
     volumes:
     - db-data:/data:z
-    - /tmp/edgex/secrets/edgex-redis:/tmp/edgex/secrets/edgex-redis:z
   device-rest:
     container_name: edgex-device-rest
     depends_on:
@@ -263,7 +257,7 @@ services:
       SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
       SECRETSTORE_SERVERNAME: edgex-vault
     hostname: edgex-proxy
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-proxy-setup-go:master
+    image: nexus3.edgexfoundry.org:10004/docker-security-proxy-setup-go:master
     networks:
       edgex-network: {}
     read_only: true
@@ -356,6 +350,7 @@ services:
     - consul
     - database
     - notifications
+    - security-bootstrap-database
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -390,6 +385,7 @@ services:
     depends_on:
     - consul
     - database
+    - security-bootstrap-database
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -442,6 +438,7 @@ services:
     depends_on:
     - consul
     - database
+    - security-bootstrap-database
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -472,13 +469,44 @@ services:
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
+  security-bootstrap-database:
+    container_name: edgex-security-bootstrap-database
+    depends_on:
+    - database
+    - vault-worker
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_SECURITY_SECRET_STORE: "true"
+      REGISTRY_HOST: edgex-core-consul
+      SECRETSTORE_HOST: edgex-vault
+      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
+      SECRETSTORE_SERVERNAME: edgex-vault
+      SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json
+      SERVICE_HOST: edgex-security-bootstrap-redis
+    hostname: edgex-security-bootstrap-database
+    image: nexus3.edgexfoundry.org:10004/docker-security-bootstrap-redis-go:master
+    networks:
+      edgex-network: {}
+    read_only: true
+    tmpfs:
+    - /run
+    - /vault
+    volumes:
+    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+    - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
   security-secrets-setup:
     command: generate
     container_name: edgex-secrets-setup
-    environment:
-      REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
     hostname: edgex-secrets-setup
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-secrets-setup-go:master
+    image: nexus3.edgexfoundry.org:10004/docker-security-secrets-setup-go:master
     read_only: true
     tmpfs:
     - /tmp
@@ -553,10 +581,9 @@ services:
     - security-secrets-setup
     - vault
     environment:
-      REDIS5_PASSWORD_PATHNAME: /tmp/edgex/secrets/edgex-redis/redis5-password
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     hostname: edgex-vault-worker
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-security-secretstore-setup-go:master
+    image: nexus3.edgexfoundry.org:10004/docker-security-secretstore-setup-go:master
     networks:
       edgex-network: {}
     read_only: true

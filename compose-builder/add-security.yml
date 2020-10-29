@@ -68,11 +68,9 @@ services:
       - security-secrets-setup
 
   security-secrets-setup:
-    image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-secrets-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-security-secrets-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-secrets-setup
     hostname: edgex-secrets-setup
-    env_file:
-      - database-security.env
     read_only: true
     tmpfs:
       - /tmp
@@ -84,11 +82,9 @@ services:
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
 
   vault-worker:
-    image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-vault-worker
     hostname: edgex-vault-worker
-    env_file:
-      - database-security.env
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     read_only: true
@@ -105,6 +101,29 @@ services:
       - security-secrets-setup
       - consul
       - vault
+
+  security-bootstrap-database:
+    image: ${CORE_EDGEX_REPOSITORY}/docker-security-bootstrap-redis-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    container_name: edgex-security-bootstrap-database
+    hostname: edgex-security-bootstrap-database
+    env_file:
+      - common.env
+      - common-security.env
+    environment:
+      SERVICE_HOST: edgex-security-bootstrap-redis
+      SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json 
+    read_only: true
+    networks:
+      - edgex-network
+    tmpfs:
+      - /run
+      - /vault
+    volumes:
+      - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
+      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
+    depends_on:
+      - vault-worker
+      - database
 
 # containers for reverse proxy
   kong-db:
@@ -196,7 +215,7 @@ services:
       - kong-migrations
 
   edgex-proxy:
-    image: ${CORE_EDGEX_REPOSITORY}/docker-edgex-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
+    image: ${CORE_EDGEX_REPOSITORY}/docker-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
     container_name: edgex-proxy
     hostname: edgex-proxy
     entrypoint: >
@@ -227,23 +246,6 @@ services:
 
 # end of containers for reverse proxy
 
-  database:
-    env_file:
-      - database-security.env
-    command: |
-      /bin/sh -c "
-      until [ -r $${REDIS5_PASSWORD_PATHNAME} ] && [ -s $${REDIS5_PASSWORD_PATHNAME} ]; do sleep 1; done
-      exec /usr/local/bin/docker-entrypoint.sh --requirepass `cat $${REDIS5_PASSWORD_PATHNAME}` \
-        --dir /data \
-        --save 900 1 \
-        --save 300 10 \
-        --save 60 10000
-      "
-    volumes:
-      - /tmp/edgex/secrets/edgex-redis:/tmp/edgex/secrets/edgex-redis:z
-    depends_on:
-      - vault-worker
-
   notifications:
     env_file:
       - common-security.env
@@ -254,6 +256,7 @@ services:
       - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
       - vault-worker
+      - security-bootstrap-database
 
   metadata:
     env_file:
@@ -265,6 +268,7 @@ services:
       - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
       - vault-worker
+      - security-bootstrap-database
 
   data:
     env_file:
@@ -276,6 +280,7 @@ services:
       - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
       - vault-worker
+      - security-bootstrap-database
 
   command:
     env_file:
@@ -287,6 +292,7 @@ services:
       - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
       - vault-worker
+      - security-bootstrap-database
 
   scheduler:
     env_file:
@@ -298,3 +304,4 @@ services:
       - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
       - vault-worker
+      - security-bootstrap-database

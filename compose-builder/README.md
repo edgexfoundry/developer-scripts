@@ -61,8 +61,6 @@ This folder contains the following environment files:
     This file contains the common environment overrides used by all Edgex services.
 - **common-security.env**
     This file contains the common security related environment overrides used by many Edgex services.
-- **database-security.env**
-    This file contains the database specific security related environment overrides used by a few Edgex services.
 
 ### Makefile
 
