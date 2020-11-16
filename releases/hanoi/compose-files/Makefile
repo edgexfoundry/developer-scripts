@@ -74,6 +74,6 @@ get-token:
 		--network edgex_edgex-network \
 		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
 		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		edgexfoundry/docker-edgex-security-proxy-setup-go$(ARM64):1.3.0 \
+		edgexfoundry/docker-security-proxy-setup-go$(ARM64):1.3.0 \
 		--init=false --useradd=developer --group=admin \
 		| grep " access token for user developer" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
