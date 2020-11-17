@@ -66,5 +66,14 @@ clean: down
 	docker network prune -f
 
 get-token:
-	cd source; \
-	make get-token ${ARM64_OPTION}
+	docker run --rm \
+		-e SECRETSERVICE_SERVER=edgex-vault \
+		-e KONGURL_SERVER=kong \
+		-e SECRETSERVICE_TOKENPATH=/tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json \
+		-e SECRETSERVICE_CACERTPATH=/tmp/edgex/secrets/ca/ca.pem \
+		--network edgex_edgex-network \
+		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
+		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
+		nexus3.edgexfoundry.org:10004/docker-security-proxy-setup-go$(ARM64):master \
+		--init=false --useradd=developer --group=admin \
+		| grep " access token for user developer" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
