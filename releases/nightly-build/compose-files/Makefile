@@ -66,6 +66,7 @@ clean: down
 	docker network prune -f
 
 get-token:
+<<<<<<< HEAD
 	docker run --rm \
 		-e SECRETSERVICE_SERVER=edgex-vault \
 		-e KONGURL_SERVER=kong \
@@ -77,3 +78,7 @@ get-token:
 		nexus3.edgexfoundry.org:10004/docker-security-proxy-setup-go$(ARM64):master \
 		--init=false --useradd=developer --group=admin \
 		| grep " access token for user developer" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
+=======
+	cd source; \
+	make get-token ${ARM64_OPTION}
+>>>>>>> 419aafa (fix: Add missing option for adding Device Camera)

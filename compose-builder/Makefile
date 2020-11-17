@@ -19,7 +19,7 @@
 include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
-OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual" # Must have spaces around words for `filter-out` function to work properly
+OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual" # Must have spaces around words for `filter-out` function to work properly
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -38,6 +38,9 @@ endif
 # Add Device Services
 ifeq (ds-bacnet, $(filter ds-bacnet,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-bacnet.yml
+endif
+ifeq (ds-camera, $(filter ds-camera,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-camera.yml
 endif
 ifeq (ds-grove, $(filter ds-grove,$(ARGS)))
     DS_GROVE:=true
@@ -154,6 +157,7 @@ down: ui-down
 	docker-compose -p edgex \
 		-f docker-compose-base.yml \
 		-f add-device-bacnet.yml \
+		-f add-device-camera.yml \
 		-f add-device-grove.yml \
 		-f add-device-modbus.yml \
 		-f add-device-mqtt.yml \

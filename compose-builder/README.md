@@ -32,6 +32,8 @@ This folder contains the following compose files:
     Security **extending** compose file. Adds the additional security services and configuration of services so that all the services are running in the secure configuration.
 - **add-device-bacnet.yml**
     Device Service **extending** compose file, which adds the **Device Bacnet**  service.
+- **add-device-camera.yml**
+    Device Service **extending** compose file, which adds the **Device Camera**  service.
 - **add-device-grove.yml**
     Device Service **extending** compose file, which adds the **Device Grove**  service.
 - **add-device-modbus.yml**
@@ -96,6 +98,7 @@ Options:
     dev:        Generates compose file using local dev built images from edgex-go repo's 
                 'make docker' which creates docker images tagged with '0.0.0-dev'    
     ds-bacnet:  Generates compose file with device-bacnet included
+    ds-camera:  Generates compose file with device-camera included
     ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
     ds-modbus:  Generates compose file with device-modbus included
     ds-mqtt:    Generates compose file with device-mqtt included
@@ -117,6 +120,7 @@ Options:
                 'make docker' which creates docker images tagged with '0.0.0-dev'
     ds-modbus:  Runs with device-modbus included
     ds-bacnet:  Runs with device-bacnet included
+    ds-camera:  Runs with device-camera included
     ds-grove:   Runs with device-grove included (valid only with arm64 option)
     ds-mqtt:    Runs with device-mqtt included
     ds-random:  Runs with device-random included
@@ -135,6 +139,7 @@ Options:
     no-secty:   Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
     arm64:      Pulls ARM64 version of images    
     ds-bacnet:  Pull includes device-bacnet 
+    ds-camera:  Pull includes device-camera
     ds-grove:   Pull includes device-grove (valid only with arm64 option)
     ds-modbus:  Pull includes device-modbus 
     ds-mqtt:    Pull includes device-mqtt
@@ -157,6 +162,7 @@ Options:
                 'make docker' which creates docker images tagged with '0.0.0-dev'
     ds-modbus:  Generates compose file with device-modbus included
     ds-bacnet:  Generates compose file with device-bacnet included
+    ds-camera:  Generates compose file with device-camera included
     ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
     ds-mqtt:    Generates compose file with device-mqtt included
     ds-random:  Generates compose file with device-random included
