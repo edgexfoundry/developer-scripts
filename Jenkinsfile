@@ -8,6 +8,9 @@ pipeline {
         durabilityHint 'PERFORMANCE_OPTIMIZED'
         timeout(360)
     }
+    triggers {
+        issueCommentTrigger('.*^recheck$.*')
+    }
     stages {
         stage('Smoke Tests') {
             when {
