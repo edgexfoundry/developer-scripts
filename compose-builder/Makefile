@@ -19,7 +19,7 @@
 include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
-OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual" # Must have spaces around words for `filter-out` function to work properly
+OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual " # Must have spaces around words for `filter-out` function to work properly
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
