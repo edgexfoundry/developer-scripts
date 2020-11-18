@@ -64,7 +64,6 @@ services:
       - vault-init:/vault/init:ro,z
       - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
     depends_on:
-      - consul
       - security-secrets-setup
 
   security-secrets-setup:
