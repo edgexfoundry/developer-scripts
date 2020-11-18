@@ -35,6 +35,8 @@ services:
       MESSAGEQUEUE_PORT: 1883
       MESSAGEQUEUE_TYPE: mqtt
       MESSAGEQUEUE_OPTIONAL_CLIENTID: edgex-core-data
+    depends_on:
+      - mqtt-broker
 
   app-service-rules:
     environment:
@@ -42,6 +44,8 @@ services:
       MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-mqtt-broker
       MESSAGEBUS_PUBLISHHOST_HOST: edgex-mqtt-broker
       BINDING_PUBLISHTOPIC: rules-events
+    depends_on:
+      - mqtt-broker
 
   rulesengine:
     environment:
@@ -50,3 +54,5 @@ services:
       EDGEX__DEFAULT__PORT: 1883
       EDGEX__DEFAULT__TYPE: mqtt
       EDGEX__DEFAULT__OPTIONAL__CLIENTID: kuiper-rules-engine
+    depends_on:
+      - mqtt-broker
