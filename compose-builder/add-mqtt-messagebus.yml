@@ -22,14 +22,12 @@ services:
   mqtt-broker:
     image: eclipse-mosquitto:${MOSQUITTO_VERSION}
     ports:
-      - "127.0.0.1:1883:1883"
+      - "1883:1883"
     container_name: edgex-mqtt-broker
     hostname: edgex-mqtt-broker
     read_only: true
     networks:
       - edgex-network
-    depends_on:
-      - data
 
   data:
     environment:
