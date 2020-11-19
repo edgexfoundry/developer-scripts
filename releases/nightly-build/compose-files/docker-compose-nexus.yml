@@ -490,7 +490,7 @@ services:
       SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
       SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json
-      SERVICE_HOST: edgex-security-bootstrap-redis
+      SERVICE_HOST: edgex-security-bootstrap-database
     hostname: edgex-security-bootstrap-database
     image: nexus3.edgexfoundry.org:10004/docker-security-bootstrap-redis-go:master
     networks:
