@@ -110,7 +110,7 @@ services:
       - common.env
       - common-security.env
     environment:
-      SERVICE_HOST: edgex-security-bootstrap-redis
+      SERVICE_HOST: edgex-security-bootstrap-database
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json 
     read_only: true
     networks:

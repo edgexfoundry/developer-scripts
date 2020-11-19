@@ -2,18 +2,25 @@
 
 ## Edgex Docker Compose Builder
 
-This folder contains the `Compose Builder` which is made up of **source** compose and environment files and **makefile** for building the single file docker composes files for the configured `release`. The default release is `nexus` and the files are placed in `release/nightly-build/compose-files`. 
+This folder contains the `Compose Builder` which is made up of **source** compose and environment files and **makefile** for building the single file docker composes files for the configured `release`. The default release is `nexus` and the generated compose files are placed in `release/nightly-build/compose-files`. 
 
 > **Note to Developers**: 
 > *Once you have edited and tested your changes to these source files you **MUST** regenerate the composes using the `make build` command.*
+
+### Generate next release compose files
 
 Do the following to build compose files for next release such as `hanoi` 
 
 1. Update the `RELEASE`, `REPOSITORY`, `CORE_EDGEX_REPOSITORY` and `versions` contained in the `.env` file.
 2. Create the release folder, i.e `release/hanoi/compose-files`
 3. Run `make build` 
-4. **Undo changes made to `.env` file**. (committed values **must** remain as `nexus/nightly-build`)
-5. Commit changes and open PR
+4. Commit changes, open PR and merge PR
+5. TAG repo for new release, i.e. `1.3.0`
+   - This is need for generating dot releases and allows user to get back to the `release` source compose and .env files so they can generate custom compose files base on the `release`.  
+6. **Undo changes made to `.env` file**. (values on master branch **must** remain as `nexus/nightly-build`)
+7. Commit changes, open PR and merge PR
+
+### Multiple Compose files approach
 
 The approach used with these source compose files is the `Extending using multiple Compose files` described here: https://docs.docker.com/compose/extends/#multiple-compose-files
 
@@ -194,5 +201,3 @@ Stops all EdgeX services no matter which configuration started them
 clean
 Runs 'down' , then removes any stopped containers and then prunes unused volumes and networks
 ```
-
-
