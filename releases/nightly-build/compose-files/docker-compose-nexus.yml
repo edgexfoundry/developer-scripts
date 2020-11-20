@@ -557,7 +557,6 @@ services:
     - IPC_LOCK
     container_name: edgex-vault
     depends_on:
-    - consul
     - security-secrets-setup
     entrypoint:
     - /vault/init/start_vault.sh
