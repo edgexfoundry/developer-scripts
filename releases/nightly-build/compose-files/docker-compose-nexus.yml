@@ -93,12 +93,9 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
   consul:
     container_name: edgex-core-consul
-    depends_on:
-    - security-secrets-setup
     environment:
       EDGEX_DB: redis
       EDGEX_SECURE: "true"
@@ -116,10 +113,8 @@ services:
     - consul-config:/consul/config:z
     - consul-data:/consul/data:z
     - consul-scripts:/consul/scripts:z
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
     - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
-    - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
   data:
     container_name: edgex-core-data
     depends_on:
@@ -154,7 +149,6 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
   database:
     container_name: edgex-redis
@@ -272,7 +266,6 @@ services:
     - no-new-privileges:true
     volumes:
     - consul-scripts:/consul/scripts:ro,z
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
   kong:
     command: "/bin/sh -cx \"\n  until /consul/scripts/consul-svc-healthy.sh kong-db;\n\
@@ -315,8 +308,6 @@ services:
     - kong:/usr/local/kong:rw
   kong-db:
     container_name: kong-db
-    depends_on:
-    - security-secrets-setup
     environment:
       POSTGRES_DB: kong
       POSTGRES_PASSWORD: kong
@@ -370,7 +361,6 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
   notifications:
     container_name: edgex-support-notifications
@@ -404,7 +394,6 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
   rulesengine:
     container_name: edgex-kuiper
@@ -464,7 +453,6 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
   security-bootstrap-database:
     container_name: edgex-security-bootstrap-database
@@ -497,23 +485,7 @@ services:
     - /run
     - /vault
     volumes:
-    - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
-  security-secrets-setup:
-    command: generate
-    container_name: edgex-secrets-setup
-    hostname: edgex-secrets-setup
-    image: nexus3.edgexfoundry.org:10004/docker-security-secrets-setup-go:master
-    read_only: true
-    security_opt:
-    - no-new-privileges:true
-    tmpfs:
-    - /tmp
-    - /run
-    volumes:
-    - secrets-setup-cache:/etc/edgex/pki:rw
-    - /tmp/edgex/secrets:/tmp/edgex/secrets:z
-    - vault-init:/vault/init:z
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
@@ -552,14 +524,16 @@ services:
   vault:
     cap_add:
     - IPC_LOCK
+    command: server
     container_name: edgex-vault
-    depends_on:
-    - security-secrets-setup
-    entrypoint:
-    - /vault/init/start_vault.sh
     environment:
       VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
+      VAULT_LOCAL_CONFIG: "listener \"tcp\" { \n    tls_disable = \"1\" \n    address\
+        \ = \"edgex-vault:8200\" \n    cluster_address = \"edgex-vault:8201\"\n} \
+        \ backend \"file\" { \n    path = \"/vault/file\" \n}  default_lease_ttl =\
+        \ \"168h\"  max_lease_ttl = \"720h\"\n"
+      VAULT_LOG_LEVEL: INFO
       VAULT_UI: "true"
     hostname: edgex-vault
     image: vault:1.5.3
@@ -570,15 +544,12 @@ services:
     tmpfs:
     - /vault/config
     volumes:
-    - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
     - vault-file:/vault/file:z
-    - vault-init:/vault/init:ro,z
     - vault-logs:/vault/logs:z
   vault-worker:
     container_name: edgex-vault-worker
     depends_on:
     - consul
-    - security-secrets-setup
     - vault
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
@@ -606,7 +577,6 @@ volumes:
   kuiper-data: {}
   log-data: {}
   postgres-data: {}
-  secrets-setup-cache: {}
   vault-config: {}
   vault-file: {}
   vault-init: {}
