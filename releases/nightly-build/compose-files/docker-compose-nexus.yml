@@ -541,11 +541,12 @@ services:
     - IPC_LOCK
     container_name: edgex-vault
     depends_on:
+    - consul
     - security-secrets-setup
     entrypoint:
     - /vault/init/start_vault.sh
     environment:
-      VAULT_ADDR: https://edgex-vault:8200
+      VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
       VAULT_UI: "true"
     hostname: edgex-vault
