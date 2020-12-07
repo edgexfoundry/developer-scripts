@@ -79,8 +79,6 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "true"
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-command/secrets-token.json
       SERVICE_HOST: edgex-core-command
     hostname: edgex-core-command
@@ -137,8 +135,6 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "true"
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-data/secrets-token.json
       SERVICE_HOST: edgex-core-data
     hostname: edgex-core-data
@@ -250,13 +246,9 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "true"
       KONGURL_SERVER: kong
       REGISTRY_HOST: edgex-core-consul
-      SECRETSERVICE_CACERTPATH: /tmp/edgex/secrets/ca/ca.pem
       SECRETSERVICE_SERVER: edgex-vault
-      SECRETSERVICE_SNIS: edgex-kong
       SECRETSERVICE_TOKENPATH: /tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
     hostname: edgex-proxy
     image: nexus3.edgexfoundry.org:10004/docker-security-proxy-setup-go-arm64:master
     networks:
@@ -367,8 +359,6 @@ services:
       NOTIFICATIONS_SENDER: edgex-core-metadata
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-metadata/secrets-token.json
       SERVICE_HOST: edgex-core-metadata
     hostname: edgex-core-metadata
@@ -401,8 +391,6 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "true"
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-notifications/secrets-token.json
       SERVICE_HOST: edgex-support-notifications
     hostname: edgex-support-notifications
@@ -459,8 +447,6 @@ services:
       INTERVALACTIONS_SCRUBPUSHED_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-scheduler/secrets-token.json
       SERVICE_HOST: edgex-support-scheduler
     hostname: edgex-support-scheduler
@@ -491,8 +477,6 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "true"
       REGISTRY_HOST: edgex-core-consul
       SECRETSTORE_HOST: edgex-vault
-      SECRETSTORE_ROOTCACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSTORE_SERVERNAME: edgex-vault
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json
       SERVICE_HOST: edgex-security-bootstrap-database
     hostname: edgex-security-bootstrap-database
@@ -562,7 +546,7 @@ services:
     entrypoint:
     - /vault/init/start_vault.sh
     environment:
-      VAULT_ADDR: https://edgex-vault:8200
+      VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
       VAULT_UI: "true"
     hostname: edgex-vault

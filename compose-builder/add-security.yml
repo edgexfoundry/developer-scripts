@@ -55,7 +55,7 @@ services:
       - /vault/config
     entrypoint: ["/vault/init/start_vault.sh"]
     environment:
-      VAULT_ADDR: https://edgex-vault:8200
+      VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
       VAULT_UI: "true"
     volumes:
@@ -233,8 +233,6 @@ services:
       KONGURL_SERVER: kong
       SECRETSERVICE_SERVER: edgex-vault
       SECRETSERVICE_TOKENPATH: /tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json
-      SECRETSERVICE_CACERTPATH: /tmp/edgex/secrets/ca/ca.pem
-      SECRETSERVICE_SNIS: "edgex-kong"
     volumes:
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
