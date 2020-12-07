@@ -34,6 +34,7 @@ volumes:
   consul-config:
   consul-data:
   consul-scripts:
+  kuiper-data:
 
 services:
   consul:
@@ -186,6 +187,7 @@ services:
 
   app-service-rules:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
+    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
@@ -212,8 +214,11 @@ services:
       - "127.0.0.1:20498:20498"
     container_name: edgex-kuiper
     hostname: edgex-kuiper
+    read_only: true
     networks:
       - edgex-network
+    volumes:
+      - kuiper-data:/kuiper/data:z
     environment:
       # KUIPER_DEBUG: "true"
       KUIPER__BASIC__CONSOLELOG: "true"

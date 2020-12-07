@@ -434,6 +434,9 @@ services:
     ports:
     - 127.0.0.1:20498:20498/tcp
     - 127.0.0.1:48075:48075/tcp
+    read_only: true
+    volumes:
+    - kuiper-data:/kuiper/data:z
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:
@@ -602,6 +605,7 @@ volumes:
   consul-scripts: {}
   db-data: {}
   kong: {}
+  kuiper-data: {}
   log-data: {}
   postgres-data: {}
   secrets-setup-cache: {}
