@@ -187,6 +187,7 @@ services:
 
   app-service-rules:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
+    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
