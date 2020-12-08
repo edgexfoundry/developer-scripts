@@ -132,7 +132,7 @@ gen:
 get-token:
 	DEV=$(DEV) \
 	ARCH=$(ARCH) \
-	sh -c ./get-api-gateway-token.sh
+	sh ./get-api-gateway-token.sh
 
 ui-down:
 	DEV= \
