@@ -10,7 +10,7 @@ if [ "$DEV" = "-dev" ]; then
   CORE_EDGEX_VERSION=0.0.0
 fi
 
-
+rm -rf keys
 mkdir keys
 openssl genpkey -algorithm RSA -out keys/rsa4096.key -pkeyopt rsa_keygen_bits:4096
 openssl rsa -in keys/rsa4096.key -pubout -out keys/rsa4096.pub
