@@ -22,4 +22,3 @@ docker run --rm -it -e KONGURL_SERVER=kong --network edgex_edgex-network --entry
        ${CORE_EDGEX_REPOSITORY}/docker-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV} \
        /edgex/secrets-config proxy jwt --algorithm RS256 --id ${ID} --private_key /keys/rsa4096.key
 rm -rf keys
-
