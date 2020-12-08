@@ -130,17 +130,7 @@ gen:
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 get-token:
-	docker run --rm \
-		-e SECRETSERVICE_SERVER=edgex-vault \
-		-e KONGURL_SERVER=kong \
-		-e SECRETSERVICE_TOKENPATH=/tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json \
-		-e SECRETSERVICE_CACERTPATH=/tmp/edgex/secrets/ca/ca.pem \
-		--network edgex_edgex-network \
-		--volume /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z \
-		--volume /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z \
-		$(CORE_EDGEX_REPOSITORY)/docker-edgex-security-proxy-setup-go$(ARCH):$(CORE_EDGEX_VERSION)$(DEV) \
-		--init=false --useradd=developer --group=admin \
-		| grep " access token for user developer" | sed 's/.*: \([^.]*\.[^.]*\.[^.]*\).*/\1/'
+	bash -c ./get-api-gateway-token.sh
 
 ui-down:
 	DEV= \
