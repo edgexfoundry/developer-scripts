@@ -130,6 +130,8 @@ gen:
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 get-token:
+	DEV=$(DEV) \
+	ARCH=$(ARCH) \
 	bash -c ./get-api-gateway-token.sh
 
 ui-down:
