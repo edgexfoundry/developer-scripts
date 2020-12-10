@@ -3,7 +3,7 @@
 # usage function for uploading tls cert:
 usage()
 {
-  echo "Usage: make upload-tls-cert CERT_INPUT_FILE=<full-path-for-cert-input-file> KEY_INPUT_FILE=<full-path-for-key-input-file> [EXTRA-SNIS=<comma-separated-list-for-server-name>]"
+  echo "Usage: uplaod-api-gateway-cert.sh CERT_INPUT_FILE=<full-path-for-cert-input-file> KEY_INPUT_FILE=<full-path-for-key-input-file> [EXTRA-SNIS=<comma-separated-list-for-server-name>]"
   echo "\tBoth CERT_INPUT_FILE and KEY_INPUT_FILE are required."
   echo "\tEXTRA_SNIS is optional"
   exit 1
