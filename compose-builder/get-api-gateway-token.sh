@@ -7,6 +7,7 @@
 . ./.env
 
 if [ "$DEV" = "-dev" ]; then
+  CORE_EDGEX_REPOSITORY=edgexfoundry
   CORE_EDGEX_VERSION=0.0.0
 fi
 
