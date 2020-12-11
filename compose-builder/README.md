@@ -187,6 +187,20 @@ Options:
     dev:    Generates a Kong access token using local dev built docker image
             'make docker', which creates docker images tagged with '0.0.0-dev'    
 ```
+
+```
+upload-tls-cert [options] <environment_variables>
+Upload a bring-your-own (BYO) TLS certificate to the Kong proxy server as specified by:
+Options:
+    arm64:  Upload TLS certificate to the Kong server using ARM64 image
+    dev:    Upload TLS certificate to the Kong server using local dev built docker image
+            'make docker', which creates docker images tagged with '0.0.0-dev'
+Environment Variables: 
+    CERT_INPUT_FILE=<full_path_to_cert_file>: the full file name path to your own certificate file, this is required
+    KEY_INPUT_FILE=<full_path_to_key_file>: the full file name path to your own key file, this is required
+    EXTRA_SNIS="comma_separated_server_name_list_if_any": an extra server name indicator list in addition to localhost and kong, this is optional and can be omitted
+```
+
 ```
 ui-down 
 Stops the optional EdgeX UI service

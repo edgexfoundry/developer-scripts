@@ -13,8 +13,8 @@
 #  *
 #  *******************************************************************************/
 
-.PHONY: help portainer portainer-down build build-ui run pull gen get-token ui-down down clean
-.SILENT: help get-token del-token
+.PHONY: help portainer portainer-down build build-ui run pull gen get-token upload-tls-cert ui-down down clean
+.SILENT: help get-token del-token upload-tls-cert
 
 include .env
 
@@ -133,6 +133,11 @@ get-token:
 	DEV=$(DEV) \
 	ARCH=$(ARCH) \
 	sh ./get-api-gateway-token.sh
+
+upload-tls-cert:
+	DEV=$(DEV) \
+	ARCH=$(ARCH) \
+	sh ./upload-api-gateway-cert.sh
 
 ui-down:
 	DEV= \
