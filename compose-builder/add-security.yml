@@ -146,35 +146,6 @@ services:
       POSTGRES_PASSWORD: ${KONG_POSTGRES_PASSWORD:-kong}
     depends_on:
       - security-secrets-setup
-
-  kong-migrations:
-    image: kong:${KONG_VERSION}${KONG_UBUNTU}
-    container_name: kong-migrations
-    read_only: true
-    networks:
-      - edgex-network
-    environment:
-      KONG_DATABASE: postgres
-      KONG_PG_HOST: kong-db
-      KONG_PG_PASSWORD: ${KONG_POSTGRES_PASSWORD:-kong}
-    command: >
-      /bin/sh -cx 
-      'until /consul/scripts/consul-svc-healthy.sh kong-db;
-         do sleep 1;
-      done && kong migrations bootstrap;
-      kong migrations list;
-      code=$$?;
-      if [ $$code -eq 5 ]; then
-        kong migrations up && kong migrations finish;
-      fi'
-    tmpfs:
-      - /tmp
-    volumes:
-      - consul-scripts:/consul/scripts:ro,z
-    depends_on:
-      - consul
-      - kong-db
-
   kong:
     image: kong:${KONG_VERSION}${KONG_UBUNTU}
     container_name: kong
@@ -202,16 +173,26 @@ services:
       - /run
       - /tmp
     command: >
-      /bin/sh -c 
-      "until /consul/scripts/consul-svc-healthy.sh kong-migrations; do sleep 1; done;
-      /docker-entrypoint.sh kong docker-start"
+      /bin/sh -cx "
+        until /consul/scripts/consul-svc-healthy.sh kong-db;
+          do sleep 1;
+        done;
+        kong migrations bootstrap;
+        kong migrations list;
+        code=$$?;
+        if [ $$code -eq 5 ]; then
+          kong migrations up && kong migrations finish;
+        fi;
+        until /consul/scripts/consul-svc-healthy.sh kong-migrations;
+          do sleep 1;
+        done;
+        /docker-entrypoint.sh kong docker-start"
     volumes:
       - kong:/usr/local/kong
       - consul-scripts:/consul/scripts:ro,z
     depends_on:
       - consul
       - kong-db
-      - kong-migrations
 
   edgex-proxy:
     image: ${CORE_EDGEX_REPOSITORY}/docker-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}

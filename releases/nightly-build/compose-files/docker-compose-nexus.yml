@@ -259,15 +259,15 @@ services:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
   kong:
-    command: '/bin/sh -c  "until /consul/scripts/consul-svc-healthy.sh kong-migrations;
-      do sleep 1; done; /docker-entrypoint.sh kong docker-start"
-
-      '
+    command: "/bin/sh -cx \"\n  until /consul/scripts/consul-svc-healthy.sh kong-db;\n\
+      \    do sleep 1;\n  done;\n  kong migrations bootstrap;\n  kong migrations list;\n\
+      \  code=$$?;\n  if [ $$code -eq 5 ]; then\n    kong migrations up && kong migrations\
+      \ finish;\n  fi;\n  until /consul/scripts/consul-svc-healthy.sh kong-migrations;\n\
+      \    do sleep 1;\n  done;\n  /docker-entrypoint.sh kong docker-start\"\n"
     container_name: kong
     depends_on:
     - consul
     - kong-db
-    - kong-migrations
     environment:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ERROR_LOG: /dev/stderr
@@ -316,27 +316,6 @@ services:
     - /run
     volumes:
     - postgres-data:/var/lib/postgresql/data:z
-  kong-migrations:
-    command: "/bin/sh -cx  'until /consul/scripts/consul-svc-healthy.sh kong-db;\n\
-      \   do sleep 1;\ndone && kong migrations bootstrap; kong migrations list; code=$$?;\
-      \ if [ $$code -eq 5 ]; then\n  kong migrations up && kong migrations finish;\n\
-      fi'\n"
-    container_name: kong-migrations
-    depends_on:
-    - consul
-    - kong-db
-    environment:
-      KONG_DATABASE: postgres
-      KONG_PG_HOST: kong-db
-      KONG_PG_PASSWORD: kong
-    image: kong:2.0.5
-    networks:
-      edgex-network: {}
-    read_only: true
-    tmpfs:
-    - /tmp
-    volumes:
-    - consul-scripts:/consul/scripts:ro,z
   metadata:
     container_name: edgex-core-metadata
     depends_on:
