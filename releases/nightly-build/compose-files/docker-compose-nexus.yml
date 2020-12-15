@@ -67,6 +67,7 @@ services:
     - database
     - metadata
     - security-bootstrap-database
+    - security-bootstrapper
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -93,9 +94,13 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
   consul:
     container_name: edgex-core-consul
+    depends_on:
+    - security-bootstrapper
+    - vault
     environment:
       EDGEX_DB: redis
       EDGEX_SECURE: "true"
@@ -113,6 +118,7 @@ services:
     - consul-config:/consul/config:z
     - consul-data:/consul/data:z
     - consul-scripts:/consul/scripts:z
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
     - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
   data:
@@ -122,6 +128,7 @@ services:
     - database
     - metadata
     - security-bootstrap-database
+    - security-bootstrapper
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -149,9 +156,12 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
   database:
     container_name: edgex-redis
+    depends_on:
+    - security-bootstrapper
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -175,6 +185,7 @@ services:
     - no-new-privileges:true
     volumes:
     - db-data:/data:z
+    - edgex-init:/edgex-init:z
   device-rest:
     container_name: edgex-device-rest
     depends_on:
@@ -277,6 +288,7 @@ services:
     depends_on:
     - consul
     - kong-db
+    - security-bootstrapper
     environment:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ERROR_LOG: /dev/stderr
@@ -305,9 +317,12 @@ services:
     tty: true
     volumes:
     - consul-scripts:/consul/scripts:ro,z
+    - edgex-init:/edgex-init:z
     - kong:/usr/local/kong:rw
   kong-db:
     container_name: kong-db
+    depends_on:
+    - security-bootstrapper
     environment:
       POSTGRES_DB: kong
       POSTGRES_PASSWORD: kong
@@ -326,6 +341,7 @@ services:
     - /tmp
     - /run
     volumes:
+    - edgex-init:/edgex-init:z
     - postgres-data:/var/lib/postgresql/data:z
   metadata:
     container_name: edgex-core-metadata
@@ -334,6 +350,7 @@ services:
     - database
     - notifications
     - security-bootstrap-database
+    - security-bootstrapper
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -361,6 +378,7 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
   notifications:
     container_name: edgex-support-notifications
@@ -368,6 +386,7 @@ services:
     - consul
     - database
     - security-bootstrap-database
+    - security-bootstrapper
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -394,6 +413,7 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
   rulesengine:
     container_name: edgex-kuiper
@@ -425,6 +445,7 @@ services:
     - consul
     - database
     - security-bootstrap-database
+    - security-bootstrapper
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -453,11 +474,13 @@ services:
     security_opt:
     - no-new-privileges:true
     volumes:
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
   security-bootstrap-database:
     container_name: edgex-security-bootstrap-database
     depends_on:
     - database
+    - security-bootstrapper
     - vault-worker
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -485,7 +508,16 @@ services:
     - /run
     - /vault
     volumes:
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
+  security-bootstrapper:
+    container_name: edgex-security-installer
+    hostname: edgex-security-installer
+    image: gcr.io/google_containers/defaultbackend:1.4
+    networks:
+      edgex-network: {}
+    volumes:
+    - edgex-init:/edgex-init:z
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
@@ -526,6 +558,8 @@ services:
     - IPC_LOCK
     command: server
     container_name: edgex-vault
+    depends_on:
+    - security-bootstrapper
     environment:
       VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
@@ -544,12 +578,14 @@ services:
     tmpfs:
     - /vault/config
     volumes:
+    - edgex-init:/edgex-init:z
     - vault-file:/vault/file:z
     - vault-logs:/vault/logs:z
   vault-worker:
     container_name: edgex-vault-worker
     depends_on:
     - consul
+    - security-bootstrapper
     - vault
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
@@ -565,6 +601,7 @@ services:
     - /vault
     volumes:
     - consul-scripts:/consul/scripts:ro,z
+    - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     - vault-config:/vault/config:z
 version: '3.7'
@@ -573,6 +610,7 @@ volumes:
   consul-data: {}
   consul-scripts: {}
   db-data: {}
+  edgex-init: {}
   kong: {}
   kuiper-data: {}
   log-data: {}
