@@ -58,6 +58,8 @@ services:
     ports:
     - 127.0.0.1:48100:48100/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   command:
     container_name: edgex-core-command
     depends_on:
@@ -84,6 +86,8 @@ services:
     ports:
     - 127.0.0.1:48082:48082/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   consul:
     container_name: edgex-core-consul
     environment:
@@ -96,6 +100,8 @@ services:
     ports:
     - 127.0.0.1:8500:8500/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - consul-config:/consul/config:z
     - consul-data:/consul/data:z
@@ -127,6 +133,8 @@ services:
     - 127.0.0.1:5563:5563/tcp
     - 127.0.0.1:48080:48080/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   database:
     container_name: edgex-redis
     environment:
@@ -148,6 +156,8 @@ services:
     ports:
     - 127.0.0.1:6379:6379/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - db-data:/data:z
   device-rest:
@@ -176,6 +186,8 @@ services:
     ports:
     - 127.0.0.1:49986:49986/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
@@ -201,6 +213,8 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:49990:49990/tcp
+    security_opt:
+    - no-new-privileges:true
   metadata:
     container_name: edgex-core-metadata
     depends_on:
@@ -228,6 +242,8 @@ services:
     ports:
     - 127.0.0.1:48081:48081/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   notifications:
     container_name: edgex-support-notifications
     depends_on:
@@ -253,6 +269,8 @@ services:
     ports:
     - 127.0.0.1:48060:48060/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   rulesengine:
     container_name: edgex-kuiper
     depends_on:
@@ -273,6 +291,8 @@ services:
     - 127.0.0.1:20498:20498/tcp
     - 127.0.0.1:48075:48075/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - kuiper-data:/kuiper/data:z
   scheduler:
@@ -302,6 +322,8 @@ services:
     ports:
     - 127.0.0.1:48085:48085/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
@@ -333,6 +355,8 @@ services:
     ports:
     - 127.0.0.1:48090:48090/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
 version: '3.7'

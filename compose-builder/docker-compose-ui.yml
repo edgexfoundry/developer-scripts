@@ -33,3 +33,5 @@ services:
     read_only: true
     networks:
       - edgex-network
+    security_opt: 
+      - no-new-privileges:true

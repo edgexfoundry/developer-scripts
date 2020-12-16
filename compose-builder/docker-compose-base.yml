@@ -53,6 +53,8 @@ services:
     environment: 
       EDGEX_DB: redis
       EDGEX_SECURE: "false"
+    security_opt: 
+      - no-new-privileges:true
 
   database:
     image: redis:${REDIS_VERSION}
@@ -67,6 +69,8 @@ services:
       - common.env
     volumes:
       - db-data:/data:z
+    security_opt: 
+      - no-new-privileges:true
 
   system:
     image: ${CORE_EDGEX_REPOSITORY}/docker-sys-mgmt-agent-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -92,6 +96,8 @@ services:
       - metadata
       - data
       - command
+    security_opt: 
+      - no-new-privileges:true
 
   notifications:
     image: ${CORE_EDGEX_REPOSITORY}/docker-support-notifications-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -109,6 +115,8 @@ services:
     depends_on:
       - consul
       - database
+    security_opt: 
+      - no-new-privileges:true
 
   metadata:
     image: ${CORE_EDGEX_REPOSITORY}/docker-core-metadata-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -128,6 +136,8 @@ services:
       - consul
       - database
       - notifications
+    security_opt: 
+      - no-new-privileges:true
 
   data:
     image: ${CORE_EDGEX_REPOSITORY}/docker-core-data-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -147,6 +157,8 @@ services:
       - consul
       - database
       - metadata
+    security_opt: 
+      - no-new-privileges:true
 
   command:
     image: ${CORE_EDGEX_REPOSITORY}/docker-core-command-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -165,6 +177,8 @@ services:
       - consul
       - database
       - metadata
+    security_opt: 
+      - no-new-privileges:true
 
   scheduler:
     image: ${CORE_EDGEX_REPOSITORY}/docker-support-scheduler-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -184,6 +198,8 @@ services:
     depends_on:
       - consul
       - database
+    security_opt: 
+      - no-new-privileges:true
 
   app-service-rules:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
@@ -206,6 +222,8 @@ services:
     depends_on:
       - consul
       - data
+    security_opt: 
+      - no-new-privileges:true
 
   rulesengine:
     image: emqx/kuiper:${KUIPER_VERSION}
@@ -230,3 +248,5 @@ services:
       EDGEX__DEFAULT__PORT: 5566
     depends_on:
       - app-service-rules
+    security_opt: 
+      - no-new-privileges:true

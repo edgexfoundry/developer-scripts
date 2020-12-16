@@ -38,3 +38,5 @@ services:
       - consul
       - data
       - metadata
+    security_opt: 
+      - no-new-privileges:true
