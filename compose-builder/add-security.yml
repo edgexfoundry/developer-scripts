@@ -26,7 +26,6 @@ volumes:
   kong:
   # non-shared volumes
   postgres-data:
-  secrets-setup-cache:
 
 services:
   consul:
@@ -34,12 +33,8 @@ services:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
       EDGEX_SECURE: "true"
     volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
-      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
       - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
-    depends_on:
-      - security-secrets-setup
 
   vault:
     image: vault:${VAULT_VERSION}
@@ -53,34 +48,27 @@ services:
       - "IPC_LOCK"
     tmpfs:
       - /vault/config
-    entrypoint: ["/vault/init/start_vault.sh"]
+    command: server
     environment:
       VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
       VAULT_UI: "true"
+      # temporary add config here, will be absorbed into security-bootstrapper's installation once that is ready
+      VAULT_LOG_LEVEL: INFO
+      VAULT_LOCAL_CONFIG: >
+          listener "tcp" { 
+              tls_disable = "1" 
+              address = "edgex-vault:8200" 
+              cluster_address = "edgex-vault:8201"
+          } 
+          backend "file" { 
+              path = "/vault/file" 
+          } 
+          default_lease_ttl = "168h" 
+          max_lease_ttl = "720h"
     volumes:
       - vault-file:/vault/file:z
       - vault-logs:/vault/logs:z
-      - vault-init:/vault/init:ro,z
-      - /tmp/edgex/secrets/edgex-vault:/tmp/edgex/secrets/edgex-vault:ro,z
-    depends_on:
-      - security-secrets-setup
-
-  security-secrets-setup:
-    image: ${CORE_EDGEX_REPOSITORY}/docker-security-secrets-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
-    container_name: edgex-secrets-setup
-    hostname: edgex-secrets-setup
-    read_only: true
-    tmpfs:
-      - /tmp
-      - /run
-    command: "generate"
-    volumes:
-      - secrets-setup-cache:/etc/edgex/pki
-      - vault-init:/vault/init:z
-      - /tmp/edgex/secrets:/tmp/edgex/secrets:z
-    security_opt: 
-      - no-new-privileges:true
 
   vault-worker:
     image: ${CORE_EDGEX_REPOSITORY}/docker-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -99,7 +87,6 @@ services:
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
-      - security-secrets-setup
       - consul
       - vault
     security_opt: 
@@ -123,7 +110,6 @@ services:
       - /vault
     volumes:
       - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     depends_on:
       - vault-worker
       - database
@@ -150,8 +136,6 @@ services:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
       POSTGRES_PASSWORD: ${KONG_POSTGRES_PASSWORD:-kong}
-    depends_on:
-      - security-secrets-setup
     security_opt: 
       - no-new-privileges:true
 
@@ -226,7 +210,6 @@ services:
       SECRETSERVICE_TOKENPATH: /tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json
     volumes:
       - consul-scripts:/consul/scripts:ro,z
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
     depends_on:
       - consul
@@ -243,7 +226,6 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-notifications/secrets-token.json
     volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
       - vault-worker
@@ -255,7 +237,6 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-metadata/secrets-token.json
     volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
       - vault-worker
@@ -267,7 +248,6 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-data/secrets-token.json
     volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
       - vault-worker
@@ -279,7 +259,6 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-command/secrets-token.json
     volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
       - vault-worker
@@ -291,7 +270,6 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-scheduler/secrets-token.json
     volumes:
-      - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
       - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
       - vault-worker
