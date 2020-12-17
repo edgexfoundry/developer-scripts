@@ -19,6 +19,7 @@
 version: '3.7'
 
 volumes:
+  edgex-init:
   vault-init:
   vault-config:
   vault-file:
@@ -28,13 +29,32 @@ volumes:
   postgres-data:
 
 services:
+  security-bootstrapper:
+    image: gcr.io/google_containers/defaultbackend:1.4
+    container_name: edgex-security-installer
+    hostname: edgex-security-installer
+    networks:
+      - edgex-network
+    volumes:
+      - edgex-init:/edgex-init:z
+
+  database:
+    volumes:
+      - edgex-init:/edgex-init:z
+    depends_on:
+      - security-bootstrapper
+
   consul:
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
       EDGEX_SECURE: "true"
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-consul:/tmp/edgex/secrets/edgex-consul:ro,z
       - /tmp/edgex/secrets/edgex-kong:/tmp/edgex/secrets/edgex-kong:ro,z
+    depends_on:
+      - security-bootstrapper
+      - vault
 
   vault:
     image: vault:${VAULT_VERSION}
@@ -67,8 +87,11 @@ services:
           default_lease_ttl = "168h" 
           max_lease_ttl = "720h"
     volumes:
+      - edgex-init:/edgex-init:z
       - vault-file:/vault/file:z
       - vault-logs:/vault/logs:z
+    depends_on:
+      - security-bootstrapper
 
   vault-worker:
     image: ${CORE_EDGEX_REPOSITORY}/docker-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -83,12 +106,14 @@ services:
       - /run
       - /vault
     volumes:
+      - edgex-init:/edgex-init:z
       - vault-config:/vault/config:z
       - consul-scripts:/consul/scripts:ro,z
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
     depends_on:
-      - consul
+      - security-bootstrapper
       - vault
+      - consul
     security_opt: 
       - no-new-privileges:true
 
@@ -109,8 +134,10 @@ services:
       - /run
       - /vault
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
     depends_on:
+      - security-bootstrapper
       - vault-worker
       - database
     security_opt: 
@@ -131,11 +158,14 @@ services:
       - /tmp
       - /run
     volumes:
+      - edgex-init:/edgex-init:z
       - postgres-data:/var/lib/postgresql/data:z
     environment:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
       POSTGRES_PASSWORD: ${KONG_POSTGRES_PASSWORD:-kong}
+    depends_on:
+      - security-bootstrapper
     security_opt: 
       - no-new-privileges:true
 
@@ -181,9 +211,11 @@ services:
         done;
         /docker-entrypoint.sh kong docker-start"
     volumes:
+      - edgex-init:/edgex-init:z
       - kong:/usr/local/kong
       - consul-scripts:/consul/scripts:ro,z
     depends_on:
+      - security-bootstrapper
       - consul
       - kong-db
     security_opt: 
@@ -226,8 +258,10 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-notifications/secrets-token.json
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
     depends_on:
+      - security-bootstrapper
       - vault-worker
       - security-bootstrap-database
 
@@ -237,8 +271,10 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-metadata/secrets-token.json
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
     depends_on:
+      - security-bootstrapper
       - vault-worker
       - security-bootstrap-database
 
@@ -248,8 +284,10 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-data/secrets-token.json
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
     depends_on:
+      - security-bootstrapper
       - vault-worker
       - security-bootstrap-database
 
@@ -259,8 +297,10 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-command/secrets-token.json
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
     depends_on:
+      - security-bootstrapper
       - vault-worker
       - security-bootstrap-database
 
@@ -270,7 +310,9 @@ services:
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-scheduler/secrets-token.json
     volumes:
+      - edgex-init:/edgex-init:z
       - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
     depends_on:
+      - security-bootstrapper
       - vault-worker
       - security-bootstrap-database
