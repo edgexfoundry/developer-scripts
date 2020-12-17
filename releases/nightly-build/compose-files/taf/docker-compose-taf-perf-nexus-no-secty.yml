@@ -125,11 +125,8 @@ services:
     user: 2002:2001
   consul:
     container_name: edgex-core-consul
-    environment:
-      EDGEX_DB: redis
-      EDGEX_SECURE: "false"
     hostname: edgex-core-consul
-    image: nexus3.edgexfoundry.org:10004/docker-edgex-consul:master
+    image: consul:1.9.1
     networks:
       edgex-network: {}
     ports:
@@ -140,7 +137,6 @@ services:
     volumes:
     - consul-config:/consul/config:z
     - consul-data:/consul/data:z
-    - consul-scripts:/consul/scripts:z
   data:
     container_name: edgex-core-data
     depends_on:
@@ -417,7 +413,6 @@ version: '3.7'
 volumes:
   consul-config: {}
   consul-data: {}
-  consul-scripts: {}
   db-data: {}
   kuiper-data: {}
 

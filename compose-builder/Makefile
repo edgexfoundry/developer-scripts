@@ -81,9 +81,9 @@ ifeq (asc-http, $(filter asc-http,$(ARGS)))
 endif
 ifeq (asc-http-s, $(filter asc-http-s,$(ARGS)))
     ifeq ($(TOKEN_LIST),"")
-      TOKEN_LIST:=appservice-http-export-secrets
+      TOKEN_LIST:=app-service-http-export-secrets
     else
-      TOKEN_LIST:=$(TOKEN_LIST),appservice-http-export-secrets
+      TOKEN_LIST:=$(TOKEN_LIST),app-service-http-export-secrets
     endif
     COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export-secure.yml
 endif
@@ -92,9 +92,9 @@ ifeq (asc-mqtt, $(filter asc-mqtt,$(ARGS)))
 endif
 ifeq (asc-mqtt-s, $(filter asc-mqtt-s,$(ARGS)))
     ifeq ($(TOKEN_LIST),"")
-      TOKEN_LIST:=appservice-mqtt-export-secrets
+      TOKEN_LIST:=app-service-mqtt-export-secrets
     else
-      TOKEN_LIST:=$(TOKEN_LIST),appservice-mqtt-export-secrets
+      TOKEN_LIST:=$(TOKEN_LIST),app-service-mqtt-export-secrets
     endif
     COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export-secure.yml
 endif
@@ -114,7 +114,7 @@ endif
 
 # Build compose for TAF secure testing (ignore all other compose file options)
 ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
-	TOKEN_LIST:=appservice-http-export-secrets,appservice-mqtt-export-secrets
+	TOKEN_LIST:=app-service-http-export-secrets,app-service-mqtt-export-secrets
 	COMPOSE_FILES:= \
 		-f docker-compose-base.yml \
 		-f add-security.yml \
