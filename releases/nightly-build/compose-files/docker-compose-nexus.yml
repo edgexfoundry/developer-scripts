@@ -58,6 +58,8 @@ services:
     ports:
     - 127.0.0.1:48100:48100/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   command:
     container_name: edgex-core-command
     depends_on:
@@ -88,6 +90,8 @@ services:
     ports:
     - 127.0.0.1:48082:48082/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
@@ -106,6 +110,8 @@ services:
     ports:
     - 127.0.0.1:8500:8500/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - consul-config:/consul/config:z
     - consul-data:/consul/data:z
@@ -145,6 +151,8 @@ services:
     - 127.0.0.1:5563:5563/tcp
     - 127.0.0.1:48080:48080/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
@@ -169,6 +177,8 @@ services:
     ports:
     - 127.0.0.1:6379:6379/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - db-data:/data:z
   device-rest:
@@ -197,6 +207,8 @@ services:
     ports:
     - 127.0.0.1:49986:49986/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
@@ -222,6 +234,8 @@ services:
       edgex-network: {}
     ports:
     - 127.0.0.1:49990:49990/tcp
+    security_opt:
+    - no-new-privileges:true
   edgex-proxy:
     container_name: edgex-proxy
     depends_on:
@@ -254,6 +268,8 @@ services:
     networks:
       edgex-network: {}
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - consul-scripts:/consul/scripts:ro,z
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
@@ -288,6 +304,8 @@ services:
     - 127.0.0.1:8444:8444/tcp
     read_only: true
     restart: on-failure
+    security_opt:
+    - no-new-privileges:true
     tmpfs:
     - /run
     - /tmp
@@ -310,6 +328,8 @@ services:
     ports:
     - 127.0.0.1:5432:5432/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     tmpfs:
     - /var/run
     - /tmp
@@ -347,6 +367,8 @@ services:
     ports:
     - 127.0.0.1:48081:48081/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
@@ -379,6 +401,8 @@ services:
     ports:
     - 127.0.0.1:48060:48060/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
@@ -402,6 +426,8 @@ services:
     - 127.0.0.1:20498:20498/tcp
     - 127.0.0.1:48075:48075/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - kuiper-data:/kuiper/data:z
   scheduler:
@@ -435,6 +461,8 @@ services:
     ports:
     - 127.0.0.1:48085:48085/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /tmp/edgex/secrets/ca:/tmp/edgex/secrets/ca:ro,z
     - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
@@ -463,6 +491,8 @@ services:
     networks:
       edgex-network: {}
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     tmpfs:
     - /run
     - /vault
@@ -475,6 +505,8 @@ services:
     hostname: edgex-secrets-setup
     image: nexus3.edgexfoundry.org:10004/docker-security-secrets-setup-go:master
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     tmpfs:
     - /tmp
     - /run
@@ -513,6 +545,8 @@ services:
     ports:
     - 127.0.0.1:48090:48090/tcp
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
   vault:
@@ -553,6 +587,8 @@ services:
     networks:
       edgex-network: {}
     read_only: true
+    security_opt:
+    - no-new-privileges:true
     tmpfs:
     - /run
     - /vault

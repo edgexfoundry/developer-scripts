@@ -79,6 +79,8 @@ services:
       - secrets-setup-cache:/etc/edgex/pki
       - vault-init:/vault/init:z
       - /tmp/edgex/secrets:/tmp/edgex/secrets:z
+    security_opt: 
+      - no-new-privileges:true
 
   vault-worker:
     image: ${CORE_EDGEX_REPOSITORY}/docker-security-secretstore-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -100,6 +102,8 @@ services:
       - security-secrets-setup
       - consul
       - vault
+    security_opt: 
+      - no-new-privileges:true
 
   security-bootstrap-database:
     image: ${CORE_EDGEX_REPOSITORY}/docker-security-bootstrap-redis-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -123,6 +127,8 @@ services:
     depends_on:
       - vault-worker
       - database
+    security_opt: 
+      - no-new-privileges:true
 
 # containers for reverse proxy
   kong-db:
@@ -146,6 +152,9 @@ services:
       POSTGRES_PASSWORD: ${KONG_POSTGRES_PASSWORD:-kong}
     depends_on:
       - security-secrets-setup
+    security_opt: 
+      - no-new-privileges:true
+
   kong:
     image: kong:${KONG_VERSION}${KONG_UBUNTU}
     container_name: kong
@@ -193,6 +202,8 @@ services:
     depends_on:
       - consul
       - kong-db
+    security_opt: 
+      - no-new-privileges:true
 
   edgex-proxy:
     image: ${CORE_EDGEX_REPOSITORY}/docker-security-proxy-setup-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -221,6 +232,8 @@ services:
       - consul
       - vault-worker
       - kong
+    security_opt: 
+      - no-new-privileges:true
 
 # end of containers for reverse proxy
 
