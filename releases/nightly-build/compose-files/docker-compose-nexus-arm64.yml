@@ -613,7 +613,6 @@ volumes:
   edgex-init: {}
   kong: {}
   kuiper-data: {}
-  log-data: {}
   postgres-data: {}
   vault-config: {}
   vault-file: {}

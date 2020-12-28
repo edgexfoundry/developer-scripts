@@ -366,5 +366,4 @@ volumes:
   consul-scripts: {}
   db-data: {}
   kuiper-data: {}
-  log-data: {}
 
