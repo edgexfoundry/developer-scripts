@@ -30,7 +30,6 @@ networks:
 
 volumes:
   db-data:
-  log-data:
   consul-config:
   consul-data:
   consul-scripts:
