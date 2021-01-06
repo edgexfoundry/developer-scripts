@@ -5,7 +5,7 @@ services:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
     command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
-      - 127.0.0.1:48095:48095/tcp
+      - 48105:48105/tcp
     container_name: app-service-blackbox-tests
     hostname: app-service-blackbox-tests
     env_file:
@@ -13,17 +13,21 @@ services:
     environment:
       EDGEX_PROFILE: blackbox-tests
       SERVICE_HOST: app-service-blackbox-tests
-      SERVICE_PORT: 48095
+      SERVICE_PORT: 48105
     depends_on:
       - consul
       - data
+    read_only: true
     networks:
       - edgex-network
+    security_opt:
+      - no-new-privileges:true
 
   scalability-test-mqtt-export:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
+    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
-      - "48098:48098"
+      - "48106:48106"
     container_name: scalability-test-mqtt-export
     hostname: scalability-test-mqtt-export
     env_file:
@@ -31,7 +35,8 @@ services:
     environment:
       EDGEX_PROFILE: mqtt-export
       SERVICE_HOST: app-service-mqtt-export
-      SERVICE_PORT: 48098
+      SERVICE_PORT: 48106
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       WRITABLE_PIPELINE_EXECUTIONORDER: "TransformToJSON, MQTTSecretSend"
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_TOPIC: edgex-events
@@ -39,5 +44,8 @@ services:
     depends_on:
       - consul
       - data
+    read_only: true
     networks:
       - edgex-network
+    security_opt:
+      - no-new-privileges:true

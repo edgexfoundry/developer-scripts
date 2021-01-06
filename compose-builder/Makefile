@@ -13,7 +13,7 @@
 #  *
 #  *******************************************************************************/
 
-.PHONY: help portainer portainer-down build compose build-taf taf-compose build-taf-perf taf-compose-perf run pull gen get-token upload-tls-cert ui-down down clean
+.PHONY: help portainer portainer-down build compose build-taf taf-compose taf-compose-perf run pull gen get-token upload-tls-cert ui-down down clean
 .SILENT: help get-token del-token upload-tls-cert
 
 include .env
@@ -103,24 +103,42 @@ endif
 
 # Build compose for TAF secure testing (ignore all other compose file options)
 ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
-	COMPOSE_FILES:=-f docker-compose-base.yml -f add-security.yml \
-				   -f add-taf-app-services.yml -f add-asc-http-export-secure.yml \
-				   -f add-asc-http-export.yml -f add-asc-mqtt-export.yml \
-                   -f add-mqtt-broker.yml  -f add-taf-device-services.yml -f add-modbus-simulator.yml
+	COMPOSE_FILES:=-f docker-compose-base.yml \
+				   -f add-security.yml \
+				   -f add-taf-app-services.yml \
+				   -f add-asc-http-export-secure.yml \
+				   -f add-asc-http-export.yml \
+				   -f add-asc-mqtt-export.yml \
+				   -f add-device-virtual.yml \
+				   -f add-device-rest.yml \
+				   -f add-device-modbus.yml \
+				   -f add-taf-device-services-mods.yml \
+                   -f add-mqtt-broker.yml \
+                   -f add-modbus-simulator.yml
 else
 	# Build compose for TAF non-secure testing (ignore all other compose file options)
 	ifeq (taf-no-secty, $(filter taf-no-secty,$(ARGS)))
 		COMPOSE_FILES:=-f docker-compose-base.yml \
 					   -f add-taf-app-services.yml \
-    				   -f add-device-virtual.yml -f add-device-rest.yml \
-                       -f add-mqtt-broker.yml -f add-taf-device-services.yml -f add-modbus-simulator.yml
+					   -f add-asc-http-export.yml \
+					   -f add-asc-mqtt-export.yml \
+				   	   -f add-device-virtual.yml \
+				   	   -f add-device-rest.yml \
+				   	   -f add-device-modbus.yml \
+				   	   -f add-taf-device-services-mods.yml \
+                       -f add-mqtt-broker.yml \
+                       -f add-modbus-simulator.yml
     else
     	# Build compose for TAF secure performance testing (ignore all other compose file options)
     	ifeq (taf-perf, $(filter taf-perf,$(ARGS)))
-    		COMPOSE_FILES:=-f docker-compose-base.yml -f add-security.yml \
-    					   -f add-taf-app-services.yml -f add-asc-http-export-secure.yml \
-    					   -f add-asc-http-export.yml -f add-asc-mqtt-export.yml \
-    					   -f add-device-virtual.yml -f add-device-rest.yml \
+    		COMPOSE_FILES:=-f docker-compose-base.yml \
+    					   -f add-security.yml \
+    					   -f add-taf-app-services.yml \
+    					   -f add-asc-http-export-secure.yml \
+    					   -f add-asc-http-export.yml \
+    					   -f add-asc-mqtt-export.yml \
+    					   -f add-device-virtual.yml \
+    					   -f add-device-rest.yml \
                            -f add-mqtt-broker.yml
 		else
 			# Build compose for TAF non-secure performance testing (ignore all other compose file options)
@@ -128,7 +146,9 @@ else
 				COMPOSE_FILES:=-f docker-compose-base.yml \
 							   -f add-taf-app-services.yml \
 							   -f add-asc-http-export.yml \
-							   -f add-device-virtual.yml -f add-device-rest.yml \
+    					 	   -f add-asc-mqtt-export.yml \
+							   -f add-device-virtual.yml \
+							   -f add-device-rest.yml \
 							   -f add-mqtt-broker.yml
 			endif
 		endif
@@ -149,9 +169,8 @@ ifeq (true, $(DS_GROVE))
  endif
 endif
 
-COMPOSE_FOLDER:=../releases/nightly-build/compose-files
 ifneq (nexus, $(RELEASE))
-	COMPOSE_FOLDER:=../releases/$(RELEASE)/compose-files
+	COMPOSE_FOLDER:=${RELEASE_FOLDER}
 endif
 
 help:
@@ -163,34 +182,31 @@ portainer:
 portainer-down:
 	make -C ../releases/nightly-build/compose-files portainer-down
 
-build: build-taf build-taf-perf
+build:
 	make compose ds-rest ds-virtual
 	make compose ds-rest ds-virtual arm64
 	make compose ds-rest ds-virtual no-secty
 	make compose ds-rest ds-virtual no-secty arm64
 	make compose ui
 	make compose ui arm64
-
-compose: gen
-	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
-
-build-taf:
 	make taf-compose taf-secty
 	make taf-compose taf-no-secty no-secty
 	make taf-compose taf-secty arm64
 	make taf-compose taf-no-secty no-secty arm64
-
-taf-compose: gen
-	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/taf/docker-compose-taf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
-
-build-taf-perf:
 	make taf-compose-perf taf-perf
 	make taf-compose-perf taf-perf-no-secty no-secty
 	make taf-compose-perf taf-perf arm64
 	make taf-compose-perf taf-perf-no-secty no-secty arm64
 
+
+compose: gen
+	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+
+taf-compose: gen
+	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+
 taf-compose-perf: gen
-	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/taf/docker-compose-taf-perf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-perf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
 
 run: gen
 	docker-compose -p edgex up -d $(SERVICES)
@@ -240,6 +256,12 @@ down: ui-down
 		-f add-device-rest.yml \
 		-f add-device-snmp.yml \
 		-f add-device-virtual.yml \
+		-f add-asc-http-export.yml \
+		-f add-asc-http-export-secure.yml \
+		-f add-asc-mqtt-export.yml \
+		-f add-asc-mqtt-export-secure.yml \
+		-f add-modbus-simulator.yml \
+		-f add-mqtt-broker.yml \
 		-f add-mqtt-messagebus.yml \
 		-f add-security.yml \
 		down

@@ -48,13 +48,16 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "false"
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-blackbox-tests
-      SERVICE_PORT: 48095
+      SERVICE_PORT: 48105
     hostname: app-service-blackbox-tests
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:48095:48095/tcp
+    - 48105:48105/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   app-service-http-export:
     command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: app-service-http-export
@@ -73,9 +76,10 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: http-export
       EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-http-export
-      SERVICE_PORT: 48096
+      SERVICE_PORT: 48101
       WRITABLE_LOGLEVEL: INFO
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_URL: http://EXPORT_HOST_PLACE_HOLDER:7770
     hostname: app-service-http-export
@@ -83,7 +87,41 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:48096:48096/tcp
+    - 127.0.0.1:48101:48101/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+  app-service-mqtt-export:
+    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
+    container_name: app-service-mqtt-export
+    depends_on:
+    - consul
+    - data
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: mqtt-export
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: app-service-mqtt-export
+      SERVICE_PORT: 48103
+      WRITABLE_LOGLEVEL: INFO
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_TOPIC: edgex-events
+    hostname: app-service-mqtt-export
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:48103:48103/tcp
     read_only: true
     security_opt:
     - no-new-privileges:true
@@ -366,6 +404,7 @@ services:
     volumes:
     - kuiper-data:/kuiper/data:z
   scalability-test-mqtt-export:
+    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: scalability-test-mqtt-export
     depends_on:
     - consul
@@ -382,9 +421,10 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: mqtt-export
       EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-mqtt-export
-      SERVICE_PORT: 48098
+      SERVICE_PORT: 48106
       WRITABLE_LOGLEVEL: DEBUG
       WRITABLE_PIPELINE_EXECUTIONORDER: TransformToJSON, MQTTSecretSend
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
@@ -394,7 +434,10 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 48098:48098/tcp
+    - 48106:48106/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:

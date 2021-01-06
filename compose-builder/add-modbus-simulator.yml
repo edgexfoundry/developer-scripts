@@ -9,3 +9,6 @@ services:
       - 127.0.0.1:1502:1502/tcp
     networks:
       - edgex-network
+    read_only: true
+    security_opt:
+      - no-new-privileges:true

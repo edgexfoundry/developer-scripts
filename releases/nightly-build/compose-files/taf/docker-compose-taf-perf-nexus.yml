@@ -48,13 +48,16 @@ services:
       EDGEX_SECURITY_SECRET_STORE: "false"
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-blackbox-tests
-      SERVICE_PORT: 48095
+      SERVICE_PORT: 48105
     hostname: app-service-blackbox-tests
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:48095:48095/tcp
+    - 48105:48105/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   app-service-http-export:
     command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: app-service-http-export
@@ -73,9 +76,10 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: http-export
       EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-http-export
-      SERVICE_PORT: 48096
+      SERVICE_PORT: 48101
       WRITABLE_LOGLEVEL: INFO
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_URL: http://EXPORT_HOST_PLACE_HOLDER:7770
     hostname: app-service-http-export
@@ -83,7 +87,7 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:48096:48096/tcp
+    - 127.0.0.1:48101:48101/tcp
     read_only: true
     security_opt:
     - no-new-privileges:true
@@ -105,11 +109,13 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: http-export
       EDGEX_SECURITY_SECRET_STORE: "true"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
+      SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PATH: /v1/secret/edgex/appservice-http-export-secrets/
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/appservice-http-export-secrets/secrets-token.json
       SERVICE_HOST: app-service-http-export-secrets
-      SERVICE_PORT: 48098
+      SERVICE_PORT: 48102
       WRITABLE_LOGLEVEL: INFO
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETHEADERNAME: ''
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETPATH: ''
@@ -119,13 +125,12 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:48098:48098/tcp
+    - 127.0.0.1:48102:48102/tcp
     read_only: true
     security_opt:
     - no-new-privileges:true
     volumes:
     - /tmp/edgex/secrets/appservice-http-export-secrets:/tmp/edgex/secrets/appservice-http-export-secrets:ro,z
-    - /tmp/edgex/secrets/edgex-application-service:/tmp/edgex/secrets/edgex-application-service:ro,z
   app-service-mqtt-export:
     command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: app-service-mqtt-export
@@ -144,9 +149,10 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: mqtt-export
       EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-mqtt-export
-      SERVICE_PORT: 48097
+      SERVICE_PORT: 48103
       WRITABLE_LOGLEVEL: INFO
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_TOPIC: edgex-events
@@ -155,7 +161,7 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 127.0.0.1:48097:48097/tcp
+    - 127.0.0.1:48103:48103/tcp
     read_only: true
     security_opt:
     - no-new-privileges:true
@@ -582,6 +588,7 @@ services:
     volumes:
     - kuiper-data:/kuiper/data:z
   scalability-test-mqtt-export:
+    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: scalability-test-mqtt-export
     depends_on:
     - consul
@@ -598,9 +605,10 @@ services:
       DATABASES_PRIMARY_HOST: edgex-redis
       EDGEX_PROFILE: mqtt-export
       EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       REGISTRY_HOST: edgex-core-consul
       SERVICE_HOST: app-service-mqtt-export
-      SERVICE_PORT: 48098
+      SERVICE_PORT: 48106
       WRITABLE_LOGLEVEL: DEBUG
       WRITABLE_PIPELINE_EXECUTIONORDER: TransformToJSON, MQTTSecretSend
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
@@ -610,7 +618,10 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 48098:48098/tcp
+    - 48106:48106/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:

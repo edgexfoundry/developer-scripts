@@ -9,15 +9,17 @@ services:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
     command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
-      - 127.0.0.1:48099:48099/tcp
+      - 127.0.0.1:48104:48104/tcp
     container_name: appservice-mqtt-export-secrets
     hostname: appservice-mqtt-export-secrets
     env_file:
       - common.env
+      - common-security.env
     environment:
       EDGEX_PROFILE: mqtt-export
       SERVICE_HOST: appservice-mqtt-export-secrets
-      SERVICE_PORT: 48099
+      SERVICE_PORT: 48104
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       SECRETSTORE_PATH: /v1/secret/edgex/appservice-mqtt-export-secrets/
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/appservice-mqtt-export-secrets/secrets-token.json
       WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
@@ -32,5 +34,7 @@ services:
     read_only: true
     networks:
       - edgex-network
+    volumes:
+      - /tmp/edgex/secrets/appservice-mqtt-export-secrets:/tmp/edgex/secrets/appservice-mqtt-export-secrets:ro,z
     security_opt:
       - no-new-privileges:true

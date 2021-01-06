@@ -9,16 +9,17 @@ services:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
     command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
-      - 127.0.0.1:48098:48098/tcp
+      - 127.0.0.1:48102:48102/tcp
     container_name: app-service-http-export-secrets
     hostname: app-service-http-export-secrets
     env_file:
       - common.env
+      - common-security.env
     environment:
       EDGEX_PROFILE: http-export
       SERVICE_HOST: app-service-http-export-secrets
-      SERVICE_PORT: 48098
-      EDGEX_SECURITY_SECRET_STORE: "true"
+      SERVICE_PORT: 48102
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
       SECRETSTORE_PATH: /v1/secret/edgex/appservice-http-export-secrets/
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/appservice-http-export-secrets/secrets-token.json
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_URL: http://EXPORT_HOST_PLACE_HOLDER:7770
@@ -26,7 +27,6 @@ services:
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETPATH: ""
       WRITABLE_LOGLEVEL: INFO # allows scripts to find and change with sed
     volumes:
-    - /tmp/edgex/secrets/edgex-application-service:/tmp/edgex/secrets/edgex-application-service:ro,z
     - /tmp/edgex/secrets/appservice-http-export-secrets:/tmp/edgex/secrets/appservice-http-export-secrets:ro,z
     depends_on:
       - consul
