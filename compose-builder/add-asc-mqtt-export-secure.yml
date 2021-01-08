@@ -37,3 +37,4 @@ services:
       - /tmp/edgex/secrets/appservice-mqtt-export-secrets:/tmp/edgex/secrets/appservice-mqtt-export-secrets:ro,z
     security_opt:
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"

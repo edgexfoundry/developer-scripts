@@ -12,3 +12,4 @@ services:
     read_only: true
     security_opt:
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"

@@ -57,6 +57,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   app-service-http-export:
     container_name: app-service-http-export
     depends_on:
@@ -89,6 +90,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   app-service-mqtt-export:
     container_name: app-service-mqtt-export
     depends_on:
@@ -122,6 +124,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   app-service-rules:
     container_name: edgex-app-service-configurable-rules
     depends_on:
@@ -153,6 +156,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   command:
     container_name: edgex-core-command
     depends_on:
@@ -181,6 +185,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   consul:
     container_name: edgex-core-consul
     environment:
@@ -228,6 +233,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   database:
     container_name: edgex-redis
     environment:
@@ -282,6 +288,7 @@ services:
     - 127.0.0.1:49991:49991/tcp
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - PROFILE_VOLUME_PLACE_HOLDER:CONF_DIR_PLACE_HOLDER:z
   device-rest:
@@ -312,6 +319,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   device-virtual:
     command: --registry --confdir=CONF_DIR_PLACE_HOLDER
     container_name: edgex-device-virtual
@@ -340,6 +348,7 @@ services:
     - 127.0.0.1:49990:49990/tcp
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - PROFILE_VOLUME_PLACE_HOLDER:CONF_DIR_PLACE_HOLDER:z
   metadata:
@@ -371,6 +380,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   modbus-simulator:
     container_name: edgex-modbus-simulator
     hostname: edgex-modbus-simulator
@@ -382,6 +392,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   mqtt-broker:
     container_name: edgex-mqtt-broker
     hostname: edgex-mqtt-broker
@@ -393,6 +404,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   notifications:
     container_name: edgex-support-notifications
     depends_on:
@@ -420,6 +432,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   rulesengine:
     container_name: edgex-kuiper
     depends_on:
@@ -478,6 +491,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:
@@ -507,6 +521,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
@@ -540,6 +555,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
 version: '3.7'

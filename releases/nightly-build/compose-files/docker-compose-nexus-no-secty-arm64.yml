@@ -59,6 +59,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   command:
     container_name: edgex-core-command
     depends_on:
@@ -87,6 +88,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   consul:
     container_name: edgex-core-consul
     environment:
@@ -134,6 +136,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   database:
     container_name: edgex-redis
     environment:
@@ -187,6 +190,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
@@ -214,6 +218,7 @@ services:
     - 127.0.0.1:49990:49990/tcp
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   metadata:
     container_name: edgex-core-metadata
     depends_on:
@@ -243,6 +248,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   notifications:
     container_name: edgex-support-notifications
     depends_on:
@@ -270,6 +276,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   rulesengine:
     container_name: edgex-kuiper
     depends_on:
@@ -323,6 +330,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
@@ -356,6 +364,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
 version: '3.7'

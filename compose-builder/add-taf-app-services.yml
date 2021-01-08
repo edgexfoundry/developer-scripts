@@ -21,6 +21,7 @@ services:
       - edgex-network
     security_opt:
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   scalability-test-mqtt-export:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
@@ -47,3 +48,4 @@ services:
       - edgex-network
     security_opt:
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
