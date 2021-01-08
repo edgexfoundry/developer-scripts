@@ -113,8 +113,8 @@ ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
 				   -f add-device-rest.yml \
 				   -f add-device-modbus.yml \
 				   -f add-taf-device-services-mods.yml \
-                   -f add-mqtt-broker.yml \
-                   -f add-modbus-simulator.yml
+    			   -f add-mqtt-broker.yml \
+    			   -f add-modbus-simulator.yml
 else
 	# Build compose for TAF non-secure testing (ignore all other compose file options)
 	ifeq (taf-no-secty, $(filter taf-no-secty,$(ARGS)))
@@ -126,8 +126,9 @@ else
 				   	   -f add-device-rest.yml \
 				   	   -f add-device-modbus.yml \
 				   	   -f add-taf-device-services-mods.yml \
-                       -f add-mqtt-broker.yml \
-                       -f add-modbus-simulator.yml
+        		   	   -f add-mqtt-broker.yml \
+        		   	   -f add-modbus-simulator.yml
+        NO_SECURITY:=-no-secty
     else
     	# Build compose for TAF secure performance testing (ignore all other compose file options)
     	ifeq (taf-perf, $(filter taf-perf,$(ARGS)))
@@ -139,17 +140,18 @@ else
     					   -f add-asc-mqtt-export.yml \
     					   -f add-device-virtual.yml \
     					   -f add-device-rest.yml \
-                           -f add-mqtt-broker.yml
+            			   -f add-mqtt-broker.yml
 		else
 			# Build compose for TAF non-secure performance testing (ignore all other compose file options)
 			ifeq (taf-perf-no-secty, $(filter taf-perf-no-secty,$(ARGS)))
 				COMPOSE_FILES:=-f docker-compose-base.yml \
 							   -f add-taf-app-services.yml \
 							   -f add-asc-http-export.yml \
-    					 	   -f add-asc-mqtt-export.yml \
+    						   -f add-asc-mqtt-export.yml \
 							   -f add-device-virtual.yml \
 							   -f add-device-rest.yml \
 							   -f add-mqtt-broker.yml
+				NO_SECURITY:=-no-secty
 			endif
 		endif
 	endif
@@ -190,14 +192,13 @@ build:
 	make compose ui
 	make compose ui arm64
 	make taf-compose taf-secty
-	make taf-compose taf-no-secty no-secty
+	make taf-compose taf-no-secty
 	make taf-compose taf-secty arm64
-	make taf-compose taf-no-secty no-secty arm64
+	make taf-compose taf-no-secty arm64
 	make taf-compose-perf taf-perf
-	make taf-compose-perf taf-perf-no-secty no-secty
+	make taf-compose-perf taf-perf-no-secty
 	make taf-compose-perf taf-perf arm64
-	make taf-compose-perf taf-perf-no-secty no-secty arm64
-
+	make taf-compose-perf taf-perf-no-secty arm64
 
 compose: gen
 	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml

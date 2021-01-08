@@ -68,11 +68,11 @@ This folder contains the following compose files:
 - **add-mqtt-broker.yml**
     MQTT Broker **extending** compose file. Adds the Eclipse Mosquitto MQTT Broker.
 - **add-mqtt-messagebus.yml**
-    MQTT MesssageBus **extending** compose file. Adds additional configuration of services so that the `MQTT` implementation of the Edgex Message Bus is used. Must be use in conjunction with **add-mqtt-broker.yml**
+    MQTT MesssageBus **extending** compose file. Adds additional configuration of services so that the `MQTT` implementation of the Edgex Message Bus is used. **Must be used in conjunction with add-mqtt-broker.yml**
 - **add-taf-app-services.yml**
     TAF App Services **extending** compose file. Adds additional App Service for the TAF testing compose files.
 - **add-taf-device-services-mods.yml**
-    TAF Device Services **extending** compose file. Modifies setting of Device Virtual and Device Modbus for the TAF testing compose files. Must be used in conjunction with **add-device-modbus.yml** and **add-device-virtual.yml**
+    TAF Device Services **extending** compose file. Modifies setting of Device Virtual and Device Modbus for the TAF testing compose files. **Must be used in conjunction with add-device-modbus.yml and add-device-virtual.yml**
 - **docker-compose-ui.yml**
     Stand-alone compose file for running the optional EdgeX UI. Runs in `host` network mode and only supports connecting to local Edgex services via 127.0.0.1 IP address.
 
@@ -100,7 +100,7 @@ portainer-down	Stops Portainer independent of the EdgeX services
 ```
 ```
 build
-Generates the all standard Edgex compose file variationsand the TAF testing compose files. Stores them in the configured relese folder. Each variation or standard compose files, except UI, includes Device REST & Device Virtual. Compose files are named appropriatly for release and options used to generate them. TAF compose files are store in the 'taf' sub-folder
+Generates the all standard Edgex compose file variations and the TAF testing compose files. The generated compose files are stored in the configured release folder. Each variation or standard compose files, except UI, includes Device REST & Device Virtual. Compose files are named appropriately for release and options used to generate them. TAF compose files are store in the 'taf' sub-folder
 
 Standard compose variations are:
    full secure (docker-compose-nexus.yml)
@@ -153,9 +153,8 @@ taf-compose [options]
 Generates a TAF general testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriatly for the options used to generate them.
 
 Options:
-    taf-secty:	  Bulds geneneral TAF testing compose file with security services
-    taf-no-secty: Bulds geneneral TAF testing compose file without security services
-    no-secty: 	  Must be use in conjunction with taf-no-secty so compose file is named appropriatly
+    taf-secty:	  Generates general TAF testing compose file with security services
+    taf-no-secty: Generates general TAF testing compose file without security services
     arm64:        Generates TAF compose file using ARM64 images
 ```
 
@@ -164,9 +163,8 @@ taf-perf-compose [options]
 Generates a TAF performance testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriatly for the options used to generate them.
 
 Options:
-    taf-secty:	  Bulds performance TAF testing compose file with security services
-    taf-no-secty: Bulds perforamnce TAF testing compose file without security services
-    no-secty: 	  Must be use in conjunction with taf-no-secty so compose file is named appropriatly
+    taf-secty:	  Generates performance TAF testing compose file with security services
+    taf-no-secty: Generates perforamnce TAF testing compose file without security services
     arm64:        Generates TAF compose file using ARM64 images
 ```
 
