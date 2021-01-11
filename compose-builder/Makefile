@@ -137,9 +137,6 @@ else
     		COMPOSE_FILES:= \
     			-f docker-compose-base.yml \
     			-f add-security.yml \
-    			-f add-taf-app-services.yml \
-    			-f add-asc-http-export-secure.yml \
-    			-f add-asc-http-export.yml \
     			-f add-asc-mqtt-export.yml \
     			-f add-device-virtual.yml \
     			-f add-device-rest.yml \
@@ -149,8 +146,6 @@ else
 			ifeq (taf-perf-no-secty, $(filter taf-perf-no-secty,$(ARGS)))
 				COMPOSE_FILES:= \
 					-f docker-compose-base.yml \
-					-f add-taf-app-services.yml \
-					-f add-asc-http-export.yml \
 					-f add-asc-mqtt-export.yml \
 					-f add-device-virtual.yml \
 					-f add-device-rest.yml \
