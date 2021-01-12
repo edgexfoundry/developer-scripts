@@ -61,8 +61,8 @@ This folder contains the following compose files:
     Application Service Configurable **extending** compose file, which adds the **App Service Http Export Secrets** service. Service is enable for secure secrets.
 - **add-asc-mqtt-export.yml**
     Application Service Configurable **extending** compose file, which adds the **App Service MQTT Export**  service.
-- **add-asc-MQTT-export-secure.yml**
-    Application Service Configurable **extending** compose file, which adds the **App Service Http Export Secrets** service. Service is enable for secure secrets.
+- **add-asc-mqtt-export-secure.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service MQTT Export Secrets** service. Service is enable for secure secrets.
 - **add-modbus-simulator.yml**
     ModBus Simulator **extending** compose file. Adds the MQTT ModBus Simulator service. Must be used in conjunction with  **add-device-modbus.yml**
 - **add-mqtt-broker.yml**
