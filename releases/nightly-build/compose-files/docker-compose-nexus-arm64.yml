@@ -29,7 +29,6 @@ networks:
     driver: bridge
 services:
   app-service-rules:
-    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: edgex-app-service-configurable-rules
     depends_on:
     - consul

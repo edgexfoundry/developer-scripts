@@ -3,7 +3,6 @@ version: '3.7'
 services:
   app-service-blackbox-tests:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
-    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
       - 48105:48105/tcp
     container_name: app-service-blackbox-tests

@@ -7,7 +7,6 @@ services:
 
   appservice-mqtt-export-secrets:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
-    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
       - 127.0.0.1:48104:48104/tcp
     container_name: appservice-mqtt-export-secrets

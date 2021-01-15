@@ -29,7 +29,6 @@ networks:
     driver: bridge
 services:
   app-service-blackbox-tests:
-    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: app-service-blackbox-tests
     depends_on:
     - consul
@@ -59,7 +58,6 @@ services:
     security_opt:
     - no-new-privileges:true
   app-service-http-export:
-    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: app-service-http-export
     depends_on:
     - consul
@@ -92,7 +90,6 @@ services:
     security_opt:
     - no-new-privileges:true
   app-service-mqtt-export:
-    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: app-service-mqtt-export
     depends_on:
     - consul
@@ -126,7 +123,6 @@ services:
     security_opt:
     - no-new-privileges:true
   app-service-rules:
-    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: edgex-app-service-configurable-rules
     depends_on:
     - consul

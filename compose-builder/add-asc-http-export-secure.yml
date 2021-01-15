@@ -7,7 +7,6 @@ services:
 
   app-service-http-export-secrets:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
-    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
       - 127.0.0.1:48102:48102/tcp
     container_name: app-service-http-export-secrets
