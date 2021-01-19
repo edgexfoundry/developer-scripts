@@ -55,8 +55,24 @@ This folder contains the following compose files:
     Device Service **extending** compose file, which adds the **Device SNMP**  service.
 - **add-device-virtual.yml**
     Device Service **extending** compose file, which adds the **Device Virtual**  service.
+- **add-asc-http-export.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service Http Export**  service.
+- **add-asc-http-export-secure.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service Http Export Secrets** service. Service is enable for secure secrets.
+- **add-asc-mqtt-export.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service MQTT Export**  service.
+- **add-asc-mqtt-export-secure.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service MQTT Export Secrets** service. Service is enable for secure secrets.
+- **add-modbus-simulator.yml**
+    ModBus Simulator **extending** compose file. Adds the MQTT ModBus Simulator service. Must be used in conjunction with  **add-device-modbus.yml**
+- **add-mqtt-broker.yml**
+    MQTT Broker **extending** compose file. Adds the Eclipse Mosquitto MQTT Broker.
 - **add-mqtt-messagebus.yml**
-    MQTT **extending** compose file. Adds a MQTT Broker and additional configuration of services so that the `MQTT` implementation of the Edgex Message Bus is used.
+    MQTT MesssageBus **extending** compose file. Adds additional configuration of services so that the `MQTT` implementation of the Edgex Message Bus is used. **Must be used in conjunction with add-mqtt-broker.yml**
+- **add-taf-app-services.yml**
+    TAF App Services **extending** compose file. Adds additional App Service for the TAF testing compose files.
+- **add-taf-device-services-mods.yml**
+    TAF Device Services **extending** compose file. Modifies setting of Device Virtual and Device Modbus for the TAF testing compose files. **Must be used in conjunction with add-device-modbus.yml and add-device-virtual.yml**
 - **docker-compose-ui.yml**
     Stand-alone compose file for running the optional EdgeX UI. Runs in `host` network mode and only supports connecting to local Edgex services via 127.0.0.1 IP address.
 
@@ -84,20 +100,30 @@ portainer-down	Stops Portainer independent of the EdgeX services
 ```
 ```
 build
-Generates the all standard Edgex compose file variations and stores them in the configured relese folder. Each variation, except UI, includes Device REST & Device Virtual. Compose files are named appropriatly for release and options used to generate them.
+Generates the all standard Edgex compose file variations and the TAF testing compose files. The generated compose files are stored in the configured release folder. Each variation or standard compose files, except UI, includes Device REST & Device Virtual. Compose files are named appropriately for release and options used to generate them. TAF compose files are store in the 'taf' sub-folder
 
-Current variations are:
-   full secure 
-   full secure for arm64
-   non-secure
-   nonsecure for arm64
-   stand-alone UI
-   stand-alone UI for arm64
+Standard compose variations are:
+   full secure (docker-compose-nexus.yml)
+   full secure for arm64 (docker-compose-nexus-arm64.yml)
+   non-secure (docker-compose-nexus-no-secty.yml)
+   nonsecure for arm64 (docker-compose-nexus-no-secty-arm64.yml)
+   stand-alone UI (docker-compose-nexus-ui.yml)
+   stand-alone UI for arm64 (docker-compose-nexus-ui-arm64.yml)
+   
+ TAF compose variations are:
+   full secure general testing (docker-compose-taf-nexus.yml)
+   full secure general testing for arm64 (docker-compose-taf-nexus-arm64.yml)
+   non-secure general testing (docker-compose-nexus-taf-no-secty.yml)
+   nonsecure general testing for arm64 (docker-compose-taf-nexus-no-secty-arm64.yml)
+   full secure perf testing (docker-compose-taf-perf-nexus.yml)
+   full secure perf testing for arm64 (docker-compose-taf-perf-nexus-arm64.yml)
+   non-secure perf testing (docker-compose-nexus-taf-perf-no-secty.yml)
+   nonsecure perf testing forarm64 (docker-compose-taf-perf-nexus-no-secty-arm64.yml)
 ```
 
 ```
 compose [options] 
-Generates the EdgeX compose file as specified by options and stores them in the configured relese folder. Compose files are named appropriatly for release and options used to generate them.
+Generates the EdgeX compose file as specified by options and stores them in the configured release folder. Compose files are named appropriatly for release and options used to generate them.
 
 Options:
     no-secty:   Generates non-secure compose file, otherwise generates secure compose file
@@ -113,8 +139,33 @@ Options:
     ds-rest:    Generates compose file with device-rest included
     ds-snmp:    Generates compose file with device-snmp included
     ds-virtual: Generates compose file with device-virtual included
+    modbus-sim: Generates compose file with ModBus simulator included
+    asc-http:   Generates compose file with App Service HTTP Export included
+    asc-http-s: Generates compose file with App Service HTTP Export Secrets included
+    asc-mqtt:   Generates compose file with App Service MQTT Export included
+    asc-mqtt-s: Generates compose file with App Service MQTT Export Secrets included
     mqtt:       Generates compose file with services configure for MQTT Message Bus 
     ui:         Generates stand-alone compose file for EdgeX UI	
+```
+
+```
+taf-compose [options] 
+Generates a TAF general testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriatly for the options used to generate them.
+
+Options:
+    taf-secty:	  Generates general TAF testing compose file with security services
+    taf-no-secty: Generates general TAF testing compose file without security services
+    arm64:        Generates TAF compose file using ARM64 images
+```
+
+```
+taf-perf-compose [options] 
+Generates a TAF performance testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriatly for the options used to generate them.
+
+Options:
+    taf-secty:	  Generates performance TAF testing compose file with security services
+    taf-no-secty: Generates perforamnce TAF testing compose file without security services
+    arm64:        Generates TAF compose file using ARM64 images
 ```
 
 ```
@@ -134,6 +185,11 @@ Options:
     ds-rest:    Runs with device-rest included
     ds-snmp:    Runs with device-snmp included
     ds-virtual: Runs device-virtual included
+    modbus-sim: Generates compose file with ModBus simulator included
+    asc-http:   Generates compose file with App Service HTTP Export included
+    asc-http-s: Generates compose file with App Service HTTP Export Secrets included
+    asc-mqtt:   Generates compose file with App Service MQTT Export included
+    asc-mqtt-s: Generates compose file with App Service MQTT Export Secrets included
     mqtt:       Runs using MQTT Message Bus
     ui:         Runs only the EdgeX UI service. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
 Services:
@@ -154,6 +210,11 @@ Options:
     ds-rest:    Pull includes device-rest
     ds-snmp:    Pull includes device-snmp
     ds-virtual: Pull includes device-virtual
+    modbus-sim: Generates compose file with ModBus simulator included
+    asc-http:   Generates compose file with App Service HTTP Export included
+    asc-http-s: Generates compose file with App Service HTTP Export Secrets included
+    asc-mqtt:   Generates compose file with App Service MQTT Export included
+    asc-mqtt-s: Generates compose file with App Service MQTT Export Secrets included
     mqtt:       Pulls included additional service for MQTT Message Bus 
     ui:         Pulls only the EdgeX UI service image. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored
 Services:
@@ -176,6 +237,11 @@ Options:
     ds-rest:    Generates compose file with device-rest included
     ds-snmp:    Generates compose file with device-snmp included
     ds-virtual: Generates compose file with device-virtual included
+    modbus-sim: Generates compose file with ModBus simulator included
+    asc-http:   Generates compose file with App Service HTTP Export included
+    asc-http-s: Generates compose file with App Service HTTP Export Secrets included
+    asc-mqtt:   Generates compose file with App Service MQTT Export included
+    asc-mqtt-s: Generates compose file with App Service MQTT Export Secrets included
     mqtt:       Generates compose file configured to use MQTT Message Bus
     ui:         Generates stand-alone compose file for EdgeX UI
 ```

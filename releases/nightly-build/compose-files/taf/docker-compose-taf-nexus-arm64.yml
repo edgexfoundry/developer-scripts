@@ -28,6 +28,139 @@ networks:
   edgex-network:
     driver: bridge
 services:
+  app-service-blackbox-tests:
+    container_name: app-service-blackbox-tests
+    depends_on:
+    - consul
+    - data
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: blackbox-tests
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: app-service-blackbox-tests
+      SERVICE_PORT: 48105
+    hostname: app-service-blackbox-tests
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 48105:48105/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+  app-service-http-export:
+    container_name: app-service-http-export
+    depends_on:
+    - consul
+    - data
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: http-export
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: app-service-http-export
+      SERVICE_PORT: 48101
+      WRITABLE_LOGLEVEL: INFO
+      WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_URL: http://EXPORT_HOST_PLACE_HOLDER:7770
+    hostname: app-service-http-export
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:48101:48101/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+  app-service-http-export-secrets:
+    container_name: app-service-http-export-secrets
+    depends_on:
+    - consul
+    - data
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: http-export
+      EDGEX_SECURITY_SECRET_STORE: "true"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      REGISTRY_HOST: edgex-core-consul
+      SECRETSTORE_HOST: edgex-vault
+      SECRETSTORE_PATH: /v1/secret/edgex/appservice-http-export-secrets/
+      SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/appservice-http-export-secrets/secrets-token.json
+      SERVICE_HOST: app-service-http-export-secrets
+      SERVICE_PORT: 48102
+      WRITABLE_LOGLEVEL: INFO
+      WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETHEADERNAME: ''
+      WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETPATH: ''
+      WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_URL: http://EXPORT_HOST_PLACE_HOLDER:7770
+    hostname: app-service-http-export-secrets
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:48102:48102/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+    volumes:
+    - /tmp/edgex/secrets/appservice-http-export-secrets:/tmp/edgex/secrets/appservice-http-export-secrets:ro,z
+  app-service-mqtt-export:
+    container_name: app-service-mqtt-export
+    depends_on:
+    - consul
+    - data
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: mqtt-export
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: app-service-mqtt-export
+      SERVICE_PORT: 48103
+      WRITABLE_LOGLEVEL: INFO
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_TOPIC: edgex-events
+    hostname: app-service-mqtt-export
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:48103:48103/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   app-service-rules:
     container_name: edgex-app-service-configurable-rules
     depends_on:
@@ -185,6 +318,37 @@ services:
     volumes:
     - db-data:/data:z
     - edgex-init:/edgex-init:z
+  device-modbus:
+    command: --registry --confdir=CONF_DIR_PLACE_HOLDER
+    container_name: edgex-device-modbus
+    depends_on:
+    - consul
+    - data
+    - metadata
+    - modbus-simulator
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: edgex-device-modbus
+    hostname: edgex-device-modbus
+    image: nexus3.edgexfoundry.org:10004/docker-device-modbus-go-arm64:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:49991:49991/tcp
+    security_opt:
+    - no-new-privileges:true
+    volumes:
+    - PROFILE_VOLUME_PLACE_HOLDER:CONF_DIR_PLACE_HOLDER:z
   device-rest:
     container_name: edgex-device-rest
     depends_on:
@@ -214,6 +378,7 @@ services:
     security_opt:
     - no-new-privileges:true
   device-virtual:
+    command: --registry --confdir=CONF_DIR_PLACE_HOLDER
     container_name: edgex-device-virtual
     depends_on:
     - consul
@@ -240,6 +405,8 @@ services:
     - 127.0.0.1:49990:49990/tcp
     security_opt:
     - no-new-privileges:true
+    volumes:
+    - PROFILE_VOLUME_PLACE_HOLDER:CONF_DIR_PLACE_HOLDER:z
   edgex-proxy:
     container_name: edgex-proxy
     depends_on:
@@ -379,6 +546,28 @@ services:
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
+  modbus-simulator:
+    container_name: edgex-modbus-simulator
+    hostname: edgex-modbus-simulator
+    image: nexus3.edgexfoundry.org:10003/edgex-devops/edgex-modbus-simulator-arm64:latest
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:1502:1502/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+  mqtt-broker:
+    container_name: edgex-mqtt-broker
+    hostname: edgex-mqtt-broker
+    image: eclipse-mosquitto:1.6.3
+    networks:
+      edgex-network: {}
+    ports:
+    - 1883:1883/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   notifications:
     container_name: edgex-support-notifications
     depends_on:
@@ -438,6 +627,40 @@ services:
     - no-new-privileges:true
     volumes:
     - kuiper-data:/kuiper/data:z
+  scalability-test-mqtt-export:
+    container_name: scalability-test-mqtt-export
+    depends_on:
+    - consul
+    - data
+    environment:
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: mqtt-export
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: app-service-mqtt-export
+      SERVICE_PORT: 48106
+      WRITABLE_LOGLEVEL: DEBUG
+      WRITABLE_PIPELINE_EXECUTIONORDER: TransformToJSON, MQTTSecretSend
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_BROKERADDRESS: tcp://MQTT_BROKER_ADDRESS_PLACE_HOLDER:1883
+      WRITABLE_PIPELINE_FUNCTIONS_MQTTSECRETSEND_PARAMETERS_TOPIC: edgex-events
+    hostname: scalability-test-mqtt-export
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 48106:48106/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:
@@ -587,6 +810,7 @@ services:
     - security-bootstrapper
     - vault
     environment:
+      ADD_SECRETSTORE_TOKENS: appservice-http-export-secrets
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     hostname: edgex-vault-worker
     image: nexus3.edgexfoundry.org:10004/docker-security-secretstore-setup-go-arm64:master
@@ -605,6 +829,7 @@ services:
     - vault-config:/vault/config:z
 version: '3.7'
 volumes:
+  PROFILE_VOLUME_PLACE_HOLDER: {}
   consul-config: {}
   consul-data: {}
   consul-scripts: {}
