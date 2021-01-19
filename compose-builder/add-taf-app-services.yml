@@ -24,7 +24,6 @@ services:
 
   scalability-test-mqtt-export:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
-    command: "-s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res"
     ports:
       - "48106:48106"
     container_name: scalability-test-mqtt-export

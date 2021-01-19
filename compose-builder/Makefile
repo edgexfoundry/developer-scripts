@@ -114,8 +114,8 @@ ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
 		-f add-device-rest.yml \
 		-f add-device-modbus.yml \
 		-f add-taf-device-services-mods.yml \
-    	-f add-mqtt-broker.yml \
-    	-f add-modbus-simulator.yml
+		-f add-mqtt-broker.yml \
+		-f add-modbus-simulator.yml
 else
 	# Build compose for TAF non-secure testing (ignore all other compose file options)
 	ifeq (taf-no-secty, $(filter taf-no-secty,$(ARGS)))

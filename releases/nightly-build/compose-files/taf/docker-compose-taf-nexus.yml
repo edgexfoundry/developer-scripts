@@ -628,7 +628,6 @@ services:
     volumes:
     - kuiper-data:/kuiper/data:z
   scalability-test-mqtt-export:
-    command: -s -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: scalability-test-mqtt-export
     depends_on:
     - consul
