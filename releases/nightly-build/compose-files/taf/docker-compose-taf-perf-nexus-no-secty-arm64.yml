@@ -31,8 +31,10 @@ services:
   app-service-mqtt-export:
     container_name: app-service-mqtt-export
     depends_on:
-    - consul
-    - data
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -64,8 +66,10 @@ services:
   app-service-rules:
     container_name: edgex-app-service-configurable-rules
     depends_on:
-    - consul
-    - data
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
     environment:
       BINDING_PUBLISHTOPIC: events
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -95,9 +99,12 @@ services:
   command:
     container_name: edgex-core-command
     depends_on:
-    - consul
-    - database
-    - metadata
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      metadata:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -141,9 +148,12 @@ services:
   data:
     container_name: edgex-core-data
     depends_on:
-    - consul
-    - database
-    - metadata
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      metadata:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -195,9 +205,12 @@ services:
   device-rest:
     container_name: edgex-device-rest
     depends_on:
-    - consul
-    - data
-    - metadata
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
+      metadata:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -223,9 +236,12 @@ services:
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
-    - consul
-    - data
-    - metadata
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
+      metadata:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -250,9 +266,12 @@ services:
   metadata:
     container_name: edgex-core-metadata
     depends_on:
-    - consul
-    - database
-    - notifications
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      notifications:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -283,15 +302,18 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 1883:1883/tcp
+    - published: 1883
+      target: 1883
     read_only: true
     security_opt:
     - no-new-privileges:true
   notifications:
     container_name: edgex-support-notifications
     depends_on:
-    - consul
-    - database
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -317,7 +339,8 @@ services:
   rulesengine:
     container_name: edgex-kuiper
     depends_on:
-    - app-service-rules
+      app-service-rules:
+        condition: service_started
     environment:
       EDGEX__DEFAULT__PORT: 5566
       EDGEX__DEFAULT__PROTOCOL: tcp
@@ -327,7 +350,7 @@ services:
       KUIPER__BASIC__CONSOLELOG: "true"
       KUIPER__BASIC__RESTPORT: 48075
     hostname: edgex-kuiper
-    image: emqx/kuiper:1.0.0-alpine
+    image: emqx/kuiper:1.1.1-alpine
     networks:
       edgex-network: {}
     ports:
@@ -341,8 +364,10 @@ services:
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:
-    - consul
-    - database
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -370,12 +395,18 @@ services:
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
-    - command
-    - consul
-    - data
-    - metadata
-    - notifications
-    - scheduler
+      command:
+        condition: service_started
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
+      metadata:
+        condition: service_started
+      notifications:
+        condition: service_started
+      scheduler:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data

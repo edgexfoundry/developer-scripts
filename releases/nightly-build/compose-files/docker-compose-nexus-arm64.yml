@@ -31,8 +31,10 @@ services:
   app-service-rules:
     container_name: edgex-app-service-configurable-rules
     depends_on:
-    - consul
-    - data
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
     environment:
       BINDING_PUBLISHTOPIC: events
       CLIENTS_COMMAND_HOST: edgex-core-command
@@ -62,12 +64,18 @@ services:
   command:
     container_name: edgex-core-command
     depends_on:
-    - consul
-    - database
-    - metadata
-    - security-bootstrap-database
-    - security-bootstrapper
-    - vault-worker
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      metadata:
+        condition: service_started
+      security-bootstrap-database:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -98,8 +106,10 @@ services:
   consul:
     container_name: edgex-core-consul
     depends_on:
-    - security-bootstrapper
-    - vault
+      security-bootstrapper:
+        condition: service_started
+      vault:
+        condition: service_started
     environment:
       EDGEX_DB: redis
       EDGEX_SECURE: "true"
@@ -123,12 +133,18 @@ services:
   data:
     container_name: edgex-core-data
     depends_on:
-    - consul
-    - database
-    - metadata
-    - security-bootstrap-database
-    - security-bootstrapper
-    - vault-worker
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      metadata:
+        condition: service_started
+      security-bootstrap-database:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -160,7 +176,8 @@ services:
   database:
     container_name: edgex-redis
     depends_on:
-    - security-bootstrapper
+      security-bootstrapper:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -188,9 +205,12 @@ services:
   device-rest:
     container_name: edgex-device-rest
     depends_on:
-    - consul
-    - data
-    - metadata
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
+      metadata:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -216,9 +236,12 @@ services:
   device-virtual:
     container_name: edgex-device-virtual
     depends_on:
-    - consul
-    - data
-    - metadata
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
+      metadata:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -243,9 +266,12 @@ services:
   edgex-proxy:
     container_name: edgex-proxy
     depends_on:
-    - consul
-    - kong
-    - vault-worker
+      consul:
+        condition: service_started
+      kong:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     entrypoint: '/bin/sh -c  "until /consul/scripts/consul-svc-healthy.sh kong; do
       sleep 1; done; until /consul/scripts/consul-svc-healthy.sh security-secretstore-setup;
       do sleep 1; done; /edgex/security-proxy-setup --init=true"
@@ -285,9 +311,12 @@ services:
       \    do sleep 1;\n  done;\n  /docker-entrypoint.sh kong docker-start\"\n"
     container_name: kong
     depends_on:
-    - consul
-    - kong-db
-    - security-bootstrapper
+      consul:
+        condition: service_started
+      kong-db:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
     environment:
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ERROR_LOG: /dev/stderr
@@ -302,9 +331,11 @@ services:
     networks:
       edgex-network: {}
     ports:
-    - 8000:8000/tcp
+    - published: 8000
+      target: 8000
     - 127.0.0.1:8001:8001/tcp
-    - 8443:8443/tcp
+    - published: 8443
+      target: 8443
     - 127.0.0.1:8444:8444/tcp
     read_only: true
     restart: on-failure
@@ -321,7 +352,8 @@ services:
   kong-db:
     container_name: kong-db
     depends_on:
-    - security-bootstrapper
+      security-bootstrapper:
+        condition: service_started
     environment:
       POSTGRES_DB: kong
       POSTGRES_PASSWORD: kong
@@ -345,12 +377,18 @@ services:
   metadata:
     container_name: edgex-core-metadata
     depends_on:
-    - consul
-    - database
-    - notifications
-    - security-bootstrap-database
-    - security-bootstrapper
-    - vault-worker
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      notifications:
+        condition: service_started
+      security-bootstrap-database:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -382,11 +420,16 @@ services:
   notifications:
     container_name: edgex-support-notifications
     depends_on:
-    - consul
-    - database
-    - security-bootstrap-database
-    - security-bootstrapper
-    - vault-worker
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      security-bootstrap-database:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -417,7 +460,8 @@ services:
   rulesengine:
     container_name: edgex-kuiper
     depends_on:
-    - app-service-rules
+      app-service-rules:
+        condition: service_started
     environment:
       EDGEX__DEFAULT__PORT: 5566
       EDGEX__DEFAULT__PROTOCOL: tcp
@@ -441,11 +485,16 @@ services:
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:
-    - consul
-    - database
-    - security-bootstrap-database
-    - security-bootstrapper
-    - vault-worker
+      consul:
+        condition: service_started
+      database:
+        condition: service_started
+      security-bootstrap-database:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -478,9 +527,12 @@ services:
   security-bootstrap-database:
     container_name: edgex-security-bootstrap-database
     depends_on:
-    - database
-    - security-bootstrapper
-    - vault-worker
+      database:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault-worker:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -520,12 +572,18 @@ services:
   system:
     container_name: edgex-sys-mgmt-agent
     depends_on:
-    - command
-    - consul
-    - data
-    - metadata
-    - notifications
-    - scheduler
+      command:
+        condition: service_started
+      consul:
+        condition: service_started
+      data:
+        condition: service_started
+      metadata:
+        condition: service_started
+      notifications:
+        condition: service_started
+      scheduler:
+        condition: service_started
     environment:
       CLIENTS_COMMAND_HOST: edgex-core-command
       CLIENTS_COREDATA_HOST: edgex-core-data
@@ -558,7 +616,8 @@ services:
     command: server
     container_name: edgex-vault
     depends_on:
-    - security-bootstrapper
+      security-bootstrapper:
+        condition: service_started
     environment:
       VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
@@ -583,9 +642,12 @@ services:
   vault-worker:
     container_name: edgex-vault-worker
     depends_on:
-    - consul
-    - security-bootstrapper
-    - vault
+      consul:
+        condition: service_started
+      security-bootstrapper:
+        condition: service_started
+      vault:
+        condition: service_started
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     hostname: edgex-vault-worker
