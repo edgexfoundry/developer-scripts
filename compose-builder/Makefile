@@ -20,6 +20,7 @@ include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
 OPTIONS:=" arm64 no-secty mqtt dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
+TOKEN_LIST:=""
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -79,12 +80,22 @@ ifeq (asc-http, $(filter asc-http,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export.yml
 endif
 ifeq (asc-http-s, $(filter asc-http-s,$(ARGS)))
+    ifeq ($(TOKEN_LIST),"")
+	  TOKEN_LIST:=appservice-http-export-secrets
+	else
+	  TOKEN_LIST:=$(TOKEN_LIST),appservice-http-export-secrets
+	endif
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export-secure.yml
 endif
 ifeq (asc-mqtt, $(filter asc-mqtt,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export.yml
 endif
 ifeq (asc-mqtt-s, $(filter asc-mqtt-s,$(ARGS)))
+    ifeq ($(TOKEN_LIST),"")
+	  TOKEN_LIST:=appservice-mqtt-export-secrets
+	else
+	  TOKEN_LIST:=$(TOKEN_LIST),appservice-mqtt-export-secrets
+	endif
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export-secure.yml
 endif
 
@@ -103,13 +114,13 @@ endif
 
 # Build compose for TAF secure testing (ignore all other compose file options)
 ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
+	TOKEN_LIST:=appservice-http-export-secrets,appservice-mqtt-export-secrets
 	COMPOSE_FILES:= \
 		-f docker-compose-base.yml \
 		-f add-security.yml \
 		-f add-taf-app-services.yml \
 		-f add-asc-http-export-secure.yml \
-		-f add-asc-http-export.yml \
-		-f add-asc-mqtt-export.yml \
+		-f add-asc-mqtt-export-secure.yml \
 		-f add-device-virtual.yml \
 		-f add-device-rest.yml \
 		-f add-device-modbus.yml \
@@ -221,6 +232,7 @@ gen:
 	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	ARCH=$(ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
+	TOKEN_LIST=$(TOKEN_LIST) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 get-token:

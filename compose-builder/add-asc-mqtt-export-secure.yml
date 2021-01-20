@@ -3,7 +3,7 @@ version: '3.7'
 services:
   vault-worker:
     environment:
-      ADD_SECRETSTORE_TOKENS: appservice-mqtt-export-secrets
+      ADD_SECRETSTORE_TOKENS: ${TOKEN_LIST}
 
   appservice-mqtt-export-secrets:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
