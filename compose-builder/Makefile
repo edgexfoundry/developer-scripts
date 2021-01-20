@@ -1,5 +1,5 @@
 # /*******************************************************************************
-#  * Copyright 2020 Intel
+#  * Copyright 2021 Intel
 #  *
 #  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 #  * in compliance with the License. You may obtain a copy of the License at
@@ -20,6 +20,7 @@ include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
 OPTIONS:=" arm64 no-secty mqtt dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
+TOKEN_LIST:=""
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -79,13 +80,23 @@ ifeq (asc-http, $(filter asc-http,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export.yml
 endif
 ifeq (asc-http-s, $(filter asc-http-s,$(ARGS)))
-	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export-secure.yml
+    ifeq ($(TOKEN_LIST),"")
+      TOKEN_LIST:=appservice-http-export-secrets
+    else
+      TOKEN_LIST:=$(TOKEN_LIST),appservice-http-export-secrets
+    endif
+    COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export-secure.yml
 endif
 ifeq (asc-mqtt, $(filter asc-mqtt,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export.yml
 endif
 ifeq (asc-mqtt-s, $(filter asc-mqtt-s,$(ARGS)))
-	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export-secure.yml
+    ifeq ($(TOKEN_LIST),"")
+      TOKEN_LIST:=appservice-mqtt-export-secrets
+    else
+      TOKEN_LIST:=$(TOKEN_LIST),appservice-mqtt-export-secrets
+    endif
+    COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export-secure.yml
 endif
 
 # Add switch to use MQTT Message Bus
@@ -103,12 +114,14 @@ endif
 
 # Build compose for TAF secure testing (ignore all other compose file options)
 ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
+	TOKEN_LIST:=appservice-http-export-secrets,appservice-mqtt-export-secrets
 	COMPOSE_FILES:= \
 		-f docker-compose-base.yml \
 		-f add-security.yml \
 		-f add-taf-app-services.yml \
 		-f add-asc-http-export-secure.yml \
 		-f add-asc-http-export.yml \
+		-f add-asc-mqtt-export-secure.yml \
 		-f add-asc-mqtt-export.yml \
 		-f add-device-virtual.yml \
 		-f add-device-rest.yml \
@@ -118,7 +131,7 @@ ifeq (taf-secty, $(filter taf-secty,$(ARGS)))
 		-f add-modbus-simulator.yml
 else
 	# Build compose for TAF non-secure testing (ignore all other compose file options)
-	ifeq (taf-no-secty, $(filter taf-no-secty,$(ARGS)))
+    ifeq (taf-no-secty, $(filter taf-no-secty,$(ARGS)))
 		COMPOSE_FILES:= \
 			-f docker-compose-base.yml \
 			-f add-taf-app-services.yml \
@@ -141,7 +154,7 @@ else
     			-f add-device-virtual.yml \
     			-f add-device-rest.yml \
     			-f add-mqtt-broker.yml
-		else
+    	else
 			# Build compose for TAF non-secure performance testing (ignore all other compose file options)
 			ifeq (taf-perf-no-secty, $(filter taf-perf-no-secty,$(ARGS)))
 				COMPOSE_FILES:= \
@@ -221,6 +234,7 @@ gen:
 	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	ARCH=$(ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
+	TOKEN_LIST=$(TOKEN_LIST) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
 get-token:
