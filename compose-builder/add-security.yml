@@ -99,6 +99,8 @@ services:
     hostname: edgex-vault-worker
     environment:
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
+      EDGEX_USER: ${EDGEX_USER}
+      EDGEX_GROUP: ${EDGEX_GROUP}
     read_only: true
     networks:
       - edgex-network
@@ -142,6 +144,7 @@ services:
       - database
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
 # containers for reverse proxy
   kong-db:
@@ -249,6 +252,7 @@ services:
       - kong
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
 # end of containers for reverse proxy
 

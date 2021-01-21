@@ -40,5 +40,6 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
 version: '3.7'
 

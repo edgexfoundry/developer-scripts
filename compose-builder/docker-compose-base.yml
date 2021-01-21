@@ -97,6 +97,7 @@ services:
       - command
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   notifications:
     image: ${CORE_EDGEX_REPOSITORY}/docker-support-notifications-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -116,6 +117,7 @@ services:
       - database
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   metadata:
     image: ${CORE_EDGEX_REPOSITORY}/docker-core-metadata-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -137,6 +139,7 @@ services:
       - notifications
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   data:
     image: ${CORE_EDGEX_REPOSITORY}/docker-core-data-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -158,6 +161,7 @@ services:
       - metadata
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   command:
     image: ${CORE_EDGEX_REPOSITORY}/docker-core-command-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -178,6 +182,7 @@ services:
       - metadata
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   scheduler:
     image: ${CORE_EDGEX_REPOSITORY}/docker-support-scheduler-go${ARCH}:${CORE_EDGEX_VERSION}${DEV}
@@ -199,6 +204,7 @@ services:
       - database
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   app-service-rules:
     image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
@@ -222,6 +228,7 @@ services:
       - data
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"
 
   rulesengine:
     image: emqx/kuiper:${KUIPER_VERSION}

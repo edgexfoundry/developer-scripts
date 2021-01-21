@@ -38,3 +38,4 @@ services:
       - metadata
     security_opt: 
       - no-new-privileges:true
+    user: "${EDGEX_USER}:${EDGEX_GROUP}"

@@ -57,6 +57,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   app-service-http-export:
     container_name: app-service-http-export
     depends_on:
@@ -89,6 +90,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   app-service-http-export-secrets:
     container_name: app-service-http-export-secrets
     depends_on:
@@ -126,6 +128,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - /tmp/edgex/secrets/appservice-http-export-secrets:/tmp/edgex/secrets/appservice-http-export-secrets:ro,z
   app-service-mqtt-export:
@@ -161,6 +164,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   app-service-rules:
     container_name: edgex-app-service-configurable-rules
     depends_on:
@@ -192,6 +196,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   appservice-mqtt-export-secrets:
     container_name: appservice-mqtt-export-secrets
     depends_on:
@@ -231,6 +236,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - /tmp/edgex/secrets/appservice-mqtt-export-secrets:/tmp/edgex/secrets/appservice-mqtt-export-secrets:ro,z
   command:
@@ -266,6 +272,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-command:/tmp/edgex/secrets/edgex-core-command:ro,z
@@ -328,6 +335,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-data:/tmp/edgex/secrets/edgex-core-data:ro,z
@@ -388,6 +396,7 @@ services:
     - 127.0.0.1:49991:49991/tcp
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - PROFILE_VOLUME_PLACE_HOLDER:CONF_DIR_PLACE_HOLDER:z
   device-rest:
@@ -418,6 +427,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   device-virtual:
     command: --registry --confdir=CONF_DIR_PLACE_HOLDER
     container_name: edgex-device-virtual
@@ -446,6 +456,7 @@ services:
     - 127.0.0.1:49990:49990/tcp
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - PROFILE_VOLUME_PLACE_HOLDER:CONF_DIR_PLACE_HOLDER:z
   edgex-proxy:
@@ -482,6 +493,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - consul-scripts:/consul/scripts:ro,z
     - /tmp/edgex/secrets/edgex-security-proxy-setup:/tmp/edgex/secrets/edgex-security-proxy-setup:ro,z
@@ -584,6 +596,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-core-metadata:/tmp/edgex/secrets/edgex-core-metadata:ro,z
@@ -598,6 +611,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   mqtt-broker:
     container_name: edgex-mqtt-broker
     hostname: edgex-mqtt-broker
@@ -609,6 +623,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   notifications:
     container_name: edgex-support-notifications
     depends_on:
@@ -641,6 +656,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-support-notifications:/tmp/edgex/secrets/edgex-support-notifications:ro,z
@@ -702,6 +718,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
   scheduler:
     container_name: edgex-support-scheduler
     depends_on:
@@ -736,6 +753,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-support-scheduler:/tmp/edgex/secrets/edgex-support-scheduler:ro,z
@@ -770,6 +788,7 @@ services:
     tmpfs:
     - /run
     - /vault
+    user: 2002:2001
     volumes:
     - edgex-init:/edgex-init:z
     - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
@@ -814,6 +833,7 @@ services:
     read_only: true
     security_opt:
     - no-new-privileges:true
+    user: 2002:2001
     volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
   vault:
@@ -852,6 +872,8 @@ services:
     - vault
     environment:
       ADD_SECRETSTORE_TOKENS: appservice-http-export-secrets,appservice-mqtt-export-secrets
+      EDGEX_GROUP: '2001'
+      EDGEX_USER: '2002'
       SECRETSTORE_SETUP_DONE_FLAG: /tmp/edgex/secrets/edgex-consul/.secretstore-setup-done
     hostname: edgex-vault-worker
     image: nexus3.edgexfoundry.org:10004/docker-security-secretstore-setup-go:master
