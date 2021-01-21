@@ -11,7 +11,7 @@ This folder contains the `Compose Builder` which is made up of **source** compos
 
 Do the following to build compose files for next release such as `hanoi` 
 
-1. Update the `RELEASE`, `REPOSITORY`, `CORE_EDGEX_REPOSITORY` and `versions` contained in the `.env` file.
+1. Update the `RELEASE`, `REPOSITORY`, `CORE_EDGEX_REPOSITORY`, `APP_SVC_REPOSITORY`, and `versions` contained in the `.env` file.
 2. Create the release folder, i.e `release/hanoi/compose-files`
 3. Run `make build` 
 4. Commit changes, open PR and merge PR
@@ -91,7 +91,8 @@ This folder contains the following environment files:
 
 ### Makefile
 
-This folder contains a `Makefile` that provides commands for running, stopping and cleaning the various EdgeX configurations during **development** of the compose files or testing `dev` versions of the service images.
+This folder contains a `Makefile` that provides commands for running, stopping and cleaning the various EdgeX configurations during **development** of the compose files or testing edgex-go's dev version by `dev` argument
+and/or app-service-configurable's dev version by `app-dev` argument for the service images.
 
 ```
 Usage: make <target> where target is:
@@ -132,6 +133,8 @@ Options:
     arm64:      Generates compose file using ARM64 images
     dev:        Generates compose file using local dev built images from edgex-go repo's 
                 'make docker' which creates docker images tagged with '0.0.0-dev'    
+    app-dev:    Generates compose file using local dev built images from app-service-configurable repo's
+                'make docker' which creates docker images tagged with 'master-dev'
     ds-bacnet:  Generates compose file with device-bacnet included
     ds-camera:  Generates compose file with device-camera included
     ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
@@ -178,6 +181,8 @@ Options:
     arm64:      Runs using ARM64 images    
     dev:        Runs using local dev built images from edgex-go repo's    
                 'make docker' which creates docker images tagged with '0.0.0-dev'
+    app-dev:    Runs using local dev built images from app-service-configurable repo's
+                'make docker' which creates docker images tagged with 'master-dev'
     ds-modbus:  Runs with device-modbus included
     ds-bacnet:  Runs with device-bacnet included
     ds-camera:  Runs with device-camera included
@@ -230,6 +235,8 @@ Options:
     arm64:      Generates compose file using ARM64 images    
     dev:        Generates compose file using local dev built images from edgex-go repo's 
                 'make docker' which creates docker images tagged with '0.0.0-dev'
+    app-dev:    Generates compose file using local dev built images from app-service-configurable repo's
+                'make docker' which creates docker images tagged with 'master-dev'
     ds-modbus:  Generates compose file with device-modbus included
     ds-bacnet:  Generates compose file with device-bacnet included
     ds-camera:  Generates compose file with device-camera included

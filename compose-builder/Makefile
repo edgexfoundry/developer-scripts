@@ -19,7 +19,7 @@
 include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
-OPTIONS:=" arm64 no-secty mqtt dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
+OPTIONS:=" arm64 no-secty mqtt dev app-dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
 TOKEN_LIST:=""
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -29,8 +29,14 @@ $(eval $(ARGS):;@:)
 ifeq (dev, $(filter dev,$(ARGS)))
 	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
+	FILE_TAIL_DEV:=$(DEV)
 	# matches the way that edgex-go to versioning the docker images for `make docker`
 	CORE_EDGEX_VERSION:="0.0.0"
+endif
+ifeq (app-dev, $(filter app-dev,$(ARGS)))
+	APP_SVC_REPOSITORY=edgexfoundry
+	APP_SVC_DEV:=-dev
+	FILE_TAIL_DEV:=$(FILE_TAIL_DEV)-app-dev
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:=-arm64
@@ -213,13 +219,13 @@ build:
 	make taf-compose-perf taf-perf-no-secty arm64
 
 compose: gen
-	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_TAIL_DEV).yml
 
 taf-compose: gen
-	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_TAIL_DEV).yml
 
 taf-compose-perf: gen
-	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-perf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(DEV).yml
+	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-perf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_TAIL_DEV).yml
 
 run: gen
 	docker-compose -p edgex up -d $(SERVICES)
@@ -230,8 +236,10 @@ pull: gen
 gen:
 	$(GROVE_CHECK) \
 	DEV=$(DEV) \
+	APP_SVC_DEV=$(APP_SVC_DEV) \
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
+	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH=$(ARCH) \
 	KONG_UBUNTU=$(KONG_UBUNTU) \
 	TOKEN_LIST=$(TOKEN_LIST) \
@@ -249,14 +257,18 @@ upload-tls-cert:
 
 ui-down:
 	DEV= \
+	APP_SVC_DEV= \
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
+	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
 	KONG_UBUNTU= \
 	docker-compose -p edgex -f docker-compose-ui.yml down
 
 down: ui-down
 	DEV= \
+	APP_SVC_DEV= \
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
+	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
 	KONG_UBUNTU= \
 	docker-compose -p edgex \

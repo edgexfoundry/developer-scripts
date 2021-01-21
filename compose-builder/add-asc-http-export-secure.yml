@@ -6,7 +6,7 @@ services:
       ADD_SECRETSTORE_TOKENS: ${TOKEN_LIST}
 
   app-service-http-export-secrets:
-    image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
+    image: ${APP_SVC_REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}${APP_SVC_DEV}
     entrypoint: ["/edgex-init/ready_to_run_wait_install.sh"]
     command: "/app-service-configurable ${DEFAULT_EDGEX_RUN_CMD_PARMS}"
     ports:

@@ -5,10 +5,10 @@ services:
     environment:
       ADD_SECRETSTORE_TOKENS: ${TOKEN_LIST}
 
-  app-service-mqtt-export-secrets:
-    image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
+  appservice-mqtt-export-secrets:
+    image: ${APP_SVC_REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}${APP_SVC_DEV}
     entrypoint: ["/edgex-init/ready_to_run_wait_install.sh"]
-    command: "/app-service-configurable ${DEFAULT_EDGEX_RUN_CMD_PARMS}"
+    command: "/app-service-configurable ${DEFAULT_EDGEX_RUN_CMD_PARMS}"    
     ports:
       - 127.0.0.1:48104:48104/tcp
     container_name: app-service-mqtt-export-secrets
