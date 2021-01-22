@@ -29,14 +29,14 @@ $(eval $(ARGS):;@:)
 ifeq (dev, $(filter dev,$(ARGS)))
 	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
-	FILE_TAIL_DEV:=$(DEV)
+	FILE_SUFFIX:=$(DEV)
 	# matches the way that edgex-go to versioning the docker images for `make docker`
 	CORE_EDGEX_VERSION:="0.0.0"
 endif
 ifeq (app-dev, $(filter app-dev,$(ARGS)))
 	APP_SVC_REPOSITORY=edgexfoundry
 	APP_SVC_DEV:=-dev
-	FILE_TAIL_DEV:=$(FILE_TAIL_DEV)-app-dev
+	FILE_SUFFIX:=$(FILE_SUFFIX)-app-dev
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:=-arm64
@@ -219,13 +219,13 @@ build:
 	make taf-compose-perf taf-perf-no-secty arm64
 
 compose: gen
-	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_TAIL_DEV).yml
+	cat gen-header docker-compose.yml > $(COMPOSE_FOLDER)/docker-compose-$(RELEASE)$(UI)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_SUFFIX).yml
 
 taf-compose: gen
-	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_TAIL_DEV).yml
+	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_SUFFIX).yml
 
 taf-compose-perf: gen
-	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-perf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_TAIL_DEV).yml
+	cat gen-header docker-compose.yml > $(TAF_COMPOSE_FOLDER)/docker-compose-taf-perf-$(RELEASE)$(NO_SECURITY)$(MQTT)$(ARCH)$(FILE_SUFFIX).yml
 
 run: gen
 	docker-compose -p edgex up -d $(SERVICES)
