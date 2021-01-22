@@ -29,7 +29,6 @@ $(eval $(ARGS):;@:)
 ifeq (dev, $(filter dev,$(ARGS)))
 	CORE_EDGEX_REPOSITORY=edgexfoundry
 	DEV:=-dev
-	FILE_SUFFIX:=$(DEV)
 	# matches the way that edgex-go to versioning the docker images for `make docker`
 	CORE_EDGEX_VERSION:="0.0.0"
 endif
