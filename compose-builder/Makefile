@@ -269,6 +269,7 @@ down: ui-down
 	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
 	KONG_UBUNTU= \
+	TOKEN_LIST= \
 	docker-compose -p edgex \
 		-f docker-compose-base.yml \
 		-f add-device-bacnet.yml \
