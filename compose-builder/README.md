@@ -86,6 +86,8 @@ This folder contains the following environment files:
     This file contains the common environment overrides used by all Edgex services.
 - **common-security.env**
     This file contains the common security related environment overrides used by many Edgex services.
+- **common-sec-stage-gate.env**
+    This file contains the common security-bootstrapper stage gate related environment overrides used by many Edgex services.
 
 ### Makefile
 
@@ -118,7 +120,7 @@ Standard compose variations are:
    full secure perf testing (docker-compose-taf-perf-nexus.yml)
    full secure perf testing for arm64 (docker-compose-taf-perf-nexus-arm64.yml)
    non-secure perf testing (docker-compose-nexus-taf-perf-no-secty.yml)
-   nonsecure perf testing forarm64 (docker-compose-taf-perf-nexus-no-secty-arm64.yml)
+   nonsecure perf testing for arm64 (docker-compose-taf-perf-nexus-no-secty-arm64.yml)
 ```
 
 ```
@@ -150,7 +152,7 @@ Options:
 
 ```
 taf-compose [options] 
-Generates a TAF general testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriatly for the options used to generate them.
+Generates a TAF general testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriately for the options used to generate them.
 
 Options:
     taf-secty:	  Generates general TAF testing compose file with security services
@@ -160,11 +162,11 @@ Options:
 
 ```
 taf-perf-compose [options] 
-Generates a TAF performance testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriatly for the options used to generate them.
+Generates a TAF performance testing compose file as specified by options and stores them in the configured TAF release folder. Compose files are named appropriately for the options used to generate them.
 
 Options:
     taf-secty:	  Generates performance TAF testing compose file with security services
-    taf-no-secty: Generates perforamnce TAF testing compose file without security services
+    taf-no-secty: Generates performance TAF testing compose file without security services
     arm64:        Generates TAF compose file using ARM64 images
 ```
 
@@ -184,12 +186,12 @@ Options:
     ds-random:  Runs with device-random included
     ds-rest:    Runs with device-rest included
     ds-snmp:    Runs with device-snmp included
-    ds-virtual: Runs device-virtual included
-    modbus-sim: Generates compose file with ModBus simulator included
-    asc-http:   Generates compose file with App Service HTTP Export included
-    asc-http-s: Generates compose file with App Service HTTP Export Secrets included
-    asc-mqtt:   Generates compose file with App Service MQTT Export included
-    asc-mqtt-s: Generates compose file with App Service MQTT Export Secrets included
+    ds-virtual: Runs with device-virtual included
+    modbus-sim: Runs with ModBus simulator included
+    asc-http:   Runs with App Service HTTP Export included
+    asc-http-s: Runs with App Service HTTP Export Secrets included
+    asc-mqtt:   Runs with App Service MQTT Export included
+    asc-mqtt-s: Runs with App Service MQTT Export Secrets included
     mqtt:       Runs using MQTT Message Bus
     ui:         Runs only the EdgeX UI service. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
 Services:
@@ -210,12 +212,12 @@ Options:
     ds-rest:    Pull includes device-rest
     ds-snmp:    Pull includes device-snmp
     ds-virtual: Pull includes device-virtual
-    modbus-sim: Generates compose file with ModBus simulator included
-    asc-http:   Generates compose file with App Service HTTP Export included
-    asc-http-s: Generates compose file with App Service HTTP Export Secrets included
-    asc-mqtt:   Generates compose file with App Service MQTT Export included
-    asc-mqtt-s: Generates compose file with App Service MQTT Export Secrets included
-    mqtt:       Pulls included additional service for MQTT Message Bus 
+    modbus-sim: Pull includes ModBus simulator
+    asc-http:   Pull includes App Service HTTP Export
+    asc-http-s: Pull includes App Service HTTP Export Secrets
+    asc-mqtt:   Pull includes App Service MQTT Export
+    asc-mqtt-s: Pull includes App Service MQTT Export Secrets
+    mqtt:       Pull includes additional service for MQTT Message Bus
     ui:         Pulls only the EdgeX UI service image. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored
 Services:
     <names...>: Pulls only images for the service(s) listed

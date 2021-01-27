@@ -32,12 +32,11 @@ volumes:
   db-data:
   consul-config:
   consul-data:
-  consul-scripts:
   kuiper-data:
 
 services:
   consul:
-    image: ${REPOSITORY}/docker-edgex-consul${ARCH}:${CONSUL_VERSION}
+    image: consul:${CONSUL_VERSION}
     ports:
       - "127.0.0.1:8500:8500"
     container_name: edgex-core-consul
@@ -48,10 +47,6 @@ services:
     volumes:
       - consul-config:/consul/config:z
       - consul-data:/consul/data:z
-      - consul-scripts:/consul/scripts:z
-    environment: 
-      EDGEX_DB: redis
-      EDGEX_SECURE: "false"
     security_opt: 
       - no-new-privileges:true
 
