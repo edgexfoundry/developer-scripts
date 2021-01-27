@@ -38,7 +38,6 @@ ifeq (app-dev, $(filter app-dev,$(ARGS)))
 endif
 ifeq (arm64, $(filter arm64,$(ARGS)))
 	ARCH:=-arm64
-	KONG_UBUNTU:=-ubuntu
 endif
 
 # Add Device Services
@@ -239,7 +238,6 @@ gen:
 	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH=$(ARCH) \
-	KONG_UBUNTU=$(KONG_UBUNTU) \
 	TOKEN_LIST=$(TOKEN_LIST) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
@@ -259,7 +257,6 @@ ui-down:
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
-	KONG_UBUNTU= \
 	docker-compose -p edgex -f docker-compose-ui.yml down
 
 down: ui-down
@@ -268,7 +265,6 @@ down: ui-down
 	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
 	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
-	KONG_UBUNTU= \
 	TOKEN_LIST= \
 	docker-compose -p edgex \
 		-f docker-compose-base.yml \

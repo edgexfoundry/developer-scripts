@@ -366,7 +366,7 @@ services:
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
     hostname: kong
-    image: kong:2.0.5
+    image: kong:2.3-alpine
     networks:
       edgex-network: {}
     ports:
