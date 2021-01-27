@@ -1,17 +1,17 @@
 version: '3.7'
 
 services:
-  app-service-blackbox-tests:
+  app-service-functional-tests:
     image: ${APP_SVC_REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}${APP_SVC_DEV}
     ports:
       - 48105:48105/tcp
-    container_name: app-service-blackbox-tests
-    hostname: app-service-blackbox-tests
+    container_name: app-service-functional-tests
+    hostname: app-service-functional-tests
     env_file:
       - common.env
     environment:
-      EDGEX_PROFILE: blackbox-tests
-      SERVICE_HOST: app-service-blackbox-tests
+      EDGEX_PROFILE: functional-tests
+      SERVICE_HOST: app-service-functional-tests
       SERVICE_PORT: 48105
     depends_on:
       - consul

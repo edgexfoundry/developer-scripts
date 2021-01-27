@@ -28,8 +28,8 @@ networks:
   edgex-network:
     driver: bridge
 services:
-  app-service-blackbox-tests:
-    container_name: app-service-blackbox-tests
+  app-service-functional-tests:
+    container_name: app-service-functional-tests
     depends_on:
     - consul
     - data
@@ -43,12 +43,12 @@ services:
       CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
       CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
       DATABASES_PRIMARY_HOST: edgex-redis
-      EDGEX_PROFILE: blackbox-tests
+      EDGEX_PROFILE: functional-tests
       EDGEX_SECURITY_SECRET_STORE: "false"
       REGISTRY_HOST: edgex-core-consul
-      SERVICE_HOST: app-service-blackbox-tests
+      SERVICE_HOST: app-service-functional-tests
       SERVICE_PORT: 48105
-    hostname: app-service-blackbox-tests
+    hostname: app-service-functional-tests
     image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable-arm64:master
     networks:
       edgex-network: {}
