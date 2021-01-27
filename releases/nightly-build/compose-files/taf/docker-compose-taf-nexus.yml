@@ -1,4 +1,4 @@
-#  * Copyright 2020 Intel Corporation.
+#  * Copyright 2021 Intel Corporation.
 #  *
 #  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
 #  * in compliance with the License. You may obtain a copy of the License at
@@ -190,7 +190,39 @@ services:
     security_opt:
     - no-new-privileges:true
     user: 2002:2001
-  app-service-mqtt-export-secrets:
+  app-service-rules:
+    container_name: edgex-app-service-configurable-rules
+    depends_on:
+    - consul
+    - data
+    environment:
+      BINDING_PUBLISHTOPIC: events
+      CLIENTS_COMMAND_HOST: edgex-core-command
+      CLIENTS_COREDATA_HOST: edgex-core-data
+      CLIENTS_DATA_HOST: edgex-core-data
+      CLIENTS_METADATA_HOST: edgex-core-metadata
+      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
+      CLIENTS_RULESENGINE_HOST: edgex-kuiper
+      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
+      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
+      DATABASES_PRIMARY_HOST: edgex-redis
+      EDGEX_PROFILE: rules-engine
+      EDGEX_SECURITY_SECRET_STORE: "false"
+      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
+      REGISTRY_HOST: edgex-core-consul
+      SERVICE_HOST: edgex-app-service-configurable-rules
+      SERVICE_PORT: 48100
+    hostname: edgex-app-service-configurable-rules
+    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
+    networks:
+      edgex-network: {}
+    ports:
+    - 127.0.0.1:48100:48100/tcp
+    read_only: true
+    security_opt:
+    - no-new-privileges:true
+    user: 2002:2001
+  appservice-mqtt-export-secrets:
     command: /app-service-configurable -cp=consul.http://edgex-core-consul:8500 --registry
       --confdir=/res
     container_name: app-service-mqtt-export-secrets
@@ -257,38 +289,6 @@ services:
     volumes:
     - edgex-init:/edgex-init:ro,z
     - /tmp/edgex/secrets/app-service-mqtt-export-secrets:/tmp/edgex/secrets/app-service-mqtt-export-secrets:ro,z
-  app-service-rules:
-    container_name: edgex-app-service-configurable-rules
-    depends_on:
-    - consul
-    - data
-    environment:
-      BINDING_PUBLISHTOPIC: events
-      CLIENTS_COMMAND_HOST: edgex-core-command
-      CLIENTS_COREDATA_HOST: edgex-core-data
-      CLIENTS_DATA_HOST: edgex-core-data
-      CLIENTS_METADATA_HOST: edgex-core-metadata
-      CLIENTS_NOTIFICATIONS_HOST: edgex-support-notifications
-      CLIENTS_RULESENGINE_HOST: edgex-kuiper
-      CLIENTS_SCHEDULER_HOST: edgex-support-scheduler
-      CLIENTS_VIRTUALDEVICE_HOST: edgex-device-virtual
-      DATABASES_PRIMARY_HOST: edgex-redis
-      EDGEX_PROFILE: rules-engine
-      EDGEX_SECURITY_SECRET_STORE: "false"
-      MESSAGEBUS_SUBSCRIBEHOST_HOST: edgex-core-data
-      REGISTRY_HOST: edgex-core-consul
-      SERVICE_HOST: edgex-app-service-configurable-rules
-      SERVICE_PORT: 48100
-    hostname: edgex-app-service-configurable-rules
-    image: nexus3.edgexfoundry.org:10004/docker-app-service-configurable:master
-    networks:
-      edgex-network: {}
-    ports:
-    - 127.0.0.1:48100:48100/tcp
-    read_only: true
-    security_opt:
-    - no-new-privileges:true
-    user: 2002:2001
   command:
     command: /core-command -cp=consul.http://edgex-core-consul:8500 --registry --confdir=/res
     container_name: edgex-core-command
