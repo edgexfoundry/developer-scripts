@@ -160,7 +160,7 @@ services:
       - no-new-privileges:true
 
   kong:
-    image: kong:${KONG_VERSION}${KONG_UBUNTU}
+    image: kong:${KONG_VERSION}
     container_name: kong
     hostname: kong
     read_only: true
