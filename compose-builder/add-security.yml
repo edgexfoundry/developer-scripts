@@ -168,9 +168,7 @@ services:
       - edgex-network
     ports:
         - "8000:8000"
-        - "127.0.0.1:8001:8001"
         - "8443:8443"
-        - "127.0.0.1:8444:8444"
     tty: true
     entrypoint: ["/edgex-init/kong_wait_install.sh"]
     env_file:
