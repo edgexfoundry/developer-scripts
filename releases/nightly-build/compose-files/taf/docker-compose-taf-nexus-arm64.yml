@@ -122,7 +122,6 @@ services:
       SECRETSTORE_PATH: /v1/secret/edgex/app-service-http-export-secrets/
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/app-service-http-export-secrets/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: app-service-http-export-secrets
       SERVICE_PORT: 48102
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
@@ -139,6 +138,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
       WRITABLE_LOGLEVEL: INFO
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETHEADERNAME: ''
       WRITABLE_PIPELINE_FUNCTIONS_HTTPPOSTJSON_PARAMETERS_SECRETPATH: ''
@@ -253,7 +253,6 @@ services:
       SECRETSTORE_PATH: /v1/secret/edgex/app-service-mqtt-export-secrets/
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/app-service-mqtt-export-secrets/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: app-service-mqtt-export-secrets
       SERVICE_PORT: 48104
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
@@ -270,6 +269,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
       WRITABLE_INSECURESECRETS_MQTT_SECRETS_PASSWORD: PASSWORD_PLACE_HOLDER
       WRITABLE_INSECURESECRETS_MQTT_SECRETS_USERNAME: USERNAME_PLACEH_OLDER
       WRITABLE_LOGLEVEL: INFO
@@ -318,7 +318,6 @@ services:
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-command/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: edgex-core-command
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
@@ -334,6 +333,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-core-command
     image: nexus3.edgexfoundry.org:10004/docker-core-command-go-arm64:master
     networks:
@@ -361,7 +361,6 @@ services:
       PROXY_SETUP_HOST: edgex-proxy-setup
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -376,6 +375,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-core-consul
     image: consul:1.9.1
     networks:
@@ -420,7 +420,6 @@ services:
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-data/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: edgex-core-data
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
@@ -436,6 +435,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-core-data
     image: nexus3.edgexfoundry.org:10004/docker-core-data-go-arm64:master
     networks:
@@ -475,7 +475,6 @@ services:
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -490,6 +489,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-redis
     image: redis:6.0.9-alpine
     networks:
@@ -614,7 +614,6 @@ services:
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
       PROXY_SETUP_HOST: edgex-proxy-setup
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -629,6 +628,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: kong
     image: kong:2.3-alpine
     networks:
@@ -666,7 +666,6 @@ services:
       PROXY_SETUP_HOST: edgex-proxy-setup
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -681,6 +680,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: kong-db
     image: postgres:12.3-alpine
     networks:
@@ -728,7 +728,6 @@ services:
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-core-metadata/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: edgex-core-metadata
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
@@ -744,6 +743,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-core-metadata
     image: nexus3.edgexfoundry.org:10004/docker-core-metadata-go-arm64:master
     networks:
@@ -810,7 +810,6 @@ services:
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-notifications/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: edgex-support-notifications
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
@@ -826,6 +825,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-support-notifications
     image: nexus3.edgexfoundry.org:10004/docker-support-notifications-go-arm64:master
     networks:
@@ -865,7 +865,6 @@ services:
       REGISTRY_HOST: edgex-core-consul
       SECRETSERVICE_SERVER: edgex-vault
       SECRETSERVICE_TOKENPATH: /tmp/edgex/secrets/edgex-security-proxy-setup/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -880,6 +879,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-proxy-setup
     image: nexus3.edgexfoundry.org:10004/docker-security-proxy-setup-go-arm64:master
     networks:
@@ -981,7 +981,6 @@ services:
       SECRETSTORE_HOST: edgex-vault
       SECRETSTORE_PORT: '8200'
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-support-scheduler/secrets-token.json
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       SERVICE_HOST: edgex-support-scheduler
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
@@ -997,6 +996,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-support-scheduler
     image: nexus3.edgexfoundry.org:10004/docker-support-scheduler-go-arm64:master
     networks:
@@ -1022,7 +1022,6 @@ services:
       EDGEX_GROUP: '2001'
       EDGEX_USER: '2002'
       PROXY_SETUP_HOST: edgex-proxy-setup
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -1037,6 +1036,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-secretstore-setup
     image: nexus3.edgexfoundry.org:10004/docker-security-secretstore-setup-go-arm64:master
     networks:
@@ -1059,7 +1059,6 @@ services:
       EDGEX_GROUP: '2001'
       EDGEX_USER: '2002'
       PROXY_SETUP_HOST: edgex-proxy-setup
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -1074,6 +1073,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
     hostname: edgex-security-bootstrapper
     image: nexus3.edgexfoundry.org:10004/docker-security-bootstrapper-go-arm64:master
     networks:
@@ -1132,7 +1132,6 @@ services:
       API_GATEWAY_HOST: kong
       API_GATEWAY_STATUS_PORT: '8001'
       PROXY_SETUP_HOST: edgex-proxy-setup
-      SECTY_BOOTSTRAP_GATING_TIMEOUT_DURATION: 60s
       STAGEGATE_BOOTSTRAPPER_HOST: edgex-security-bootstrapper
       STAGEGATE_BOOTSTRAPPER_STARTPORT: '54321'
       STAGEGATE_DATABASE_HOST: edgex-redis
@@ -1147,6 +1146,7 @@ services:
       STAGEGATE_REGISTRY_READYPORT: '54324'
       STAGEGATE_SECRETSTORESETUP_HOST: edgex-secretstore-setup
       STAGEGATE_SECRETSTORESETUP_TOKENS_READYPORT: '54322'
+      STAGEGATE_WAITFOR_TIMEOUT: 60s
       VAULT_ADDR: http://edgex-vault:8200
       VAULT_CONFIG_DIR: /vault/config
       VAULT_UI: "true"
