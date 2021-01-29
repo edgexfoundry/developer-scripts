@@ -185,7 +185,7 @@ services:
       - database
 
   app-service-rules:
-    image: ${REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
+    image: ${APP_SVC_REPOSITORY}/docker-app-service-configurable${ARCH}:${APP_SERVICE_VERSION}
     ports:
       - "127.0.0.1:48100:48100"
     container_name: edgex-app-service-configurable-rules
