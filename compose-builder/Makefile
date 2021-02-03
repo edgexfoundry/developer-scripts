@@ -19,7 +19,7 @@
 include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
-OPTIONS:=" arm64 no-secty mqtt dev app-dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
+OPTIONS:=" arm64 no-secty mqtt-bus mqtt-broker dev app-dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
 TOKEN_LIST:=""
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -103,8 +103,14 @@ ifeq (asc-mqtt-s, $(filter asc-mqtt-s,$(ARGS)))
     COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export-secure.yml
 endif
 
+# Add a MQTT Broker
+ifeq (mqtt-broker, $(filter mqtt-broker,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-mqtt-broker.yml
+	MQTT:=-mqtt
+endif
+
 # Add switch to use MQTT Message Bus
-ifeq (mqtt, $(filter mqtt,$(ARGS)))
+ifeq (mqtt-bus, $(filter mqtt-bus,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-mqtt-messagebus.yml -f add-mqtt-broker.yml
 	MQTT:=-mqtt
 endif
