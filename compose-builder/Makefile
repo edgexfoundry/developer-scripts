@@ -19,8 +19,22 @@
 include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
-OPTIONS:=" arm64 no-secty mqtt-bus mqtt-broker dev app-dev taf-secty taf-no-secty taf-perf taf-perf-no-secty ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual modbus-sim asc-http asc-http-s asc-mqtt asc-mqtt-s " # Must have spaces around words for `filter-out` function to work properly
 TOKEN_LIST:=""
+
+# Must have spaces around words for `filter-out` function to work properly.
+# Dashes at beginning & end of line ensure space before/after the first/last option on that line
+# and don't impact the option list
+define OPTIONS
+ - arm64 no-secty dev app-dev -
+ - mqtt-bus mqtt-broker -
+ - taf-secty taf-no-secty taf-perf taf-perf-no-secty -
+ - ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual -
+ - asc-http asc-http-s asc-mqtt asc-mqtt-s -
+ - modbus-sim ui -
+endef
+export OPTIONS
+
+
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -184,7 +198,7 @@ ifeq (ui, $(filter ui,$(ARGS)))
 	UI:=-ui
 endif
 
-SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
+SERVICES:=$(filter-out ${OPTIONS},$(ARGS))
 
 ifeq (true, $(DS_GROVE))
  ifneq (-arm64, $(ARCH))
@@ -198,6 +212,7 @@ ifneq (nexus, $(RELEASE))
 endif
 
 help:
+	echo ${OPTIONS}
 	echo "See README.md in this folder"
 
 portainer:
