@@ -123,9 +123,7 @@ Options:
     ds-virtual:  Generates compose file with device-virtual included
     modbus-sim:  Generates compose file with ModBus simulator included
     asc-http:    Generates compose file with App Service HTTP Export included
-    asc-http-s:  Generates compose file with App Service HTTP Export Secrets included
     asc-mqtt:    Generates compose file with App Service MQTT Export included
-    asc-mqtt-s:  Generates compose file with App Service MQTT Export Secrets included
     mqtt-broker: Generates compose file with a MQTT Broker service included 
     mqtt-bus:    Generates compose file with services configure for MQTT Message Bus 
                  The MQTT Broker service is also included. 
@@ -151,9 +149,7 @@ Options:
     ds-virtual:  Runs device-virtual included
     modbus-sim:  Runs with ModBus simulator included
     asc-http:    Runs with App Service HTTP Export included
-    asc-http-s:  Runs with App Service HTTP Export Secrets included
     asc-mqtt:    Runs with App Service MQTT Export included
-    asc-mqtt-s:  Runs with App Service MQTT Export Secrets included
     mqtt-broker: Runs with a MQTT Broker service included 
     mqtt-bus:    Runs with services configure for MQTT Message Bus 
     ui:          Runs only the EdgeX UI service. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
@@ -177,9 +173,7 @@ Options:
     ds-virtual:  Pull includes device-virtual
     modbus-sim:  Pull includes ModBus simulator
     asc-http:    Pull includes App Service HTTP Export
-    asc-http-s:  Pull includes App Service HTTP Export Secrets
     asc-mqtt:    Pull includes App Service MQTT Export
-    asc-mqtt-s:  Pull includes App Service MQTT Export Secrets
     mqtt-broker: Pull includes MQTT Broker service
     mqtt-bus:    Pull includes additional service for MQTT Message Bus
     ui:          Pulls only the EdgeX UI service image. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored
@@ -205,9 +199,7 @@ Options:
     ds-virtual:  Generates compose file with device-virtual included
     modbus-sim:  Generates compose file with ModBus simulator included
     asc-http:    Generates compose file with App Service HTTP Export included
-    asc-http-s:  Generates compose file with App Service HTTP Export Secrets included
     asc-mqtt:    Generates compose file with App Service MQTT Export included
-    asc-mqtt-s:  Generates compose file with App Service MQTT Export Secrets included
     mqtt-broker: Generates compose file with a MQTT Broker service included 
     mqtt-bus:    Generates compose file with services configure for MQTT Message Bus 
                  The MQTT Broker service is also included. 
