@@ -27,6 +27,8 @@ services:
     hostname: edgex-device-grove
     networks:
       - edgex-network
+    devices:
+      - /dev/i2c-1
     env_file:
       - common.env
     environment:

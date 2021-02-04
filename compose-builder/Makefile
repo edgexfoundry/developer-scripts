@@ -19,7 +19,18 @@
 include .env
 
 COMPOSE_FILES:=-f docker-compose-base.yml
-OPTIONS:=" arm64 no-secty mqtt dev ui ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual " # Must have spaces around words for `filter-out` function to work properly
+
+# Must have spaces around words for `filter-out` function to work properly.
+# Dashes at beginning & end of line ensure space before/after the first/last option on that line
+# and don't impact the option list
+define OPTIONS
+ - arm64 no-secty dev -
+ - mqtt-bus mqtt-broker -
+ - ds-bacnet ds-camera ds-grove ds-modbus ds-mqtt ds-random ds-rest ds-snmp ds-virtual -
+ - asc-http asc-mqtt  -
+ - modbus-sim ui -
+endef
+export OPTIONS
 
 ARGS:=$(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 $(eval $(ARGS):;@:)
@@ -64,23 +75,46 @@ endif
 ifeq (ds-virtual, $(filter ds-virtual,$(ARGS)))
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-device-virtual.yml
 endif
-# Add/switch to use MQTT Message Bus
-ifeq (mqtt, $(filter mqtt,$(ARGS)))
-	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-mqtt-messagebus.yml
+
+# Add ModBus Simulator
+ifeq (modbus-sim, $(filter modbus-sim,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-modbus-simulator.yml
+endif
+
+# Add Application Services
+ifeq (asc-http, $(filter asc-http,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-http-export.yml
+endif
+ifeq (asc-mqtt, $(filter asc-mqtt,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-asc-mqtt-export.yml
+endif
+
+# Add a MQTT Broker
+ifeq (mqtt-broker, $(filter mqtt-broker,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-mqtt-broker.yml
 	MQTT:=-mqtt
 endif
+
+# Add switch to use MQTT Message Bus
+ifeq (mqtt-bus, $(filter mqtt-bus,$(ARGS)))
+	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-mqtt-messagebus.yml -f add-mqtt-broker.yml
+	MQTT:=-mqtt
+endif
+
 # Add Security services and settings
 ifeq (no-secty, $(filter no-secty,$(ARGS)))
 	NO_SECURITY:=-no-secty
 else
 	COMPOSE_FILES:=$(COMPOSE_FILES) -f add-security.yml
 endif
+
+# Just the UI
 ifeq (ui, $(filter ui,$(ARGS)))
 	COMPOSE_FILES:=-f docker-compose-ui.yml
 	UI:=-ui
 endif
 
-SERVICES:=$(filter-out $(OPTIONS),$(ARGS))
+SERVICES:=$(filter-out ${OPTIONS},$(ARGS))
 
 ifeq (true, $(DS_GROVE))
  ifneq (-arm64, $(ARCH))
@@ -165,7 +199,11 @@ down: ui-down
 		-f add-device-rest.yml \
 		-f add-device-snmp.yml \
 		-f add-device-virtual.yml \
+		-f add-asc-http-export.yml \
+		-f add-asc-mqtt-export.yml \
+		-f add-mqtt-broker.yml \
 		-f add-mqtt-messagebus.yml \
+		-f add-modbus-simulator.yml \
 		-f add-security.yml \
 		down
 
