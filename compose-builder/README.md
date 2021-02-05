@@ -55,6 +55,14 @@ This folder contains the following compose files:
     Device Service **extending** compose file, which adds the **Device SNMP**  service.
 - **add-device-virtual.yml**
     Device Service **extending** compose file, which adds the **Device Virtual**  service.
+- **add-asc-http-export.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service Http Export**  service.
+- **add-asc-mqtt-export.yml**
+    Application Service Configurable **extending** compose file, which adds the **App Service MQTT Export**  service.
+- **add-modbus-simulator.yml**
+    ModBus Simulator **extending** compose file. Adds the MQTT ModBus Simulator service. Must be used in conjunction with  **add-device-modbus.yml**
+- **add-mqtt-broker.yml**
+    MQTT Broker **extending** compose file. Adds the Eclipse Mosquitto MQTT Broker.
 - **add-mqtt-messagebus.yml**
     MQTT **extending** compose file. Adds a MQTT Broker and additional configuration of services so that the `MQTT` implementation of the Edgex Message Bus is used.
 - **docker-compose-ui.yml**
@@ -100,42 +108,51 @@ compose [options]
 Generates the EdgeX compose file as specified by options and stores them in the configured relese folder. Compose files are named appropriatly for release and options used to generate them.
 
 Options:
-    no-secty:   Generates non-secure compose file, otherwise generates secure compose file
-    arm64:      Generates compose file using ARM64 images
-    dev:        Generates compose file using local dev built images from edgex-go repo's 
-                'make docker' which creates docker images tagged with '0.0.0-dev'    
-    ds-bacnet:  Generates compose file with device-bacnet included
-    ds-camera:  Generates compose file with device-camera included
-    ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
-    ds-modbus:  Generates compose file with device-modbus included
-    ds-mqtt:    Generates compose file with device-mqtt included
-    ds-random:  Generates compose file with device-random included
-    ds-rest:    Generates compose file with device-rest included
-    ds-snmp:    Generates compose file with device-snmp included
-    ds-virtual: Generates compose file with device-virtual included
-    mqtt:       Generates compose file with services configure for MQTT Message Bus 
-    ui:         Generates stand-alone compose file for EdgeX UI	
+    no-secty:    Generates non-secure compose file, otherwise generates secure compose file
+    arm64:       Generates compose file using ARM64 images
+    dev:         Generates compose file using local dev built images from edgex-go repo's 
+                 'make docker' which creates docker images tagged with '0.0.0-dev'    
+    ds-bacnet:   Generates compose file with device-bacnet included
+    ds-camera:   Generates compose file with device-camera included
+    ds-grove:    Generates compose file with device-grove included (valid only with arm64 option)
+    ds-modbus:   Generates compose file with device-modbus included
+    ds-mqtt:     Generates compose file with device-mqtt included
+    ds-random:   Generates compose file with device-random included
+    ds-rest:     Generates compose file with device-rest included
+    ds-snmp:     Generates compose file with device-snmp included
+    ds-virtual:  Generates compose file with device-virtual included
+    modbus-sim:  Generates compose file with ModBus simulator included
+    asc-http:    Generates compose file with App Service HTTP Export included
+    asc-mqtt:    Generates compose file with App Service MQTT Export included
+    mqtt-broker: Generates compose file with a MQTT Broker service included 
+    mqtt-bus:    Generates compose file with services configure for MQTT Message Bus 
+                 The MQTT Broker service is also included. 
+    ui:          Generates stand-alone compose file for EdgeX UI	
 ```
 
 ```
 run [options] [services]
 Runs the EdgeX services as specified by:
 Options:
-    no-secty:   Runs in Non-Secure Mode, otherwise runs in Secure Mode
-    arm64:      Runs using ARM64 images    
-    dev:        Runs using local dev built images from edgex-go repo's    
-                'make docker' which creates docker images tagged with '0.0.0-dev'
-    ds-modbus:  Runs with device-modbus included
-    ds-bacnet:  Runs with device-bacnet included
-    ds-camera:  Runs with device-camera included
-    ds-grove:   Runs with device-grove included (valid only with arm64 option)
-    ds-mqtt:    Runs with device-mqtt included
-    ds-random:  Runs with device-random included
-    ds-rest:    Runs with device-rest included
-    ds-snmp:    Runs with device-snmp included
-    ds-virtual: Runs device-virtual included
-    mqtt:       Runs using MQTT Message Bus
-    ui:         Runs only the EdgeX UI service. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
+    no-secty:    Runs in Non-Secure Mode, otherwise runs in Secure Mode
+    arm64:       Runs using ARM64 images    
+    dev:         Runs using local dev built images from edgex-go repo's    
+                 'make docker' which creates docker images tagged with '0.0.0-dev'
+    ds-modbus:   Runs with device-modbus included
+    ds-bacnet:   Runs with device-bacnet included
+    ds-camera:   Runs with device-camera included
+    ds-grove:    Runs with device-grove included (valid only with arm64 option)
+    ds-mqtt:     Runs with device-mqtt included
+    ds-random:   Runs with device-random included
+    ds-rest:     Runs with device-rest included
+    ds-snmp:     Runs with device-snmp included
+    ds-virtual:  Runs device-virtual included
+    modbus-sim:  Runs with ModBus simulator included
+    asc-http:    Runs with App Service HTTP Export included
+    asc-mqtt:    Runs with App Service MQTT Export included
+    mqtt-broker: Runs with a MQTT Broker service included 
+    mqtt-bus:    Runs with services configure for MQTT Message Bus 
+    ui:          Runs only the EdgeX UI service. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored. Typically used after the other Edgex Services have been started
 Services:
     <names...>: Runs only services listed (and their dependent services) where 'name' matches a service name in one of the compose files used
 ```
@@ -143,19 +160,23 @@ Services:
 pull [options] [services]
 Pulls the EdgeX service images as specified by:
 Options:
-    no-secty:   Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
-    arm64:      Pulls ARM64 version of images    
-    ds-bacnet:  Pull includes device-bacnet 
-    ds-camera:  Pull includes device-camera
-    ds-grove:   Pull includes device-grove (valid only with arm64 option)
-    ds-modbus:  Pull includes device-modbus 
-    ds-mqtt:    Pull includes device-mqtt
-    ds-random:  Pull includes device-random
-    ds-rest:    Pull includes device-rest
-    ds-snmp:    Pull includes device-snmp
-    ds-virtual: Pull includes device-virtual
-    mqtt:       Pulls included additional service for MQTT Message Bus 
-    ui:         Pulls only the EdgeX UI service image. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored
+    no-secty:    Pulls images for Non-Secure Mode, otherwise pull images for Secure Mode
+    arm64:       Pulls ARM64 version of images    
+    ds-bacnet:   Pull includes device-bacnet 
+    ds-camera:   Pull includes device-camera
+    ds-grove:    Pull includes device-grove (valid only with arm64 option)
+    ds-modbus:   Pull includes device-modbus 
+    ds-mqtt:     Pull includes device-mqtt
+    ds-random:   Pull includes device-random
+    ds-rest:     Pull includes device-rest
+    ds-snmp:     Pull includes device-snmp
+    ds-virtual:  Pull includes device-virtual
+    modbus-sim:  Pull includes ModBus simulator
+    asc-http:    Pull includes App Service HTTP Export
+    asc-mqtt:    Pull includes App Service MQTT Export
+    mqtt-broker: Pull includes MQTT Broker service
+    mqtt-bus:    Pull includes additional service for MQTT Message Bus
+    ui:          Pulls only the EdgeX UI service image. `ds-x`, 'mqtt', 'no-ds' & 'no-secty' are ignored
 Services:
     <names...>: Pulls only images for the service(s) listed
 ```
@@ -163,21 +184,26 @@ Services:
 gen [options]
 Generates temporary single file compose file (`docker-compose.yml`) as specified by:
 Options:
-    no-secty:   Generates non-secure compose, otherwise generates secure compose file
-    arm64:      Generates compose file using ARM64 images    
-    dev:        Generates compose file using local dev built images from edgex-go repo's 
-                'make docker' which creates docker images tagged with '0.0.0-dev'
-    ds-modbus:  Generates compose file with device-modbus included
-    ds-bacnet:  Generates compose file with device-bacnet included
-    ds-camera:  Generates compose file with device-camera included
-    ds-grove:   Generates compose file with device-grove included (valid only with arm64 option)
-    ds-mqtt:    Generates compose file with device-mqtt included
-    ds-random:  Generates compose file with device-random included
-    ds-rest:    Generates compose file with device-rest included
-    ds-snmp:    Generates compose file with device-snmp included
-    ds-virtual: Generates compose file with device-virtual included
-    mqtt:       Generates compose file configured to use MQTT Message Bus
-    ui:         Generates stand-alone compose file for EdgeX UI
+    no-secty:    Generates non-secure compose, otherwise generates secure compose file
+    arm64:       Generates compose file using ARM64 images    
+    dev:         Generates compose file using local dev built images from edgex-go repo's 
+                 'make docker' which creates docker images tagged with '0.0.0-dev'
+    ds-modbus:   Generates compose file with device-modbus included
+    ds-bacnet:   Generates compose file with device-bacnet included
+    ds-camera:   Generates compose file with device-camera included
+    ds-grove:    Generates compose file with device-grove included (valid only with arm64 option)
+    ds-mqtt:     Generates compose file with device-mqtt included
+    ds-random:   Generates compose file with device-random included
+    ds-rest:     Generates compose file with device-rest included
+    ds-snmp:     Generates compose file with device-snmp included
+    ds-virtual:  Generates compose file with device-virtual included
+    modbus-sim:  Generates compose file with ModBus simulator included
+    asc-http:    Generates compose file with App Service HTTP Export included
+    asc-mqtt:    Generates compose file with App Service MQTT Export included
+    mqtt-broker: Generates compose file with a MQTT Broker service included 
+    mqtt-bus:    Generates compose file with services configure for MQTT Message Bus 
+                 The MQTT Broker service is also included. 
+    ui:          Generates stand-alone compose file for EdgeX UI
 ```
 ```
 get-token [options] 
