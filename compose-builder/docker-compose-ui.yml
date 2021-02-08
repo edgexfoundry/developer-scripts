@@ -25,7 +25,7 @@ networks:
 
 services:
   ui:
-    image: ${REPOSITORY}/docker-edgex-ui-go${ARCH}:${CORE_EDGEX_VERSION}
+    image: ${REPOSITORY}/docker-edgex-ui-go${ARCH}:${EDGEX_UI_VERSION}
     ports:
       - "127.0.0.1:4000:4000"
     container_name: edgex-ui-go
