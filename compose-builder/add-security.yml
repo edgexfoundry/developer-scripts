@@ -27,6 +27,7 @@ volumes:
   postgres-config:
   # non-shared volumes
   postgres-data:
+  redis-config:
 
 services:
   security-bootstrapper:
@@ -54,8 +55,13 @@ services:
       - common-sec-stage-gate.env
     environment:
       SECRETSTORE_TOKENFILE: /tmp/edgex/secrets/edgex-security-bootstrap-redis/secrets-token.json
+      DATABASECONFIG_PATH: /run/redis/conf
+      DATABASECONFIG_NAME: redis.conf
+    tmpfs:
+      - /run
     volumes:
       - edgex-init:/edgex-init:ro,z
+      - redis-config:/run/redis/conf:z
       - /tmp/edgex/secrets/edgex-security-bootstrap-redis:/tmp/edgex/secrets/edgex-security-bootstrap-redis:ro,z
     depends_on:
       - security-bootstrapper
