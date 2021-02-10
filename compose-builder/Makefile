@@ -256,6 +256,8 @@ gen:
 	$(GROVE_CHECK) \
 	DEV=$(DEV) \
 	APP_SVC_DEV=$(APP_SVC_DEV) \
+	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
 	ARCH=$(ARCH) \
 	TOKEN_LIST=$(TOKEN_LIST) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
