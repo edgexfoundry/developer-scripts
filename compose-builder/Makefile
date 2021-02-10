@@ -256,11 +256,7 @@ gen:
 	$(GROVE_CHECK) \
 	DEV=$(DEV) \
 	APP_SVC_DEV=$(APP_SVC_DEV) \
-	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
-	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
-	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH=$(ARCH) \
-	KONG_UBUNTU=$(KONG_UBUNTU) \
 	TOKEN_LIST=$(TOKEN_LIST) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
 
@@ -275,21 +271,13 @@ upload-tls-cert:
 	sh ./upload-api-gateway-cert.sh
 
 ui-down:
-	DEV= \
-	APP_SVC_DEV= \
-	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
-	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
-	KONG_UBUNTU= \
 	docker-compose -p edgex -f docker-compose-ui.yml down
 
 down: ui-down
 	DEV= \
 	APP_SVC_DEV= \
-	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
-	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH= \
-	KONG_UBUNTU= \
 	TOKEN_LIST= \
 	docker-compose -p edgex \
 		-f docker-compose-base.yml \
