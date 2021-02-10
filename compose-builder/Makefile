@@ -212,7 +212,6 @@ ifneq (nexus, $(RELEASE))
 endif
 
 help:
-	echo ${OPTIONS}
 	echo "See README.md in this folder"
 
 portainer:
