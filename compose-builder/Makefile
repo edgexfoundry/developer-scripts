@@ -212,7 +212,6 @@ ifneq (nexus, $(RELEASE))
 endif
 
 help:
-	echo ${OPTIONS}
 	echo "See README.md in this folder"
 
 portainer:
@@ -256,6 +255,9 @@ gen:
 	$(GROVE_CHECK) \
 	DEV=$(DEV) \
 	APP_SVC_DEV=$(APP_SVC_DEV) \
+	CORE_EDGEX_REPOSITORY=$(CORE_EDGEX_REPOSITORY) \
+	CORE_EDGEX_VERSION=$(CORE_EDGEX_VERSION) \
+	APP_SVC_REPOSITORY=$(APP_SVC_REPOSITORY) \
 	ARCH=$(ARCH) \
 	TOKEN_LIST=$(TOKEN_LIST) \
 	docker-compose -p edgex $(COMPOSE_FILES) config > docker-compose.yml
